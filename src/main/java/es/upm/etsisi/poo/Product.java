@@ -46,7 +46,7 @@ public class Product {
     }
 
     public String toString() {
-        return "Product: " + this.name + " | Category: " + this.category.name()
-                + " | Price: " + this.price + " | Identifier: " + identifier;
+        return "{class:Product, id:" + this.identifier + ", name:" + this.name +
+                ", category:" + this.category.name() + ", price:" + this.price + "}";
     }
 }
