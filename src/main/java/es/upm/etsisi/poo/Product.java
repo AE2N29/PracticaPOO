@@ -1,20 +1,20 @@
 package es.upm.etsisi.poo;
 
 public class Product {
-    private int identifier;
+    private int id;
     private String name;
     private Category category;
     private double price;
 
-    public Product(int identifier, String name, Category category, double price) {
-        this.identifier = identifier;
+    public Product(int id, String name, Category category, double price) {
+        this.id = id;
         this.name = name;
         this.category = category;
         this.price = price;
     }
 
-    public int getIdentifier() {
-        return identifier;
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -37,8 +37,8 @@ public class Product {
         this.category = category;
     }
 
-    public void setIdentifier(int identifier) {
-        this.identifier = identifier;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setName(String name) {
@@ -46,7 +46,7 @@ public class Product {
     }
 
     public String toString() {
-        return "{class:Product, id:" + this.identifier + ", name:" + this.name +
+        return "{class:Product, id:" + this.id + ", name:" + this.name +
                 ", category:" + this.category.name() + ", price:" + this.price + "}";
     }
 }
