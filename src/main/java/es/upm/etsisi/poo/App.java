@@ -42,5 +42,4 @@ public class App {
         System.out.println("Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%,");
         System.out.println("ELECTRONICS 3%.");
     }
-
 }

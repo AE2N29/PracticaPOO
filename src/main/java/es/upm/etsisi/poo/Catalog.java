@@ -49,7 +49,7 @@ public class Catalog {
                     endCondition = true;
                     switch (field.toUpperCase()) {
                         case "PRICE":
-                            double updatedPrice = Double.parseDouble(update);
+                            double updatedPrice = Double.parseDouble(update); // The variable update is a String object, it is parsed to double when field corresponds to PRICE
                             products[index].setPrice(updatedPrice);
                             break;
                         case "CATEGORY":
