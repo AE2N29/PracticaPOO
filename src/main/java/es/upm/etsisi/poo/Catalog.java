@@ -11,7 +11,7 @@ public class Catalog {
     }
 
     public void add(int id, String name, Category category, double price) {  // for the 'ticket add <prodID> <cantidad>' command
-        if (pointer == PRODUCT_LIMIT-1) { // When pointer = 199 (last index) and PRODUCT_LIMIT-1 are the same, it doesn't let you add nothing
+        if (pointer == PRODUCT_LIMIT) {
             System.out.println("El catálogo ha alcanzado su límite");
         } else if (IDInProducts(id)){
             System.out.println("Ya existe un producto con el mismo ID");
