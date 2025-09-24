@@ -49,7 +49,7 @@ public class Catalog {
                     endCondition = true;
                     switch (field.toUpperCase()) {
                         case "PRICE":
-                            double updatedPrice = Double.parseDouble(update);
+                            double updatedPrice = Double.parseDouble(update); // The variable update is a String object, it is parsed to double when field corresponds to PRICE
                             products[index].setPrice(updatedPrice);
                             break;
                         case "CATEGORY":
@@ -90,7 +90,7 @@ public class Catalog {
     }
 
 
-    protected  boolean IDInProducts(int id) {
+    public boolean IDInProducts(int id) {
         for (int i=0; i<pointer; i++) { // It iterates while i < pointer to avoid NullPointerException
             if (products[i].getId() == id) {
                 return true;
@@ -99,7 +99,7 @@ public class Catalog {
         return false;
     }
 
-    protected boolean nameInProducts(String name) {
+    private boolean nameInProducts(String name) {
         for (int i=0; i<pointer; i++) {
             if (products[i].getName().equals(name)) {
                 return true;
@@ -108,7 +108,7 @@ public class Catalog {
         return false;
     }
 
-    public boolean inCategory(String category) {
+    private boolean inCategory(String category) {
         boolean result = false;
         Category[] categories = Category.values();
         for (int i=0; i<categories.length; i++) {
@@ -119,4 +119,11 @@ public class Catalog {
         return result;
     }
 
+    public Product[] getCopyOfProds() {
+        Product[] prodsClone = new Product[PRODUCT_LIMIT];
+        for (int i=0; i<products.length; i++) {
+            prodsClone[i] = products[i];
+        }
+        return prodsClone;
+    }
 }
