@@ -31,8 +31,8 @@ public class Catalog {
         } else {
             int iterator = 0;
             System.out.println("Catalog:");
-            while (products[iterator] != null) {
-                System.out.println("  " + products[iterator].toString());
+            for (int i=0; i<pointer; i++) {
+                System.out.println("  " + products[i].toString());
             }
             System.out.println("prod list: ok");
         }
@@ -47,7 +47,7 @@ public class Catalog {
             while (!endCondition) {
                 if (products[index].getId() == id) {
                     endCondition = true;
-                    switch (field) {
+                    switch (field.toUpperCase()) {
                         case "PRICE":
                             double updatedPrice = Double.parseDouble(update);
                             products[index].setPrice(updatedPrice);
@@ -91,7 +91,7 @@ public class Catalog {
 
 
     private boolean IDInProducts(int id) {
-        for (int i=0; i<products.length; i++) {
+        for (int i=0; i<pointer; i++) { // It iterates while i < pointer to avoid NullPointerException
             if (products[i].getId() == id) {
                 return true;
             }
@@ -100,8 +100,8 @@ public class Catalog {
     }
 
     private boolean nameInProducts(String name) {
-        for (int i=0; i<products.length; i++) {
-            if (products[i].getName() == name) {
+        for (int i=0; i<pointer; i++) {
+            if (products[i].getName().equals(name)) {
                 return true;
             }
         }
@@ -112,7 +112,7 @@ public class Catalog {
         boolean result = false;
         Category[] categories = Category.values();
         for (int i=0; i<categories.length; i++) {
-            if (categories[i].name() == category) {
+            if (categories[i].name().equals(category)) {
                 result = true;
             }
         }
