@@ -8,11 +8,11 @@ public class App {
     public static void main( String[] args ) {
         App app = new App();
         app.init();
-
     }
 
     private void init() {
-        System.out.println("Welcome to the ticket module App. Type 'help' to see commands");
+        System.out.println("Welcome to the ticket module App.\n" +
+                "Ticket module. Type 'help' to see commands");
     }
 
     private void start() {
@@ -22,6 +22,21 @@ public class App {
     private void end() {
         System.out.println("Closing application.");
         System.out.println("Goodbye!");
+    }
+
+    public void help() {
+        System.out.println("Commands:");
+        System.out.println(" prod add <id> \"<name>\" <category> <price>");
+        System.out.println(" prod list");
+        System.out.println(" prod update <id> NAME|CATEGORY|PRICE <value>");
+        System.out.println(" prod remove <id>");
+        System.out.println(" ticket new");
+        System.out.println(" ticket add <prodId> <quantity>");
+        System.out.println(" ticket remove <prodId>");
+        System.out.println(" ticket print");
+        System.out.println(" echo \"<texto>\"");
+        System.out.println(" help");
+        System.out.println(" exit");
     }
 
 }
