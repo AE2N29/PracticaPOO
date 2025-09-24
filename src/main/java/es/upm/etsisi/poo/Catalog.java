@@ -90,7 +90,7 @@ public class Catalog {
     }
 
 
-    private boolean IDInProducts(int id) {
+    protected  boolean IDInProducts(int id) {
         for (int i=0; i<pointer; i++) { // It iterates while i < pointer to avoid NullPointerException
             if (products[i].getId() == id) {
                 return true;
@@ -99,7 +99,7 @@ public class Catalog {
         return false;
     }
 
-    private boolean nameInProducts(String name) {
+    protected boolean nameInProducts(String name) {
         for (int i=0; i<pointer; i++) {
             if (products[i].getName().equals(name)) {
                 return true;
