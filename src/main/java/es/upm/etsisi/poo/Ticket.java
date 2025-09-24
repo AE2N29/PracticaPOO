@@ -25,7 +25,7 @@ public class Ticket {
          }
     }
     public void TicketRemove(Product product){
-        if(Catalog.IDInProducts(product.getId())) {
+        if(IDInProducts(product.getId())) {
             for (int i = 0; i < products.length; i++) {
                 if (products[i] == product) {
                     products[i] = null;
@@ -33,6 +33,6 @@ public class Ticket {
             }
         }
     }
-
+   private
 
 }
