@@ -49,4 +49,8 @@ public class Product {
         return "{class:Product, id:" + this.id + ", name:" + this.name +
                 ", category:" + this.category.name() + ", price:" + this.price + "}";
     }
+
+    public boolean equals(Product prod) {
+        return this.id == prod.getId() && this.name == prod.getName() && this.category == prod.getCategory() && this.price == prod.getPrice();
+    }
 }
