@@ -119,7 +119,12 @@ public class Catalog {
         return result;
     }
 
-    public Product[] getCopyOfProds() {
+    public static Product[] getCopyOfProds() {       // This method needs the private method beneath to be used it statically as it is necessary to check IDs from Ticket class. We avoided to set to static the attributes of this class to have less problems with the previous methods
+        Product[] prodsCopy = getCopyOfProds();
+        return prodsCopy;
+    }
+
+    private Product[] getProducts() {   // This private method helps to return an actual copy of the catalog to then use it in the static method getCopyOfProds() in order to access the catalog from different classes
         Product[] prodsClone = new Product[PRODUCT_LIMIT];
         for (int i=0; i<products.length; i++) {
             prodsClone[i] = products[i];
