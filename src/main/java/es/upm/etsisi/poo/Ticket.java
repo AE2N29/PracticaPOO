@@ -24,6 +24,7 @@ public class Ticket {
           i++;
          }
     }
+
     public void ticketRemove(Product product){
         Product[] actualCatalog = Catalog.getCopyOfProds();
         boolean IDexists = false;
@@ -36,7 +37,15 @@ public class Ticket {
         if (!IDexists) {
             System.out.println("The product " + product.getName() + " does not exist");
         } else {
-            // TODO
+            for (int i=0; i<products.length; i++) {
+                if (products[i].equals(product)) {
+                    for (int j=i; j<products.length-1; j++) { // For sentence ends after reaching products.length - 1 to avoid IndexOutOfBounds
+                        products[j] = products[j+1];
+                    }
+                    products[products.length-1] = null; // It removes the last object correctly
+                    i--; // returns to the previous position. Otherwise, it would skip an index
+                }
+            }
         }
     }
 }
