@@ -1,4 +1,5 @@
 package es.upm.etsisi.poo;
+import java.util.Scanner;
 
 /**
  * Hello world!
@@ -16,7 +17,9 @@ public class App {
     }
 
     private void start() {
-        // TODO
+        while (true) {
+            String command = typeCommand();
+        }
     }
 
     private void end() {
@@ -24,4 +27,12 @@ public class App {
         System.out.println("Goodbye!");
     }
 
+    private String typeCommand() {  // To make easier the implementation of the shell
+        Scanner sc = new Scanner(System.in);
+        System.out.print("tUpm> ");
+        String command = sc.nextLine();
+        sc.close();
+        return command;
+
+    }
 }
