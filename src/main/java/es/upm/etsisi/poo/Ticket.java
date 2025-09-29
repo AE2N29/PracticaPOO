@@ -17,8 +17,7 @@ public class Ticket {
     }
 
     public void add(Product product, int amount){
-        int i = 0;
-         while(i < amount){
+        int i = 0;         while(i < amount) {
              int products_amount = products.length + 1;
           products = new Product[products.length];
           i++;
