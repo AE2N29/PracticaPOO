@@ -3,9 +3,9 @@ package es.upm.etsisi.poo;
 public class Catalog {
     private static final int PRODUCT_LIMIT = 200;
     private static Product[] products;
-    private int pointer = 0;  // Used as index
+    private static int pointer = 0;  // Used as index
 
-    public void add(int id, String name, Category category, double price) {  // for the 'ticket add <prodID> <cantidad>' command
+    public static void add(int id, String name, Category category, double price) {  // for the 'ticket add <prodID> <cantidad>' command
         if (pointer == PRODUCT_LIMIT) {
             System.out.println("El catálogo ha alcanzado su límite");
         } else if (IDInProducts(id)){
@@ -20,7 +20,7 @@ public class Catalog {
         }
     }
 
-    public void list() {
+    public static void list() {
         if (pointer == 0) {
             System.out.println("El catálogo está vacío");
         } else {
@@ -33,7 +33,7 @@ public class Catalog {
         }
     }
 
-    public void update(int id, String field, String update) {   // Field indicates if you want to change price, name or category and update indicates the change
+    public static void update(int id, String field, String update) {   // Field indicates if you want to change price, name or category and update indicates the change
         boolean endCondition = false;
         if (!IDInProducts(id)) {
             System.out.println("No existe ningún producto con ID:" + id);
@@ -66,7 +66,7 @@ public class Catalog {
         }
     }
 
-    public void remove(int id) {
+    public static void remove(int id) {
         boolean found = false;
         for (int i=0; i<pointer; i++) {
             if (products[i].getId() == id) {
@@ -86,7 +86,7 @@ public class Catalog {
     }
 
 
-    private boolean IDInProducts(int id) {
+    private static boolean IDInProducts(int id) {
         for (int i=0; i<pointer; i++) { // It iterates while i < pointer to avoid NullPointerException
             if (products[i].getId() == id) {
                 return true;
@@ -95,7 +95,7 @@ public class Catalog {
         return false;
     }
 
-    private boolean nameInProducts(String name) {
+    private static boolean nameInProducts(String name) {
         for (int i=0; i<pointer; i++) {
             if (products[i].getName().equals(name)) {
                 return true;
@@ -104,7 +104,7 @@ public class Catalog {
         return false;
     }
 
-    private boolean inCategory(String category) {
+    private static boolean inCategory(String category) {
         boolean result = false;
         Category[] categories = Category.values();
         for (int i=0; i<categories.length; i++) {

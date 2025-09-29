@@ -25,11 +25,10 @@ public class Ticket {
     }
 
     public void remove(Product product) {
-        Product[] actualCatalog = Catalog.getProds();
         boolean IDexists = false;
         int iterator = 0;
-        for (int i=0; i<actualCatalog.length; i++) {
-            if (product.getId() == actualCatalog[i].getId()) {
+        for (int i=0; i<Catalog.getProds().length; i++) {
+            if (product.getId() == Catalog.getProds()[i].getId()) {
                 IDexists = true;    // Acts like IDInProducts from this class
             }
         }
