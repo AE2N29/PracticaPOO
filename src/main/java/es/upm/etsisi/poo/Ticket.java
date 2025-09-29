@@ -12,31 +12,52 @@ public class Ticket {
        this.products = new Product[MAX_PRODS_TICKET]; // Everything is initialized to null
     }
 
-    public Ticket ticketNew() {
-        return new Ticket();
+    public void resetTicket() {
+        this.products = new Product[MAX_PRODS_TICKET];
     }
 
-    public void add(Product product, int amount){
-        int i = 0;         while(i < amount) {
-             int products_amount = products.length + 1;
-          products = new Product[products.length];
-          i++;
-         }
-    }
-
-    public void remove(Product product) {
-        boolean IDexists = false;
-        int iterator = 0;
-        for (int i=0; i<Catalog.getProds().length; i++) {
-            if (product.getId() == Catalog.getProds()[i].getId()) {
-                IDexists = true;    // Acts like IDInProducts from this class
+    public void add(int prodID, int amount) {
+        // Check if prodID exists in catalog
+        Product[] catalogProds = Catalog.getProds();
+        Product prodToAdd = null;
+        for (int i=0; i<catalogProds.length; i++) {
+            if (catalogProds[i].getId() == prodID) {
+                prodToAdd = catalogProds[i];
             }
         }
-        if (!IDexists) {
-            System.out.println("The product " + product.getName() + " does not exist");
+        if (prodToAdd == null) {
+            System.out.println("There isn't any product with " + prodID + " as ID");
+        } else {
+            int added = 0;
+            int iterator = 0;
+            while (iterator < products.length && added < amount) {
+                if (products[iterator] == null) {
+                    products[iterator] = prodToAdd;
+                    added++;
+                }
+                iterator++;
+            }
+            if (added < amount) {
+                System.out.println("Only " + added + " units could be added. Ticket is full.");
+            } else {
+                System.out.println("ticket add: ok");
+            }
+        }
+    }
+
+    public void remove(int prodID) {
+        Product[] catalogProds = Catalog.getProds();
+        Product prodToAdd = null;
+        for (int i=0; i<catalogProds.length; i++) {
+            if (prodID == catalogProds[i].getId()) {
+                prodToAdd = catalogProds[i];
+            }
+        }
+        if (prodToAdd == null) {
+            System.out.println("There isn't any product with " + prodID + " as ID");
         } else {
             for (int i=0; i<products.length; i++) {
-                if (products[i].equals(product)) {
+                if (products[i].equals(prodToAdd)) {
                     for (int j=i; j<products.length-1; j++) { // For sentence ends after reaching products.length - 1 to avoid IndexOutOfBounds
                         products[j] = products[j+1];
                     }

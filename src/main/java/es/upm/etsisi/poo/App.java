@@ -14,11 +14,64 @@ public class App {
 
     private void init() {
         System.out.println("Welcome to the ticket module App. Type 'help' to see commands");
+        start();
     }
 
     private void start() {
-        while (true) {
+        boolean keepGoing = true;
+        Ticket ticket = new Ticket();
+        while (keepGoing) {
             String command = typeCommand();
+            if (!validCommand(command)) {
+                System.out.println("Not a valid command");
+            } else {
+                String[] commandParts = command.split(" ");
+                switch (commandParts[0]) {
+                    case "prod":
+                        switch (commandParts[1]) {
+                            case "add":
+                                Catalog.add(Integer.parseInt(commandParts[2]), commandParts[3], Category.valueOf(commandParts[4]), Double.parseDouble(commandParts[5]));
+                                break;
+                            case "list":
+                                Catalog.list();
+                                break;
+                            case "update":
+                                Catalog.update(Integer.parseInt(commandParts[2]), commandParts[3], commandParts[4]);
+                                break;
+                            case "remove":
+                                Catalog.remove(Integer.parseInt(commandParts[2]));
+                                break;
+                        }
+                    case "ticket":
+                        switch (commandParts[1]) {
+                            case "new":
+                                ticket.resetTicket();
+                                break;
+                            case "add":
+                                ticket.add(Integer.parseInt(commandParts[2]), Integer.parseInt(commandParts[3]));
+                                break;
+                            case "remove":
+                                ticket.remove(Integer.parseInt(commandParts[2]));
+                                break;
+                            case "print":
+                                ticket.print();
+                        }
+                    case "help":
+                        help();
+                        break;
+                    case "echo":
+                        System.out.println(command.substring(5));
+                        break;
+                    case "exit":
+                        keepGoing = false;
+                        end();
+                        break;
+                    default:
+                        System.out.println("Not a valid command");
+                }
+                System.out.println();
+                System.out.println();
+            }
         }
     }
 
@@ -27,7 +80,7 @@ public class App {
         System.out.println("Goodbye!");
     }
 
-    public void help() {
+    private void help() {
         System.out.println("Commands:");
         System.out.println(" prod add <id> \"<name>\" <category> <price>");
         System.out.println(" prod list");
@@ -49,7 +102,95 @@ public class App {
         Scanner sc = new Scanner(System.in);
         System.out.print("tUpm> ");
         String command = sc.nextLine();
-        sc.close();
         return command;
     }
+
+    private boolean validCommand(String command) {
+        if (command.equals("prod list") || command.equals("ticket new") || command.equals("ticket print") || command.equals("help") || command.equals("exit")) {
+            return true;
+        } else {
+            String[] splittedCommand = command.split(" ");
+            switch (splittedCommand[0]) {
+                case "prod":
+                    switch (splittedCommand[1]) {
+                        case "add":
+                            try {
+                                int num = Integer.parseInt(splittedCommand[2]);
+                            } catch (NumberFormatException e) {
+                                return false;
+                            }
+                            String name = "";
+                            int firstIndex = command.indexOf('"');
+                            int lastIndex = command.lastIndexOf('"');
+                            name = command.substring(firstIndex);
+                            if (!inCategory(splittedCommand[4].toUpperCase())) {
+                                return false;
+                            }
+                            try {
+                                double number = Double.parseDouble(splittedCommand[5]);
+                            } catch (NumberFormatException e) {
+                                return false;
+                            }
+                            return true;
+                        case "update":
+                            try {
+                                int num = Integer.parseInt(splittedCommand[2]);
+                            } catch (NumberFormatException e) {
+                                return false;
+                            }
+                            if (!splittedCommand[3].toUpperCase().equals("NAME") && !splittedCommand[3].toUpperCase().equals("CATEGORY") && !splittedCommand[3].toUpperCase().equals("PRICE")) {
+                                return false;
+                            }
+                            return true;
+                        case "remove":
+                            try {
+                                double number = Double.parseDouble(splittedCommand[2]);
+                            } catch (NumberFormatException e) {
+                                return false;
+                            }
+                            return true;
+                        default:
+                            return false;
+                    }
+                case "ticket":
+                    switch (splittedCommand[1]) {
+                        case "add":
+                            try {
+                                int number = Integer.parseInt(splittedCommand[2]);
+                            } catch (NumberFormatException e) {
+                                return false;
+                            }
+                            try {
+                                int number = Integer.parseInt(splittedCommand[3]);
+                            } catch (NumberFormatException e) {
+                                return false;
+                            }
+                            return true;
+                        case "remove":
+                            try {
+                                int number = Integer.parseInt(splittedCommand[2]);
+                            } catch (NumberFormatException e) {
+                                return false;
+                            }
+                            return true;
+                        default:
+                            return false;
+
+                    }
+                case "echo":
+                    return true;
+            }
+        }
+        return true;
+    }
+
+    private boolean inCategory(String category) {
+        for (int i=0; i<Category.values().length; i++) {
+            if (category.equals(Category.values()[i].name().toUpperCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
