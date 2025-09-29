@@ -1,14 +1,9 @@
 package es.upm.etsisi.poo;
 
 public class Catalog {
-    private final int PRODUCT_LIMIT = 200;
-    private Product[] products;
+    private static final int PRODUCT_LIMIT = 200;
+    private static Product[] products;
     private int pointer = 0;  // Used as index
-
-    public Catalog() {
-        this.products = new Product[PRODUCT_LIMIT];
-        this.pointer = 0;
-    }
 
     public void add(int id, String name, Category category, double price) {  // for the 'ticket add <prodID> <cantidad>' command
         if (pointer == PRODUCT_LIMIT) {
@@ -120,16 +115,8 @@ public class Catalog {
         return result;
     }
 
-    public static Product[] getCopyOfProds() {       // This method needs the private method beneath to be used it statically as it is necessary to check IDs from Ticket class. We avoided to set to static the attributes of this class to have less problems with the previous methods
-        Product[] prodsCopy = getCopyOfProds();
-        return prodsCopy;
+    public static Product[] getProds() {
+        return products;
     }
 
-    private Product[] getProducts() {   // This private method helps to return an actual copy of the catalog to then use it in the static method getCopyOfProds() in order to access the catalog from different classes
-        Product[] prodsClone = new Product[PRODUCT_LIMIT];
-        for (int i=0; i<products.length; i++) {
-            prodsClone[i] = products[i];
-        }
-        return prodsClone;
-    }
 }

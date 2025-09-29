@@ -25,7 +25,7 @@ public class Ticket {
     }
 
     public void remove(Product product) {
-        Product[] actualCatalog = Catalog.getCopyOfProds();
+        Product[] actualCatalog = Catalog.getProds();
         boolean IDexists = false;
         int iterator = 0;
         for (int i=0; i<actualCatalog.length; i++) {
