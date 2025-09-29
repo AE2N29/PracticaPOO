@@ -51,6 +51,6 @@ public class Product {
     }
 
     public boolean equals(Product prod) {
-        return this.id == prod.getId() && this.name == prod.getName() && this.category == prod.getCategory() && this.price == prod.getPrice();
+        return this.id == prod.getId() && this.name.equals(prod.getName()) && this.category == prod.getCategory() && this.price == prod.getPrice();
     }
 }

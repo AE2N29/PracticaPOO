@@ -67,6 +67,7 @@ public class Catalog {
                     index++;
                 }
             }
+            System.out.println("prod update: ok");
         }
     }
 
@@ -90,7 +91,7 @@ public class Catalog {
     }
 
 
-    public boolean IDInProducts(int id) {
+    private boolean IDInProducts(int id) {
         for (int i=0; i<pointer; i++) { // It iterates while i < pointer to avoid NullPointerException
             if (products[i].getId() == id) {
                 return true;
