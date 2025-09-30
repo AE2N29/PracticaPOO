@@ -30,18 +30,31 @@ public class App {
                     case "prod":
                         switch (commandParts[1]) {
                             case "add":
-                                Catalog.add(Integer.parseInt(commandParts[2]), commandParts[3], Category.valueOf(commandParts[4]), Double.parseDouble(commandParts[5]));
+                                String name = command.substring(command.indexOf('"') + 1, command.lastIndexOf('"'));
+                                String restOfCommand = command.substring(command.lastIndexOf('"')+1).trim();
+                                String[] partsRest = restOfCommand.split(" ");
+                                Catalog.add(Integer.parseInt(commandParts[2]), name, Category.valueOf(partsRest[0].toUpperCase()), Double.parseDouble(partsRest[1]));
                                 break;
                             case "list":
                                 Catalog.list();
                                 break;
                             case "update":
-                                Catalog.update(Integer.parseInt(commandParts[2]), commandParts[3], commandParts[4]);
+                                String field = commandParts[3].toUpperCase();
+                                String update;
+                                if (field.equals("NAME")) {
+                                    int firstIndex = command.indexOf('"');
+                                    int lastIndex = command.lastIndexOf('"');
+                                    update = command.substring(firstIndex+1, lastIndex);
+                                } else {
+                                    update = commandParts[4];
+                                }
+                                Catalog.update(Integer.parseInt(commandParts[2]), field, update);
                                 break;
                             case "remove":
                                 Catalog.remove(Integer.parseInt(commandParts[2]));
                                 break;
                         }
+                        break;
                     case "ticket":
                         switch (commandParts[1]) {
                             case "new":
@@ -56,6 +69,7 @@ public class App {
                             case "print":
                                 ticket.print();
                         }
+                        break;
                     case "help":
                         help();
                         break;
@@ -92,7 +106,8 @@ public class App {
         System.out.println(" ticket print");
         System.out.println(" echo \"<texto>\"");
         System.out.println(" help");
-        System.out.println(" exit + \n");
+        System.out.println(" exit");
+        System.out.println();
         System.out.println("Categories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS");
         System.out.println("Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%,");
         System.out.println("ELECTRONICS 3%.");
@@ -119,15 +134,17 @@ public class App {
                             } catch (NumberFormatException e) {
                                 return false;
                             }
-                            String name = "";
-                            int firstIndex = command.indexOf('"');
-                            int lastIndex = command.lastIndexOf('"');
-                            name = command.substring(firstIndex);
-                            if (!inCategory(splittedCommand[4].toUpperCase())) {
+                            String name = command.substring(command.indexOf('"')+1, command.lastIndexOf('"'));
+                            String rest = command.substring(command.lastIndexOf('"')+1).trim();
+                            String[] partsRest = rest.split(" ");
+                            if (partsRest.length != 2) {    // Ensure there is not extra parameters
+                                return false;
+                            }
+                            if (!inCategory(partsRest[0].toUpperCase())) {
                                 return false;
                             }
                             try {
-                                double number = Double.parseDouble(splittedCommand[5]);
+                                double number = Double.parseDouble(partsRest[1]);
                             } catch (NumberFormatException e) {
                                 return false;
                             }

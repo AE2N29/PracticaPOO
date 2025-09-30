@@ -46,8 +46,8 @@ public class Product {
     }
 
     public String toString() {
-        return "{class:Product, id:" + this.id + ", name:" + this.name +
-                ", category:" + this.category.name() + ", price:" + this.price + "}";
+        return "{class:Product, id:" + this.id + ", name: '" + this.name +
+                "', category:" + this.category.name() + ", price:" + this.price + "}";
     }
 
     public boolean equals(Product prod) {

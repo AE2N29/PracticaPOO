@@ -2,16 +2,16 @@ package es.upm.etsisi.poo;
 
 public class Catalog {
     private static final int PRODUCT_LIMIT = 200;
-    private static Product[] products;
+    private static Product[] products = new Product[PRODUCT_LIMIT];
     private static int pointer = 0;  // Used as index
 
     public static void add(int id, String name, Category category, double price) {  // for the 'ticket add <prodID> <cantidad>' command
         if (pointer == PRODUCT_LIMIT) {
-            System.out.println("El catálogo ha alcanzado su límite");
+            System.out.println("Catalog is full");
         } else if (IDInProducts(id)){
-            System.out.println("Ya existe un producto con el mismo ID");
+            System.out.println("There is already an existing product with the same ID");
         } else if (nameInProducts(name)){
-            System.out.println("Ya existe un producto con el mismo nombre");
+            System.out.println("There is already a product with the same name");
         } else {
             products[pointer] = new Product(id, name, category, price);
             System.out.println(products[pointer].toString());
@@ -22,7 +22,7 @@ public class Catalog {
 
     public static void list() {
         if (pointer == 0) {
-            System.out.println("El catálogo está vacío");
+            System.out.println("Catalog is empty");
         } else {
             int iterator = 0;
             System.out.println("Catalog:");
@@ -36,7 +36,7 @@ public class Catalog {
     public static void update(int id, String field, String update) {   // Field indicates if you want to change price, name or category and update indicates the change
         boolean endCondition = false;
         if (!IDInProducts(id)) {
-            System.out.println("No existe ningún producto con ID:" + id);
+            System.out.println("There isn't any product with ID " + id);
         } else {
             int index = 0;
             while (!endCondition) {
@@ -62,15 +62,19 @@ public class Catalog {
                     index++;
                 }
             }
+            Product prod = findByID(id);
+            System.out.println(prod.toString());
             System.out.println("prod update: ok");
         }
     }
 
     public static void remove(int id) {
+        Product prod = null;
         boolean found = false;
         for (int i=0; i<pointer; i++) {
             if (products[i].getId() == id) {
                 found = true;
+                prod = products[i];
                 for (int j=i; j<pointer-1; j++) {
                     products[j] = products[j+1];
                 }
@@ -79,9 +83,10 @@ public class Catalog {
             }
         }
         if (found) {
+            System.out.println(prod.toString());
             System.out.println("prod remove: ok");
         } else {
-            System.out.println("No existe ningún producto con ID:" + id);
+            System.out.println("Actually there isn't any product with ID " + id + " in the catalog");
         }
     }
 
@@ -117,6 +122,16 @@ public class Catalog {
 
     public static Product[] getProds() {
         return products;
+    }
+
+    public static Product findByID(int id) {
+        Product result = null;
+        for (int i=0; i<products.length; i++) {
+            if (products[i] != null && products[i].getId() == id) {
+                result = products[i];
+            }
+        }
+        return result;
     }
 
 }

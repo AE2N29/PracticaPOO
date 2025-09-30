@@ -74,28 +74,28 @@ public class Ticket {
         int books = 0, clothing = 0, stationery = 0, electronics = 0, merch = 0;
         for (int i=0; i<products.length; i++) {
             switch (products[i].getCategory()) {
-                case Category.ELECTRONICA -> electronics++;
-                case Category.ROPA -> clothing++;
-                case Category.PAPELERIA -> stationery++;
-                case Category.LIBRO -> books++;
+                case Category.ELECTRONICS -> electronics++;
+                case Category.CLOTHES -> clothing++;
+                case Category.STATIONERY -> stationery++;
+                case Category.BOOK -> books++;
             }
         }
 
         for (int i=0; i<products.length; i++) {
             int count = 0;
             switch (products[i].getCategory()) {
-                case ELECTRONICA -> count = electronics;
-                case ROPA -> count = clothing;
-                case PAPELERIA -> count = stationery;
-                case LIBRO -> count = books;
+                case ELECTRONICS -> count = electronics;
+                case CLOTHES -> count = clothing;
+                case STATIONERY -> count = stationery;
+                case BOOK -> count = books;
                 case MERCH -> count = merch;
             }
             double discount = 0;
             switch (products[i].getCategory()) {
-                case ELECTRONICA -> discount = 0.03;
-                case PAPELERIA -> discount = 0.05;
-                case ROPA -> discount = 0.07;
-                case LIBRO -> discount = 0.1;
+                case ELECTRONICS -> discount = 0.03;
+                case STATIONERY -> discount = 0.05;
+                case CLOTHES -> discount = 0.07;
+                case BOOK -> discount = 0.1;
                 case MERCH -> discount = 0.0;
             }
             if (count > 1 && products[i] != null) {
