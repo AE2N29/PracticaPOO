@@ -2,7 +2,7 @@ package es.upm.etsisi.poo;
 
 public class Catalog {
     private static final int PRODUCT_LIMIT = 200;
-    private static Product[] products = new Product[PRODUCT_LIMIT];
+    private final static Product[] products = new Product[PRODUCT_LIMIT];
     private static int pointer = 0;  // Used as index
 
     public static void add(int id, String name, Category category, double price) {  // for the 'ticket add <prodID> <cantidad>' command
@@ -24,7 +24,6 @@ public class Catalog {
         if (pointer == 0) {
             System.out.println("Catalog is empty");
         } else {
-            int iterator = 0;
             System.out.println("Catalog:");
             for (int i=0; i<pointer; i++) {
                 System.out.println("  " + products[i].toString());

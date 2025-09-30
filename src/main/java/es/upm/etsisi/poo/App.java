@@ -9,7 +9,6 @@ public class App {
     public static void main( String[] args ) {
         App app = new App();
         app.init();
-
     }
 
     private void init() {
@@ -174,12 +173,12 @@ public class App {
                         case "add":
                             try {
                                 int number = Integer.parseInt(splittedCommand[2]);
-                            } catch (NumberFormatException e) {
+                            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                                 return false;
                             }
                             try {
                                 int number = Integer.parseInt(splittedCommand[3]);
-                            } catch (NumberFormatException e) {
+                            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                                 return false;
                             }
                             return true;

@@ -17,12 +17,11 @@ public class Ticket {
     }
 
     public void add(int prodID, int amount) {
-        // Check if prodID exists in catalog
-        Product[] catalogProds = Catalog.getProds();
         Product prodToAdd = null;
-        for (int i=0; i<catalogProds.length; i++) {
-            if (catalogProds[i].getId() == prodID) {
-                prodToAdd = catalogProds[i];
+        for (int i=0; i<Catalog.getProds().length; i++) {
+            if (Catalog.getProds()[i].getId() == prodID) {
+                prodToAdd = Catalog.getProds()[i];
+                break;
             }
         }
         if (prodToAdd == null) {
@@ -33,6 +32,7 @@ public class Ticket {
             while (iterator < products.length && added < amount) {
                 if (products[iterator] == null) {
                     products[iterator] = prodToAdd;
+                    System.out.println(products[iterator].toString());
                     added++;
                 }
                 iterator++;
@@ -73,41 +73,58 @@ public class Ticket {
         double totalPrice = 0, totalDiscount = 0;
         int books = 0, clothing = 0, stationery = 0, electronics = 0, merch = 0;
         for (int i=0; i<products.length; i++) {
-            switch (products[i].getCategory()) {
-                case Category.ELECTRONICS -> electronics++;
-                case Category.CLOTHES -> clothing++;
-                case Category.STATIONERY -> stationery++;
-                case Category.BOOK -> books++;
+            if (products[i] != null) {
+                switch (products[i].getCategory()) {
+                    case Category.ELECTRONICS -> electronics++;
+                    case Category.CLOTHES -> clothing++;
+                    case Category.STATIONERY -> stationery++;
+                    case Category.BOOK -> books++;
+                }
             }
         }
 
         for (int i=0; i<products.length; i++) {
             int count = 0;
-            switch (products[i].getCategory()) {
-                case ELECTRONICS -> count = electronics;
-                case CLOTHES -> count = clothing;
-                case STATIONERY -> count = stationery;
-                case BOOK -> count = books;
-                case MERCH -> count = merch;
+            if (products[i] != null) {
+                switch (products[i].getCategory()) {
+                    case ELECTRONICS -> count = electronics;
+                    case CLOTHES -> count = clothing;
+                    case STATIONERY -> count = stationery;
+                    case BOOK -> count = books;
+                    case MERCH -> count = merch;
+                }
             }
             double discount = 0;
-            switch (products[i].getCategory()) {
-                case ELECTRONICS -> discount = 0.03;
-                case STATIONERY -> discount = 0.05;
-                case CLOTHES -> discount = 0.07;
-                case BOOK -> discount = 0.1;
-                case MERCH -> discount = 0.0;
+            if (products[i] != null) {
+                switch (products[i].getCategory()) {
+                    case ELECTRONICS -> discount = 0.03;
+                    case STATIONERY -> discount = 0.05;
+                    case CLOTHES -> discount = 0.07;
+                    case BOOK -> discount = 0.1;
+                    case MERCH -> discount = 0.0;
+                }
             }
+            double prodDiscount = 0;
             if (count > 1 && products[i] != null) {
-                double prodDiscount = products[i].getPrice() * discount;
-                System.out.println(products[i].toString() + " **discount -" + prodDiscount);
+                prodDiscount += products[i].getPrice() * discount;
                 totalDiscount += prodDiscount;
+            }
+            if (products[i] != null) {
                 totalPrice += products[i].getPrice();
             }
+            if (prodDiscount > 0) {
+                if (products[i] != null) {
+                    System.out.println(products[i].toString() + " **discount -" + Math.round(prodDiscount * 100.0) / 100.0);
+                }
+            } else {
+                if (products[i] != null) {
+                    System.out.println(products[i].toString());
+                }
+            }
         }
-        System.out.println("Total price: " + totalPrice);
-        System.out.println("Total discount: " + totalDiscount);
-        System.out.println("Final price: " + (totalPrice - totalDiscount));
+        System.out.println("Total price: " + Math.round(totalPrice * 100)/100);
+        System.out.println("Total discount: " + Math.round(totalDiscount*100)/100);
+        System.out.println("Final price: " + Math.round((totalPrice - totalDiscount) * 100)/100);
         System.out.println("ticket print: ok");
     }
 }
