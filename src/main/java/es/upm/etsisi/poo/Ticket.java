@@ -46,23 +46,25 @@ public class Ticket {
     }
 
     public void remove(int prodID) {
-        Product[] catalogProds = Catalog.getProds();
         Product prodToAdd = null;
-        for (int i=0; i<catalogProds.length; i++) {
-            if (prodID == catalogProds[i].getId()) {
-                prodToAdd = catalogProds[i];
+        for (int i=0; i<Catalog.getProds().length; i++) {
+            if (prodID == Catalog.getProds()[i].getId()) {
+                prodToAdd = Catalog.getProds()[i];
+                break;
             }
         }
         if (prodToAdd == null) {
             System.out.println("There isn't any product with " + prodID + " as ID");
         } else {
             for (int i=0; i<products.length; i++) {
-                if (products[i].equals(prodToAdd)) {
-                    for (int j=i; j<products.length-1; j++) { // For sentence ends after reaching products.length - 1 to avoid IndexOutOfBounds
-                        products[j] = products[j+1];
+                if (products[i] != null) {
+                    if (products[i].equals(prodToAdd)) {
+                        for (int j=i; j<products.length-1; j++) { // For sentence ends after reaching products.length - 1 to avoid IndexOutOfBounds
+                            products[j] = products[j+1];
+                        }
+                        products[products.length-1] = null; // It removes the last object correctly
+                        i--; // returns to the previous position. Otherwise, it would skip an index
                     }
-                    products[products.length-1] = null; // It removes the last object correctly
-                    i--; // returns to the previous position. Otherwise, it would skip an index
                 }
             }
             System.out.print("ticket remove: ok");
@@ -122,9 +124,9 @@ public class Ticket {
                 }
             }
         }
-        System.out.println("Total price: " + Math.round(totalPrice * 100)/100);
-        System.out.println("Total discount: " + Math.round(totalDiscount*100)/100);
-        System.out.println("Final price: " + Math.round((totalPrice - totalDiscount) * 100)/100);
+        System.out.println("Total price: " + totalPrice);
+        System.out.println("Total discount: " + totalDiscount);
+        System.out.println("Final price: " + (totalPrice - totalDiscount));
         System.out.println("ticket print: ok");
     }
 }
