@@ -83,7 +83,6 @@ public class App {
                         System.out.println("Not a valid command");
                 }
                 System.out.println();
-                System.out.println();
             }
         }
     }
@@ -126,8 +125,14 @@ public class App {
             String[] splittedCommand = command.split(" ");
             switch (splittedCommand[0]) {
                 case "prod":
+                    if (splittedCommand.length < 2) {
+                        return false;
+                    }
                     switch (splittedCommand[1]) {
                         case "add":
+                            if (splittedCommand.length < 5) {
+                                return false;
+                            }
                             try {
                                 int num = Integer.parseInt(splittedCommand[2]);
                             } catch (NumberFormatException e) {
@@ -149,16 +154,19 @@ public class App {
                             }
                             return true;
                         case "update":
+                            if (splittedCommand.length < 4) {
+                                return false;
+                            }
                             try {
                                 int num = Integer.parseInt(splittedCommand[2]);
                             } catch (NumberFormatException e) {
                                 return false;
                             }
-                            if (!splittedCommand[3].toUpperCase().equals("NAME") && !splittedCommand[3].toUpperCase().equals("CATEGORY") && !splittedCommand[3].toUpperCase().equals("PRICE")) {
+                            return splittedCommand[3].toUpperCase().equals("NAME") || splittedCommand[3].toUpperCase().equals("CATEGORY") || splittedCommand[3].toUpperCase().equals("PRICE");
+                        case "remove":
+                            if (splittedCommand.length != 3) {
                                 return false;
                             }
-                            return true;
-                        case "remove":
                             try {
                                 double number = Double.parseDouble(splittedCommand[2]);
                             } catch (NumberFormatException e) {
@@ -169,8 +177,14 @@ public class App {
                             return false;
                     }
                 case "ticket":
+                    if (splittedCommand.length < 2) {
+                        return false;
+                    }
                     switch (splittedCommand[1]) {
                         case "add":
+                            if (splittedCommand.length != 4) {
+                                return false;
+                            }
                             try {
                                 int number = Integer.parseInt(splittedCommand[2]);
                             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
@@ -183,6 +197,9 @@ public class App {
                             }
                             return true;
                         case "remove":
+                            if (splittedCommand.length != 3) {
+                                return false;
+                            }
                             try {
                                 int number = Integer.parseInt(splittedCommand[2]);
                             } catch (NumberFormatException e) {
