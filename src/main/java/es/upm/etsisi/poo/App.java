@@ -6,6 +6,7 @@ import java.util.Scanner;
  *
  */
 public class App {
+    private final Scanner sc = new Scanner(System.in);
     public static void main( String[] args ) {
         App app = new App();
         app.init();
@@ -83,7 +84,6 @@ public class App {
                         System.out.println("Not a valid command");
                 }
                 System.out.println();
-                System.out.println();
             }
         }
     }
@@ -113,10 +113,8 @@ public class App {
     }
 
     private String typeCommand() {  // To make easier the implementation of the shell
-        Scanner sc = new Scanner(System.in);
         System.out.print("tUpm> ");
-        String command = sc.nextLine();
-        return command;
+        return sc.nextLine();
     }
 
     private boolean validCommand(String command) {
