@@ -14,6 +14,7 @@ public class Ticket {
 
     public void resetTicket() {
         this.products = new Product[MAX_PRODS_TICKET];
+        System.out.println("ticket new: ok");
     }
 
     public void add(int prodID, int amount) {
@@ -32,17 +33,71 @@ public class Ticket {
             while (iterator < products.length && added < amount) {
                 if (products[iterator] == null) {
                     products[iterator] = prodToAdd;
-                    System.out.println(products[iterator].toString());
                     added++;
                 }
                 iterator++;
             }
             if (added < amount) {
                 System.out.println("Only " + added + " units could be added. Ticket is full.");
-            } else {
-                System.out.println("ticket add: ok");
             }
         }
+        // This prints the ticket but without the message "ticket print: ok"
+        double totalPrice = 0, totalDiscount = 0;
+        int books = 0, clothing = 0, stationery = 0, electronics = 0, merch = 0;
+        for (int i=0; i<products.length; i++) {
+            if (products[i] != null) {
+                switch (products[i].getCategory()) {
+                    case Category.ELECTRONICS -> electronics++;
+                    case Category.CLOTHES -> clothing++;
+                    case Category.STATIONERY -> stationery++;
+                    case Category.BOOK -> books++;
+                }
+            }
+        }
+
+        for (int i=0; i<products.length; i++) {
+            int count = 0;
+            if (products[i] != null) {
+                switch (products[i].getCategory()) {
+                    case ELECTRONICS -> count = electronics;
+                    case CLOTHES -> count = clothing;
+                    case STATIONERY -> count = stationery;
+                    case BOOK -> count = books;
+                    case MERCH -> count = merch;
+                }
+            }
+            double discount = 0;
+            if (products[i] != null) {
+                switch (products[i].getCategory()) {
+                    case ELECTRONICS -> discount = 0.03;
+                    case STATIONERY -> discount = 0.05;
+                    case CLOTHES -> discount = 0.07;
+                    case BOOK -> discount = 0.1;
+                    case MERCH -> discount = 0.0;
+                }
+            }
+            double prodDiscount = 0;
+            if (count > 1 && products[i] != null) {
+                prodDiscount += products[i].getPrice() * discount;
+                totalDiscount += prodDiscount;
+            }
+            if (products[i] != null) {
+                totalPrice += products[i].getPrice();
+            }
+            if (prodDiscount > 0) {
+                if (products[i] != null) {
+                    System.out.println(products[i].toString() + " **discount -" + Math.round(prodDiscount * 100.0) / 100.0);
+                }
+            } else {
+                if (products[i] != null) {
+                    System.out.println(products[i].toString());
+                }
+            }
+        }
+        System.out.println("Total price: " + totalPrice);
+        System.out.println("Total discount: " + totalDiscount);
+        System.out.println("Final price: " + (totalPrice - totalDiscount));
+        System.out.println("ticket add: ok");
     }
 
     public void remove(int prodID) {
