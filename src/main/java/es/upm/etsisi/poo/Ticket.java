@@ -96,7 +96,7 @@ public class Ticket {
         }
         System.out.println("Total price: " + totalPrice);
         System.out.println("Total discount: " + totalDiscount);
-        System.out.println("Final price: " + (totalPrice - totalDiscount));
+        System.out.println("Final price: " +  (totalPrice - totalDiscount));
         System.out.println("ticket add: ok");
     }
 

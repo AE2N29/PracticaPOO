@@ -12,7 +12,7 @@ public class App {
     }
 
     private void init() {
-        System.out.println("Welcome to the ticket module App. Type 'help' to see commands");
+        System.out.println("Welcome to the ticket module App. Type 'help' to see commands.");
         start();
     }
 
