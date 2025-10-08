@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 public class AppHM {
     private final Scanner sc = new Scanner(System.in);
+    private final TicketHM ticket = new TicketHM();
 
 
     public static void main( String[] args ) {
@@ -15,7 +16,8 @@ public class AppHM {
     }
 
     private void init() {
-        System.out.println("Welcome to the ticket module App. Type 'help' to see commands.");
+        System.out.println("Welcome to the ticket module App.");
+        System.out.println("Ticket module. Type 'help' to see commands.");
         start();
     }
 
@@ -59,7 +61,7 @@ public class AppHM {
                         help();
                         break;
                     case "ECHO":
-                        System.out.println(command);
+                        System.out.println(command.substring(5));
                         break;
                     case "EXIT":
                         keepGoing = false;
@@ -74,28 +76,35 @@ public class AppHM {
     }
 
     public void prodCommands(String[] commands) {
-        int id = Integer.parseInt(commands[2]);
         String prodCommand = commands[1].toUpperCase();
         switch (prodCommand) {
             case "ADD":
                 String fullCommand = String.join(" ", commands); // conseguimos el comando original(String)
                 String[] commandPartsAdd = processProdAdd(fullCommand);
+                int id1 = Integer.parseInt(commandPartsAdd[2]);
                 String name  = commandPartsAdd[3];
                 Category category = Category.valueOf(commandPartsAdd[4].toUpperCase());
-                float price = Float.parseFloat(commandPartsAdd[5]);
-                Product product = new Product(id, name, category, price);
-                ProductHM.add(id, product);
+                Double price = Double.parseDouble(commandPartsAdd[5]);
+                Catalog.add(id1, name, category, price);
                 break;
             case "LIST":
-                ProductHM.list();
+                Catalog.list();
                 break;
             case "UPDATE":
+                int id2 = Integer.parseInt(commands[2]);
                 String categoryToChange = commands[3].toUpperCase();
-                String change = commands[4];
-                prodUpdateManage(id, categoryToChange, change);
+                String change;
+                if ("NAME".equals(categoryToChange)) {
+                    String full = String.join(" ", commands);
+                    change = full.substring(full.indexOf('"') + 1, full.lastIndexOf('"'));
+                } else {
+                    change = commands[4];
+                }
+                Catalog.update(id2, categoryToChange, change);
                 break;
             case "REMOVE":
-                ProductHM.remove(id);
+                int id3 = Integer.parseInt(commands[2]);
+                Catalog.remove(id3);
                 break;
             default:
                 System.out.println("Invalid input");
@@ -123,7 +132,6 @@ public class AppHM {
     }
 
     public void ticketCommands(String[] commands) {
-        Ticket ticket = new Ticket();
         switch (commands[1].toUpperCase()) {
             case "NEW":
                 ticket.resetTicket();
