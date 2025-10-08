@@ -7,8 +7,6 @@ import java.util.Scanner;
 
 public class AppHM {
     private final Scanner sc = new Scanner(System.in);
-    private final TicketHM ticket = new TicketHM();
-
 
     public static void main( String[] args ) {
         AppHM app = new AppHM();
@@ -27,7 +25,7 @@ public class AppHM {
     }
 
     public static String[] processProdAdd(String command) {
-        String[]commandSplitted = command.split(" ");
+        String[] commandSplitted = command.split(" ");
         String id = commandSplitted[2];
         String name = command.substring(command.indexOf('"') + 1, command.lastIndexOf('"'));
         String restOfCommand = command.substring(command.lastIndexOf('"')+1).trim();
@@ -134,16 +132,16 @@ public class AppHM {
     public void ticketCommands(String[] commands) {
         switch (commands[1].toUpperCase()) {
             case "NEW":
-                ticket.resetTicket();
+                Ticket.resetTicket();
                 break;
             case "ADD":
-                ticket.add(Integer.parseInt(commands[2]), Integer.parseInt(commands[3]));
+                Ticket.add(Integer.parseInt(commands[2]), Integer.parseInt(commands[3]));
                 break;
             case "REMOVE":
-                ticket.remove(Integer.parseInt(commands[2]));
+                Ticket.remove(Integer.parseInt(commands[2]));
                 break;
             case "PRINT":
-                ticket.print();
+                Ticket.print();
                 break;
             default:
                 System.out.println("Invalid input");

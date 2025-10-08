@@ -1,23 +1,15 @@
 package es.upm.etsisi.poo;
 
 public class Ticket {
-    private final int MAX_PRODS_TICKET = 100; // For this version it is assumed that tickets won't have more than 100 products
-    private Product[] products;
+    private static final int MAX_PRODS_TICKET = 100; // For this version it is assumed that tickets won't have more than 100 products
+    private static Product[] products = new Product[MAX_PRODS_TICKET];
 
-    public Ticket(Product[] products) {
-        this.products = products;
-    }
-
-    public Ticket() {
-       this.products = new Product[MAX_PRODS_TICKET]; // Everything is initialized to null
-    }
-
-    public void resetTicket() {
-        this.products = new Product[MAX_PRODS_TICKET];
+    public static void resetTicket() {
+        products = new Product[MAX_PRODS_TICKET];
         System.out.println("ticket new: ok");
     }
 
-    public void add(int prodID, int amount) {
+    public static void add(int prodID, int amount) {
         Product prodToAdd = null;
         for (int i=0; i<Catalog.getProds().length; i++) {
             if (Catalog.getProds()[i].getId() == prodID) {
@@ -100,7 +92,7 @@ public class Ticket {
         System.out.println("ticket add: ok");
     }
 
-    public void remove(int prodID) {
+    public static void remove(int prodID) {
         Product prodToAdd = null;
         for (int i=0; i<Catalog.getProds().length; i++) {
             if (prodID == Catalog.getProds()[i].getId()) {
@@ -126,7 +118,7 @@ public class Ticket {
         }
     }
 
-    public void print() {
+    public static void print() {
         double totalPrice = 0, totalDiscount = 0;
         int books = 0, clothing = 0, stationery = 0, electronics = 0, merch = 0;
         for (int i=0; i<products.length; i++) {
