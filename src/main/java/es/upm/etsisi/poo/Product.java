@@ -29,6 +29,7 @@ public class Product {
         return price;
     }
 
+
     public void setPrice(double price) {
         this.price = price;
     }
@@ -44,6 +45,7 @@ public class Product {
     public void setName(String name) {
         this.name = name;
     }
+
 
     public String toString() {
         return "{class:Product, id:" + this.id + ", name: '" + this.name +

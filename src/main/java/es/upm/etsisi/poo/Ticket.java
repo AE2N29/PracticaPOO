@@ -11,7 +11,7 @@ public class Ticket {
 
     public static void add(int prodID, int amount) {
         Product prodToAdd = null;
-        for (int i=0; i<Catalog.getProds().length; i++) {
+        for (int i = 0; i < Catalog.getProds().length; i++) {
             if (Catalog.getProds()[i].getId() == prodID) {
                 prodToAdd = Catalog.getProds()[i];
                 break;
@@ -22,6 +22,7 @@ public class Ticket {
         } else {
             int added = 0;
             int iterator = 0;
+
             while (iterator < products.length && added < amount) {
                 if (products[iterator] == null) {
                     products[iterator] = prodToAdd;
@@ -29,14 +30,17 @@ public class Ticket {
                 }
                 iterator++;
             }
+
             if (added < amount) {
                 System.out.println("Only " + added + " units could be added. Ticket is full.");
             }
         }
+
         // This prints the ticket but without the message "ticket print: ok"
         double totalPrice = 0, totalDiscount = 0;
         int books = 0, clothing = 0, stationery = 0, electronics = 0, merch = 0;
-        for (int i=0; i<products.length; i++) {
+
+        for (int i = 0; i < products.length; i++) {
             if (products[i] != null) {
                 switch (products[i].getCategory()) {
                     case Category.ELECTRONICS -> electronics++;
@@ -46,8 +50,7 @@ public class Ticket {
                 }
             }
         }
-
-        for (int i=0; i<products.length; i++) {
+        for (int i = 0; i < products.length; i++) {
             int count = 0;
             if (products[i] != null) {
                 switch (products[i].getCategory()) {
@@ -94,7 +97,8 @@ public class Ticket {
 
     public static void remove(int prodID) {
         Product prodToAdd = null;
-        for (int i=0; i<Catalog.getProds().length; i++) {
+
+        for (int i = 0; i < Catalog.getProds().length; i++) {
             if (prodID == Catalog.getProds()[i].getId()) {
                 prodToAdd = Catalog.getProds()[i];
                 break;
@@ -103,10 +107,10 @@ public class Ticket {
         if (prodToAdd == null) {
             System.out.println("There isn't any product with " + prodID + " as ID");
         } else {
-            for (int i=0; i<products.length; i++) {
+            for (int i = 0; i < products.length; i++) {
                 if (products[i] != null) {
                     if (products[i].equals(prodToAdd)) {
-                        for (int j=i; j<products.length-1; j++) { // For sentence ends after reaching products.length - 1 to avoid IndexOutOfBounds
+                        for (int j = i; j < products.length - 1; j++) { // For sentence ends after reaching products.length - 1 to avoid IndexOutOfBounds
                             products[j] = products[j+1];
                         }
                         products[products.length-1] = null; // It removes the last object correctly
@@ -121,7 +125,8 @@ public class Ticket {
     public static void print() {
         double totalPrice = 0, totalDiscount = 0;
         int books = 0, clothing = 0, stationery = 0, electronics = 0, merch = 0;
-        for (int i=0; i<products.length; i++) {
+
+        for (int i = 0; i < products.length; i++) {
             if (products[i] != null) {
                 switch (products[i].getCategory()) {
                     case Category.ELECTRONICS -> electronics++;
@@ -131,8 +136,7 @@ public class Ticket {
                 }
             }
         }
-
-        for (int i=0; i<products.length; i++) {
+        for (int i = 0; i < products.length; i++) {
             int count = 0;
             if (products[i] != null) {
                 switch (products[i].getCategory()) {

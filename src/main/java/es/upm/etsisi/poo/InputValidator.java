@@ -5,21 +5,16 @@ import java.util.Arrays;
 public class InputValidator {
 
     public static boolean validCommand(String command) {
-        if (command.equals("help") || command.equals("exit")) {
-            return true;
-        }
+        if (command.equals("help") || command.equals("exit")) { return true; }
 
         String lower = command.toLowerCase();
-
         if (lower.startsWith("prod add ")) {
             String[] parts = AppHM.processProdAdd(command);
-            if (parts.length != 6) return false;
-            return (isInteger(parts[2]) &&
-                    isName(parts[3]) &&
-                    isCategory(parts[4]) &&
-                    isDouble(parts[5]));
+            if (parts.length != 6){
+                return false;
+            }
+            return (isInteger(parts[2]) && isName(parts[3]) && isCategory(parts[4]) && isDouble(parts[5]));
         }
-
 
         String[] splittedCommand = command.split(" ");
         if(splittedCommand.length < 1){return false;}
@@ -30,32 +25,14 @@ public class InputValidator {
 
         switch (splittedCommand[0].toUpperCase()) {
             case "PROD":
-                if (splittedCommand.length < 2) {return false;}
+                if (splittedCommand.length < 2) { return false; }
                 return prodCommandVerification(splittedCommand);
             case "TICKET":
-                if (splittedCommand.length < 2) {return false;}
+                if (splittedCommand.length < 2) { return false; }
                 return ticketCommandVerification(splittedCommand);
             case "ECHO":
-                if (splittedCommand.length < 2) {return false;}
+                if (splittedCommand.length < 2) { return false; }
                 return true;
-            default:
-                return false;
-        }
-    }
-
-    public static boolean ticketCommandVerification(String[] commands) {
-        switch (commands[1].toUpperCase()) {
-            case "NEW":
-                if (commands.length == 2) {return true;}
-                return false;
-            case "ADD":
-                if(commands.length != 4) {return false;}
-                return isInteger(commands[2]) && isInteger(commands[3]);
-            case "REMOVE":
-                if(commands.length != 3) {return false;}
-                return isInteger(commands[2]);
-            case "PRINT":
-                return commands.length == 2;
             default:
                 return false;
         }
@@ -103,11 +80,30 @@ public class InputValidator {
         }
     }
 
+    public static boolean ticketCommandVerification(String[] commands) {
+        switch (commands[1].toUpperCase()) {
+            case "NEW":
+                if (commands.length == 2) {return true;}
+                return false;
+            case "ADD":
+                if(commands.length != 4) {return false;}
+                return isInteger(commands[2]) && isInteger(commands[3]);
+            case "REMOVE":
+                if(commands.length != 3) {return false;}
+                return isInteger(commands[2]);
+            case "PRINT":
+                return commands.length == 2;
+            default:
+                return false;
+        }
+    }
+
+
     public static boolean isInteger(String possibleInteger) {
         try {
             Integer.parseInt(possibleInteger);
             return true;
-        }catch(NumberFormatException e) {
+        } catch(NumberFormatException e) {
             return false;
         }
     }
@@ -115,7 +111,7 @@ public class InputValidator {
         try {
             Double.parseDouble(possibleDouble);
             return true;
-        }catch(NumberFormatException e) {
+        } catch(NumberFormatException e) {
             return false;
         }
     }
@@ -123,7 +119,7 @@ public class InputValidator {
         try {
             Category category = Category.valueOf(possibleCategory);
             return true;
-        }catch(IllegalArgumentException | NullPointerException e) {
+        } catch(IllegalArgumentException | NullPointerException e) {
             return false;
         }
     }
