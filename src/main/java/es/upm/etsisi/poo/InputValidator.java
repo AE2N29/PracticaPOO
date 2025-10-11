@@ -1,9 +1,6 @@
 package es.upm.etsisi.poo;
 
-import java.util.Arrays;
-
 public class InputValidator {
-
     public static boolean validCommand(String command) {
         String upperCaseCommand = command.toUpperCase();
         if("HELP".equals(upperCaseCommand) || "EXIT".equals(upperCaseCommand)) { return true; }
@@ -25,9 +22,9 @@ public class InputValidator {
     private static boolean prodCommandVerification(String[] splittedCommand) {
         switch (splittedCommand[1]) {
             case "ADD":
-                String fullCommand = String.join(" ", splittedCommand);  // Gets the original command(String)
-                if (fullCommand.split("\"").length < 3) { return false; }  // Checks the correct use of the quotation marks "<name>" before
-                                                                                 // calling the method processProdAdd() to avoid exceptions
+                String fullCommand = String.join(" ", splittedCommand);  // Obtiene el comando original (String)
+                if (fullCommand.split("\"").length < 3) { return false; }  // Verifica el uso correcto de las comillas "<name>" antes
+                                                                                 // de llamar al metodo AppHM.processProdAdd() para evitar excepciones
                 String[] commandPartsAdd = AppHM.processProdAdd(fullCommand);
                 if (commandPartsAdd.length != 6) { return false; }
                 return (isInteger(commandPartsAdd[2]) && isName(commandPartsAdd[3]) && isCategory(commandPartsAdd[4]) && isDouble(commandPartsAdd[5]));
@@ -36,7 +33,7 @@ public class InputValidator {
                 String fullUpdate = String.join(" ", splittedCommand);
                 switch (splittedCommand[3]) {
                     case "NAME": {
-                        //  Accepts names with spaces when quoted: prod update <id> NAME "new name"
+                        //  Acepta nombres con espacios cuando están entre comillas: prod update <id> NAME "nuevo nombre"
                         int first = fullUpdate.indexOf('"');
                         int last = fullUpdate.lastIndexOf('"');
                         if (first == -1 || last <= first) { return false; }
@@ -106,15 +103,14 @@ public class InputValidator {
             return false;
         }
     }
-    public static boolean isName(String possibleName) {
+    public static boolean isName(String possibleName) { // false en casos como: isName(null), isName("   "), is name ("")
         if(possibleName == null) {
             return false;
         }
         String trimmed = possibleName.trim();
-        // Accept names either quoted or already unquoted (processProdAdd strips quotes)
         if (trimmed.length() == 0) { return false; }
         if (trimmed.startsWith("\"") && trimmed.endsWith("\"")) {
-            return trimmed.length() > 2; // at least one char between quotes
+            return trimmed.length() > 2;
         }
         return trimmed.length() > 0;
     }
