@@ -1,7 +1,4 @@
 package es.upm.etsisi.poo;
-
-import java.util.Arrays;
-
 public class InputValidator {
 
     public static boolean validCommand(String command) {
@@ -10,16 +7,14 @@ public class InputValidator {
         }
 
         String lower = command.toLowerCase();
-
-        if (lower.startsWith("prod add ")) {
-            String[] parts = AppHM.processProdAdd(command);
+        if (lower.startsWith("prod add ")) {                 //El manejo del comando prod add es un poco distinto al resto por contener "nombre"
+            String[] parts = AppHM.processProdAdd(command);  //por ello lo manejamos por aparte
             if (parts.length != 6) return false;
             return (isInteger(parts[2]) &&
                     isName(parts[3]) &&
                     isCategory(parts[4]) &&
                     isDouble(parts[5]));
         }
-
 
         String[] splittedCommand = command.split(" ");
         if(splittedCommand.length < 1){return false;}
@@ -127,15 +122,14 @@ public class InputValidator {
             return false;
         }
     }
-    public static boolean isName(String possibleName) {
+    public static boolean isName(String possibleName) { // false en casos como: isName(null), isName("   "), is name ("")
         if(possibleName == null) {
             return false;
         }
         String trimmed = possibleName.trim();
-        // Accept names either quoted or already unquoted (processProdAdd strips quotes)
         if (trimmed.length() == 0) { return false; }
         if (trimmed.startsWith("\"") && trimmed.endsWith("\"")) {
-            return trimmed.length() > 2; // at least one char between quotes
+            return trimmed.length() > 2;
         }
         return trimmed.length() > 0;
     }

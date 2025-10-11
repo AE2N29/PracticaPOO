@@ -1,14 +1,15 @@
 package es.upm.etsisi.poo;
+
 import java.nio.file.Files;
 import java.nio.file.Paths; //Para leer path donde se encuentra help.txt
-import java.sql.Array;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class AppHM {
     private final Scanner sc = new Scanner(System.in);
+    private final TicketHM ticket = new TicketHM();
 
-    public static void main( String[] args ) {
+
+    public static void main(String[] args) {
         AppHM app = new AppHM();
         app.init();
     }
@@ -28,13 +29,13 @@ public class AppHM {
         String[] commandSplitted = command.split(" ");
         String id = commandSplitted[2];
         String name = command.substring(command.indexOf('"') + 1, command.lastIndexOf('"'));
-        String restOfCommand = command.substring(command.lastIndexOf('"')+1).trim();
+        String restOfCommand = command.substring(command.lastIndexOf('"') + 1).trim();
         String[] partsRest = restOfCommand.split(" ");
         String[] array = new String[6];
-        array[0]= "prod";
-        array[1]= "add";
-        array[2]= id;
-        array[3]= name;
+        array[0] = "prod";
+        array[1] = "add";
+        array[2] = id;
+        array[3] = name;
         array[4] = partsRest[0];
         array[5] = partsRest[1];
         return array;
@@ -59,7 +60,7 @@ public class AppHM {
                         help();
                         break;
                     case "ECHO":
-                        System.out.println(command.substring(5));
+                        System.out.println(command);
                         break;
                     case "EXIT":
                         keepGoing = false;
@@ -80,13 +81,14 @@ public class AppHM {
                 String fullCommand = String.join(" ", commands); // conseguimos el comando original(String)
                 String[] commandPartsAdd = processProdAdd(fullCommand);
                 int id1 = Integer.parseInt(commandPartsAdd[2]);
-                String name  = commandPartsAdd[3];
+                String name = commandPartsAdd[3];
                 Category category = Category.valueOf(commandPartsAdd[4].toUpperCase());
                 Double price = Double.parseDouble(commandPartsAdd[5]);
-                Catalog.add(id1, name, category, price);
+                Product product = new Product(id1, name, category, price);
+                ProductHM.add(id1, product);
                 break;
             case "LIST":
-                Catalog.list();
+                ProductHM.list();
                 break;
             case "UPDATE":
                 int id2 = Integer.parseInt(commands[2]);
@@ -98,11 +100,11 @@ public class AppHM {
                 } else {
                     change = commands[4];
                 }
-                Catalog.update(id2, categoryToChange, change);
+                prodUpdateManage(id2, categoryToChange, change);
                 break;
             case "REMOVE":
                 int id3 = Integer.parseInt(commands[2]);
-                Catalog.remove(id3);
+                ProductHM.remove(id3);
                 break;
             default:
                 System.out.println("Invalid input");
@@ -112,15 +114,19 @@ public class AppHM {
 
     public void prodUpdateManage(int id, String CategoryToChange, String change) {
         Product product = ProductHM.getProduct(id);
+        if (product == null) {
+            System.out.println("ERROR: Product with id " + id + " does not exist!");
+            return;
+        }
         switch (CategoryToChange) {
             case "NAME":
                 product.setName(change);
                 break;
             case "PRICE":
-                product.setPrice(Float.parseFloat(change));
+                product.setPrice(Double.parseDouble(change));
                 break;
             case "CATEGORY":
-                product.setCategory(Category.valueOf(change));
+                product.setCategory(Category.valueOf(change.toUpperCase()));
                 break;
             default:
                 System.out.println("Invalid input");
@@ -132,16 +138,16 @@ public class AppHM {
     public void ticketCommands(String[] commands) {
         switch (commands[1].toUpperCase()) {
             case "NEW":
-                Ticket.resetTicket();
+                ticket.resetTicket();
                 break;
             case "ADD":
-                Ticket.add(Integer.parseInt(commands[2]), Integer.parseInt(commands[3]));
+                ticket.add(Integer.parseInt(commands[2]), Integer.parseInt(commands[3]));
                 break;
             case "REMOVE":
-                Ticket.remove(Integer.parseInt(commands[2]));
+                ticket.remove(Integer.parseInt(commands[2]));
                 break;
             case "PRINT":
-                Ticket.print();
+                ticket.print();
                 break;
             default:
                 System.out.println("Invalid input");
