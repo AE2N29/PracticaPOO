@@ -67,7 +67,7 @@ public class AppHM {
                 int id1 = Integer.parseInt(commandPartsAdd[2]);
                 String name = commandPartsAdd[3];
                 Category category = Category.valueOf(commandPartsAdd[4].toUpperCase());
-                Double price = Double.parseDouble(commandPartsAdd[5]);
+                double price = Double.parseDouble(commandPartsAdd[5]);
                 Product product = new Product(id1, name, category, price);
                 ProductHM.add(id1, product);
                 break;
