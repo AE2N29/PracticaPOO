@@ -25,7 +25,7 @@ public class AppHM {
         while (keepGoing) {
             String command = typeCommand();
             if (!InputValidator.validCommand(command)) {
-                System.out.println("Not a valid command");
+                System.out.println("ERROR: Not a valid command");
             } else {
                 String[] commandParts = command.split(" ");
                 switch (commandParts[0].toUpperCase()) {
@@ -39,14 +39,14 @@ public class AppHM {
                         help();
                         break;
                     case "ECHO":
-                        System.out.println(command.substring(5));
-                        break;
+                        System.out.println(command.substring(5)); // no hace falta llamar a toString(), es redundante
+                        break;                                              // .substring(5) crea un substring desde index 5 hasta el final
                     case "EXIT":
                         keepGoing = false;
                         end();
                         break;
                     default:
-                        System.out.println("Not a valid command");
+                        System.out.println("ERROR: Not a valid command");
                 }
                 System.out.println();
             }
@@ -55,10 +55,11 @@ public class AppHM {
 
     private void end() {
         System.out.println("Closing application.");
-        System.out.println("Goodbye!");
+        System.out.print("Goodbye!");
     }
 
     public void prodCommands(String[] commands) {
+
         String prodCommand = commands[1].toUpperCase();
         switch (prodCommand) {
             case "ADD":
@@ -91,7 +92,7 @@ public class AppHM {
                 ProductHM.remove(id3);
                 break;
             default:
-                System.out.println("Invalid input");
+                System.out.println("ERROR: Invalid input");
                 break;
         }
     }
@@ -129,7 +130,7 @@ public class AppHM {
                 product.setCategory(Category.valueOf(change.toUpperCase()));
                 break;
             default:
-                System.out.println("Invalid input");
+                System.out.println("ERROR: Invalid input");
                 return;
         }
         ProductHM.update(id, product);
@@ -150,7 +151,7 @@ public class AppHM {
                 ticket.print();
                 break;
             default:
-                System.out.println("Invalid input");
+                System.out.println("ERROR: Invalid input");
         }
     }
 

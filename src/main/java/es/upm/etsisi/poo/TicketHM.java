@@ -1,16 +1,17 @@
 package es.upm.etsisi.poo;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class TicketHM {
-    private final int MAX_PRODS_TICKET = 100; //ticket no puede tener mas de 100 productos
+    private final int MAX_PRODS_TICKET = 100; //  ticket no puede tener mas de 100 productos
     private final HashMap<Integer, Integer> productIdToUnits;
 
     public TicketHM() {
         this.productIdToUnits = new HashMap<>();
     }
 
-    public void resetTicket() {  //uso de HAshMap.clear para resetear el ticket
+    public void resetTicket() {  //  uso de HashMap.clear para resetear el ticket
         this.productIdToUnits.clear();
         System.out.println("ticket new: ok");
     }
@@ -22,29 +23,32 @@ public class TicketHM {
         }
         Product prod = ProductHM.getProduct(prodID);
         if (prod == null) {
-            System.out.println("There isn't any product with " + prodID + " as ID");
-        } else {
-            if(amount + productTotalUnits() <= MAX_PRODS_TICKET){ // verificar que se respete la max cantidad
-                productIdToUnits.put(prodID, amount);
-            }
-            // Imprimir el contenido del ticket
-            printTicketLines(false);
-            System.out.println("ticket add: ok");
+            System.out.println("ERROR: There isn't any product with " + prodID + " as ID");
+            return;
         }
+        if (amount + productTotalUnits() <= MAX_PRODS_TICKET){ // verificar que se respete la max cantidad
+            productIdToUnits.put(prodID, amount);
+        } else {
+            System.out.println("ERROR: Couldn't add, max products allowed per ticket exceeded!");
+            return;
+        }
+        // Imprimir el contenido del ticket
+        printTicketLines(false);
+        System.out.println("ticket add: ok");
     }
 
     public void remove(int prodID) {
         Product prod = ProductHM.getProduct(prodID);
-        if (prod == null) {  // si no encuentra el rpoducto con este id en la base de datos
-            System.out.println("There isn't any product with " + prodID + " as ID");
+        if (prod == null) {  // si no encuentra el producto con este id en la base de datos
+            System.out.println("ERROR: There isn't any product with " + prodID + " as ID");
             return;
         }
-        if (!productIdToUnits.containsKey(prodID)) {
-            System.out.print("ticket remove: ok");
+        if (!productIdToUnits.containsKey(prodID)) {  // si no existe producto con ID proporcionada en el ticket, mensaje de error
+            System.out.print("ERROR: the product with " + prodID + " as ID wasn't in the current ticket");
             return;
         }
         productIdToUnits.remove(prodID);
-        System.out.print("ticket remove: ok");
+        System.out.print("ticket remove: ok");  // si existe el producto, se devuelve confirmacion de borrado
     }
 
     public void print() {
@@ -61,13 +65,13 @@ public class TicketHM {
 
     private void printTicketLines(boolean printOkAtEnd) {
         double totalPrice = 0, totalDiscount = 0;
-
         int booksCount = 0, clothingCount = 0, stationeryCount = 0, electronicsCount = 0, merchCount = 0;
-        for (Map.Entry<Integer, Integer> couple : productIdToUnits.entrySet()) { //bucle que pilla cada pareja de datos (id, cantidad) y los llama couple
-            Product product = ProductHM.getProduct(couple.getKey());  //pilla el producto de la base de datos con el (id) de couple
+
+        for (Map.Entry<Integer, Integer> couple : productIdToUnits.entrySet()) {  // bucle que pilla cada pareja de datos (id, cantidad) y los llama couple
+            Product product = ProductHM.getProduct(couple.getKey());  // pilla el producto de la base de datos con el (id) de couple
             int amount = couple.getValue();
             if (product != null || amount > 0) {
-                switch (product.getCategory()) {                //switch que cambia la cantidad de categoría segun la categoria que tenga el producto
+                switch (product.getCategory()) {   // switch que cambia la cantidad de categoría segun la categoria que tenga el producto
                     case ELECTRONICS -> electronicsCount += amount;  // esto pq hay que considerarlo para aplicar descuentos
                     case CLOTHES -> clothingCount += amount;
                     case STATIONERY -> stationeryCount += amount;
@@ -82,16 +86,16 @@ public class TicketHM {
             int amount = couple.getValue();
 
             if (product == null || amount <= 0) continue;   // si el producto no existe en la base de datos o tiene cantidad menor a 0,
-            // pasamos a la siguiente pareja en el bucle for
+                                                            // pasamos a la siguiente pareja en el bucle for
 
-            int count = switch (product.getCategory()) {  //pillamos la cuenta de productos con esa categoria para aplicar descuento
+            int count = switch (product.getCategory()) {  // pillamos la cuenta de productos con esa categoria para aplicar descuento
                 case ELECTRONICS -> electronicsCount;
                 case CLOTHES -> clothingCount;
                 case STATIONERY -> stationeryCount;
                 case BOOK -> booksCount;
                 case MERCH -> merchCount;
             };
-            double discountRate = switch (product.getCategory()) {  //consideramos el descuento de cada categoria
+            double discountRate = switch (product.getCategory()) {  // consideramos el descuento de cada categoria
                 case ELECTRONICS -> 0.03;
                 case STATIONERY -> 0.05;
                 case CLOTHES -> 0.07;
@@ -101,9 +105,10 @@ public class TicketHM {
 
             for (int i = 0; i < amount; i++) {
                 double prodDiscount;
+
                 if(count >= 2) {  // el descuento se aplica cuando hay mas de dos prod de la misma categoria
-                    prodDiscount  = product.getPrice() * discountRate;
-                    System.out.println(product + " **discount -" + String.format("%.1f", prodDiscount)); //string format quita decimales sobrantes(1,7136654 --> 1,7)
+                    prodDiscount = product.getPrice() * discountRate;
+                    System.out.printf("%s **discount -%.1f\n", product, prodDiscount);
                 }
                 else{
                     prodDiscount = 0;
@@ -114,11 +119,11 @@ public class TicketHM {
             }
         }
 
-        System.out.println("Total price: " + String.format("%.1f", totalPrice));
-        System.out.println("Total discount: " + String.format("%.1f", totalDiscount));
-        System.out.println("Final Price: " + String.format("%.1f", (totalPrice - totalDiscount)));
+        System.out.printf("Total price: %.1f\n", totalPrice);
+        System.out.printf("Total discount: %.1f\n", totalDiscount);
+        System.out.printf("Final price: %.1f\n", (totalPrice - totalDiscount));
 
-        if(printOkAtEnd) {
+        if (printOkAtEnd) {
             System.out.println("ticket print: ok");
         }
     }
