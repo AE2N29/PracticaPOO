@@ -172,8 +172,8 @@ public class AppHM {
             String command = sc.nextLine();
             return command;
         }catch(NoSuchElementException e){
-            System.out.println("ERROR: Invalid command");
-            return null;
+            System.out.println("ERROR: Info not found");
+            return "exit";
         }
     }
 }
