@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="UPM_tienda:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/UPM_tienda_jar</output-path>
+    <root id="archive" name="UPM_tienda.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="UPM_tienda" />
+    </root>
+  </artifact>
+</component>
