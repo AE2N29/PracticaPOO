@@ -29,26 +29,31 @@ public class InputValidator {
                 if (commandPartsAdd.length != 6) { return false; }
                 return (isInteger(commandPartsAdd[2]) && isName(commandPartsAdd[3]) && isCategory(commandPartsAdd[4]) && isDouble(commandPartsAdd[5]));
             case "UPDATE":
-                if (!isInteger(splittedCommand[2])) { return false; }
-                String fullUpdate = String.join(" ", splittedCommand);
-                switch (splittedCommand[3]) {
-                    case "NAME": {
-                        //  Acepta nombres con espacios cuando están entre comillas: prod update <id> NAME "nuevo nombre"
-                        int first = fullUpdate.indexOf('"');
-                        int last = fullUpdate.lastIndexOf('"');
-                        if (first == -1 || last <= first) { return false; }
-                        String nameValue = fullUpdate.substring(first + 1, last);
-                        return isName(nameValue);
+                if (splittedCommand.length < 5) {
+                    System.out.println("ERROR: Not a valid command");
+                } else {
+                    if (!isInteger(splittedCommand[2])) { return false; }
+                    String fullUpdate = String.join(" ", splittedCommand);
+                    switch (splittedCommand[3]) {
+                        case "NAME": {
+                            //  Acepta nombres con espacios cuando están entre comillas: prod update <id> NAME "nuevo nombre"
+                            int first = fullUpdate.indexOf('"');
+                            int last = fullUpdate.lastIndexOf('"');
+                            if (first == -1 || last <= first) { return false; }
+                            String nameValue = fullUpdate.substring(first + 1, last);
+                            return isName(nameValue);
+                        }
+                        case "PRICE":
+                            if (splittedCommand.length != 5) { return false; }
+                            return isDouble(splittedCommand[4]);
+                        case "CATEGORY":
+                            if (splittedCommand.length != 5) { return false; }
+                            return isCategory(splittedCommand[4]);
+                        default:
+                            return false;
                     }
-                    case "PRICE":
-                        if (splittedCommand.length != 5) { return false; }
-                        return isDouble(splittedCommand[4]);
-                    case "CATEGORY":
-                        if (splittedCommand.length != 5) { return false; }
-                        return isCategory(splittedCommand[4]);
-                    default:
-                        return false;
                 }
+
             case "REMOVE":
                 if (splittedCommand.length != 3) { return false; }
                 return isInteger(splittedCommand[2]);
