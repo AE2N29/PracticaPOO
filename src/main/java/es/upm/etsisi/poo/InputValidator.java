@@ -22,37 +22,38 @@ public class InputValidator {
     private static boolean prodCommandVerification(String[] splittedCommand) {
         switch (splittedCommand[1]) {
             case "ADD":
+                if (splittedCommand.length < 6) {return false;}
                 String fullCommand = String.join(" ", splittedCommand);  // Obtiene el comando original (String)
                 if (fullCommand.split("\"").length < 3) { return false; }  // Verifica el uso correcto de las comillas "<name>" antes
                                                                                  // de llamar al metodo AppHM.processProdAdd() para evitar excepciones
                 String[] commandPartsAdd = AppHM.processProdAdd(fullCommand);
-                if (commandPartsAdd.length != 6) { return false; }
+                if (commandPartsAdd.length != 6 || Integer.parseInt(commandPartsAdd[5]) == 0) { return false; }
                 return (isInteger(commandPartsAdd[2]) && isName(commandPartsAdd[3]) && isCategory(commandPartsAdd[4]) && isDouble(commandPartsAdd[5]));
             case "UPDATE":
-                if (splittedCommand.length < 5) {
-                    System.out.println("ERROR: Not a valid command");
-                } else {
-                    if (!isInteger(splittedCommand[2])) { return false; }
-                    String fullUpdate = String.join(" ", splittedCommand);
-                    switch (splittedCommand[3]) {
-                        case "NAME": {
-                            //  Acepta nombres con espacios cuando están entre comillas: prod update <id> NAME "nuevo nombre"
-                            int first = fullUpdate.indexOf('"');
-                            int last = fullUpdate.lastIndexOf('"');
-                            if (first == -1 || last <= first) { return false; }
-                            String nameValue = fullUpdate.substring(first + 1, last);
-                            return isName(nameValue);
-                        }
-                        case "PRICE":
-                            if (splittedCommand.length != 5) { return false; }
-                            return isDouble(splittedCommand[4]);
-                        case "CATEGORY":
-                            if (splittedCommand.length != 5) { return false; }
-                            return isCategory(splittedCommand[4]);
-                        default:
-                            return false;
-                    }
+                if (splittedCommand.length < 4) {
+                    return false;
                 }
+                if (!isInteger(splittedCommand[2])) { return false; }
+                String fullUpdate = String.join(" ", splittedCommand);
+                switch (splittedCommand[3]) {
+                    case "NAME": {
+                        //  Acepta nombres con espacios cuando están entre comillas: prod update <id> NAME "nuevo nombre"
+                        int first = fullUpdate.indexOf('"');
+                        int last = fullUpdate.lastIndexOf('"');
+                        if (first == -1 || last <= first) { return false; }
+                        String nameValue = fullUpdate.substring(first + 1, last);
+                        return isName(nameValue);
+                    }
+                    case "PRICE":
+                        if (splittedCommand.length != 5) { return false; }
+                        return isDouble(splittedCommand[4]);
+                    case "CATEGORY":
+                        if (splittedCommand.length != 5) { return false; }
+                        return isCategory(splittedCommand[4]);
+                    default:
+                        return false;
+                }
+
 
             case "REMOVE":
                 if (splittedCommand.length != 3) { return false; }
