@@ -27,7 +27,7 @@ public class InputValidator {
                 if (fullCommand.split("\"").length < 3) { return false; }  // Verifica el uso correcto de las comillas "<name>" antes
                                                                                  // de llamar al metodo AppHM.processProdAdd() para evitar excepciones
                 String[] commandPartsAdd = AppHM.processProdAdd(fullCommand);
-                if (commandPartsAdd.length != 6 || Double.parseDouble(commandPartsAdd[5]) == 0) { return false; }
+                if (commandPartsAdd[5].contains(",") || commandPartsAdd.length != 6 || Double.parseDouble(commandPartsAdd[5]) == 0) { return false; }
                 return (isInteger(commandPartsAdd[2]) && isName(commandPartsAdd[3]) && isCategory(commandPartsAdd[4]) && isDouble(commandPartsAdd[5]));
             case "UPDATE":
                 if (splittedCommand.length < 4) {
