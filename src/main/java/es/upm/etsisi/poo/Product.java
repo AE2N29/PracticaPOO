@@ -29,6 +29,7 @@ public class Product {
         return price;
     }
 
+
     public void setPrice(double price) {
         this.price = price;
     }
@@ -45,9 +46,10 @@ public class Product {
         this.name = name;
     }
 
+
     public String toString() {
-        return "{class:Product, id:" + this.id + ", name: '" + this.name +
-                "', category:" + this.category.name() + ", price:" + this.price + "}";
+        return "{class:Product, id:" + this.id + ", name: '" + this.name + "', category:" + this.category.name() +
+                ", price:" + String.format("%.1f", this.price) + "}";  // se usa string.format para devolver solo un decimal
     }
 
     public boolean equals(Product prod) {

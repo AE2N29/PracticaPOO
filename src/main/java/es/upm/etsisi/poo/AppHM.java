@@ -1,7 +1,7 @@
 package es.upm.etsisi.poo;
 
 import java.nio.file.Files;
-import java.nio.file.Paths; //Para leer path donde se encuentra help.txt
+import java.nio.file.Paths; // Para leer path donde se encuentra help.txt
 import java.util.Scanner;
 
 public class AppHM {
@@ -9,44 +9,23 @@ public class AppHM {
     private final TicketHM ticket = new TicketHM();
 
 
-    public static void main(String[] args) {
+    public static void main( String[] args ) {
         AppHM app = new AppHM();
         app.init();
     }
 
     private void init() {
-        System.out.println("Welcome to the ticket module App.");
+        System.out.println("\nWelcome to the ticket module App.");
         System.out.println("Ticket module. Type 'help' to see commands.");
         start();
-    }
-
-    private void end() {
-        System.out.println("Closing application.");
-        System.out.println("Goodbye!");
-    }
-
-    public static String[] processProdAdd(String command) {
-        String[] commandSplitted = command.split(" ");
-        String id = commandSplitted[2];
-        String name = command.substring(command.indexOf('"') + 1, command.lastIndexOf('"'));
-        String restOfCommand = command.substring(command.lastIndexOf('"') + 1).trim();
-        String[] partsRest = restOfCommand.split(" ");
-        String[] array = new String[6];
-        array[0] = "prod";
-        array[1] = "add";
-        array[2] = id;
-        array[3] = name;
-        array[4] = partsRest[0];
-        array[5] = partsRest[1];
-        return array;
     }
 
     private void start() {
         boolean keepGoing = true;
         while (keepGoing) {
-            String command = typeCommand();
+            String command = typeCommand().trim();
             if (!InputValidator.validCommand(command)) {
-                System.out.println("Not a valid command");
+                System.out.println("ERROR: Not a valid command");
             } else {
                 String[] commandParts = command.split(" ");
                 switch (commandParts[0].toUpperCase()) {
@@ -60,21 +39,27 @@ public class AppHM {
                         help();
                         break;
                     case "ECHO":
-                        System.out.println(command);
-                        break;
+                        System.out.println(command.substring(5)); // no hace falta llamar a toString(), es redundante
+                        break;                                              // .substring(5) crea un substring desde index 5 hasta el final
                     case "EXIT":
                         keepGoing = false;
                         end();
                         break;
                     default:
-                        System.out.println("Not a valid command");
+                        System.out.println("ERROR: Not a valid command");
                 }
                 System.out.println();
             }
         }
     }
 
+    private void end() {
+        System.out.println("Closing application.");
+        System.out.print("Goodbye!");
+    }
+
     public void prodCommands(String[] commands) {
+
         String prodCommand = commands[1].toUpperCase();
         switch (prodCommand) {
             case "ADD":
@@ -83,7 +68,7 @@ public class AppHM {
                 int id1 = Integer.parseInt(commandPartsAdd[2]);
                 String name = commandPartsAdd[3];
                 Category category = Category.valueOf(commandPartsAdd[4].toUpperCase());
-                Double price = Double.parseDouble(commandPartsAdd[5]);
+                double price = Double.parseDouble(commandPartsAdd[5]);
                 Product product = new Product(id1, name, category, price);
                 ProductHM.add(id1, product);
                 break;
@@ -107,9 +92,25 @@ public class AppHM {
                 ProductHM.remove(id3);
                 break;
             default:
-                System.out.println("Invalid input");
+                System.out.println("ERROR: Invalid input");
                 break;
         }
+    }
+
+    public static String[] processProdAdd(String command) {
+        String[] commandSplitted = command.split(" ");
+        String id = commandSplitted[2];
+        String name = command.substring(command.indexOf('"') + 1, command.lastIndexOf('"'));
+        String restOfCommand = command.substring(command.lastIndexOf('"')+1).trim();
+        String[] partsRest = restOfCommand.split(" ");
+        String[] array = new String[6];
+        array[0]= "prod";
+        array[1]= "add";
+        array[2]= id;
+        array[3]= name;
+        array[4] = partsRest[0];
+        array[5] = partsRest[1];
+        return array;
     }
 
     public void prodUpdateManage(int id, String CategoryToChange, String change) {
@@ -129,7 +130,7 @@ public class AppHM {
                 product.setCategory(Category.valueOf(change.toUpperCase()));
                 break;
             default:
-                System.out.println("Invalid input");
+                System.out.println("ERROR: Invalid input");
                 return;
         }
         ProductHM.update(id, product);
@@ -150,7 +151,7 @@ public class AppHM {
                 ticket.print();
                 break;
             default:
-                System.out.println("Invalid input");
+                System.out.println("ERROR: Invalid input");
         }
     }
 
@@ -164,8 +165,9 @@ public class AppHM {
         }
     }
 
-    private String typeCommand() {  // To make easier the implementation of the shell
-        System.out.print("tUPM> ");
-        return sc.nextLine();
+    private String typeCommand() {
+        String command = sc.nextLine();
+        System.out.println("tUPM> " + command);
+        return command;
     }
 }
