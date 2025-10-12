@@ -166,8 +166,8 @@ public class AppHM {
     }
 
     private String typeCommand() {
+        System.out.print("tUPM> ");
         String command = sc.nextLine();
-        System.out.println("tUPM> " + command);
         return command;
     }
 }
