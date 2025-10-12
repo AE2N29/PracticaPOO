@@ -23,7 +23,7 @@ public class ProductHM {
             System.out.println("prod add: ok");
         } else {
             if (list.containsKey(id)) {
-                System.out.println("ERROR: Product already exists!");
+                System.out.println("ERROR: Product couldn't be added!");
             }
             else {
                 System.out.println("ERROR: The list is full");
