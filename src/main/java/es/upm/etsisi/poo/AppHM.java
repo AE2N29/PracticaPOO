@@ -2,6 +2,7 @@ package es.upm.etsisi.poo;
 
 import java.nio.file.Files;
 import java.nio.file.Paths; // Para leer path donde se encuentra help.txt
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class AppHM {
@@ -167,7 +168,12 @@ public class AppHM {
 
     private String typeCommand() {
         System.out.print("tUPM> ");
-        String command = sc.nextLine();
-        return command;
+        try{
+            String command = sc.nextLine();
+            return command;
+        }catch(NoSuchElementException e){
+            System.out.println("ERROR: Invalid command");
+            return null;
+        }
     }
 }
