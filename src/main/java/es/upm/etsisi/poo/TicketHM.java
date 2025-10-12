@@ -70,7 +70,7 @@ public class TicketHM {
         for (Map.Entry<Integer, Integer> couple : productIdToUnits.entrySet()) {  // bucle que pilla cada pareja de datos (id, cantidad) y los llama couple
             Product product = ProductHM.getProduct(couple.getKey());  // pilla el producto de la base de datos con el (id) de couple
             int amount = couple.getValue();
-            if (product != null || amount > 0) {
+            if (product != null && amount > 0) {
                 switch (product.getCategory()) {   // switch que cambia la cantidad de categoría segun la categoria que tenga el producto
                     case ELECTRONICS -> electronicsCount += amount;  // esto pq hay que considerarlo para aplicar descuentos
                     case CLOTHES -> clothingCount += amount;
