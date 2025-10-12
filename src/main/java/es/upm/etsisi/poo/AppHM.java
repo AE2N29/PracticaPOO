@@ -1,7 +1,7 @@
 package es.upm.etsisi.poo;
 
 import java.nio.file.Files;
-import java.nio.file.Paths; //Para leer path donde se encuentra help.txt
+import java.nio.file.Paths; // Para leer path donde se encuentra help.txt
 import java.util.Scanner;
 
 public class AppHM {
@@ -15,7 +15,7 @@ public class AppHM {
     }
 
     private void init() {
-        System.out.println("Welcome to the ticket module App.");
+        System.out.println("\nWelcome to the ticket module App.");
         System.out.println("Ticket module. Type 'help' to see commands.");
         start();
     }
@@ -23,7 +23,7 @@ public class AppHM {
     private void start() {
         boolean keepGoing = true;
         while (keepGoing) {
-            String command = typeCommand();
+            String command = typeCommand().trim();
             if (!InputValidator.validCommand(command)) {
                 System.out.println("ERROR: Not a valid command");
             } else {
@@ -165,8 +165,9 @@ public class AppHM {
         }
     }
 
-    private String typeCommand() {  // To make easier the implementation of the shell
-        System.out.print("tUPM> ");
-        return sc.nextLine();
+    private String typeCommand() {
+        String command = sc.nextLine();
+        System.out.println("tUPM> " + command);
+        return command;
     }
 }
