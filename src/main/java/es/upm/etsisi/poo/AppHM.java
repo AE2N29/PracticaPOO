@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class AppHM {
     private final Scanner sc = new Scanner(System.in);
-    private final TicketHM ticket = new TicketHM();
+    private final Ticket ticket = new Ticket();
 
 
     public static void main( String[] args ) {
