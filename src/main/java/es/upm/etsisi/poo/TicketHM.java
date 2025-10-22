@@ -21,13 +21,17 @@ public class TicketHM {
             System.out.println("ticket add: ok");
             return;
         }
+        int oldAmount = productIdToUnits.getOrDefault(prodID, 0);
+        int newAmount = oldAmount + amount;
+
+
         Product prod = ProductHM.getProduct(prodID);
         if (prod == null) {
             System.out.println("ERROR: There isn't any product with " + prodID + " as ID");
             return;
         }
         if (amount + productTotalUnits() <= MAX_PRODS_TICKET){ // verificar que se respete la max cantidad
-            productIdToUnits.put(prodID, amount);
+            productIdToUnits.put(prodID, newAmount);
         } else {
             System.out.println("ERROR: Couldn't add, max products allowed per ticket exceeded!");
             return;
@@ -85,8 +89,9 @@ public class TicketHM {
             Product product = ProductHM.getProduct(couple.getKey());
             int amount = couple.getValue();
 
-            if (product == null || amount <= 0) continue;   // si el producto no existe en la base de datos o tiene cantidad menor a 0,
-                                                            // pasamos a la siguiente pareja en el bucle for
+            if (product == null || amount <= 0)
+                continue;   // si el producto no existe en la base de datos o tiene cantidad menor a 0,
+            // pasamos a la siguiente pareja en el bucle for
 
             int count = switch (product.getCategory()) {  // pillamos la cuenta de productos con esa categoria para aplicar descuento
                 case ELECTRONICS -> electronicsCount;
@@ -106,11 +111,10 @@ public class TicketHM {
             for (int i = 0; i < amount; i++) {
                 double prodDiscount;
 
-                if(count >= 2) {  // el descuento se aplica cuando hay mas de dos prod de la misma categoria
+                if (count >= 2) {  // el descuento se aplica cuando hay mas de dos prod de la misma categoria
                     prodDiscount = product.getPrice() * discountRate;
                     System.out.printf("%s **discount -%.1f\n", product, prodDiscount);
-                }
-                else{
+                } else {
                     prodDiscount = 0;
                     System.out.println(product);
                 }
