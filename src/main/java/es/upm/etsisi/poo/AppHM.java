@@ -1,7 +1,5 @@
 package es.upm.etsisi.poo;
 
-import java.nio.file.Files;
-import java.nio.file.Paths; // Para leer path donde se encuentra help.txt
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -157,13 +155,24 @@ public class AppHM {
     }
 
     private void help() {
-        try {
-            System.out.println();
-            String line = Files.readString(Paths.get("src/main/java/resources/help.txt"));
-            System.out.println(line);
-        } catch (Exception e) {
-            System.out.println("ERROR: while reading help.txt files");
-        }
+        System.out.println(("""
+                Commands:
+                 prod add <id> "<name>" <category> <price>
+                 prod list
+                 prod update <id> NAME|CATEGORY|PRICE <value>
+                 prod remove <id>
+                 ticket new
+                 ticket add <prodId> <quantity>
+                 ticket remove <prodId>
+                 ticket print
+                 echo "<texto>"
+                 help
+                 exit
+                
+                Categories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS
+                Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%,
+                ELECTRONICS 3%.
+               """));
     }
 
     private String typeCommand() {
