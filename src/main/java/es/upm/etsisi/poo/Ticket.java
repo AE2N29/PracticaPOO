@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Ticket {
     private final int MAX_PRODS_TICKET = 100; //  ticket no puede tener mas de 100 productos
@@ -67,9 +68,11 @@ public class Ticket {
     }
 
     private void printTicketLinesSorted(boolean printOkAtEnd) {
-        // contar cuantos productos de cada categoria hay
+        double totalPrice = 0.0, totalDiscount = 0.0;
+        ArrayList<Product> sorted = this.productList;
+        sorted.sort(Comparator.comparing(Product::getName));
         int merchCount = 0, clothesCount = 0, electronicsCount = 0, stationeryCount = 0, bookCount = 0;
-        for (Product prod : productList) {
+        for (Product prod : sorted) {
             if (prod != null) {
                 switch (prod.getCategory()) {
                     case MERCH -> merchCount++;
@@ -80,8 +83,39 @@ public class Ticket {
                 }
             }
         }
-        for (Product prod : productList) {
-
+        for (Product prod : sorted) {
+            totalPrice += prod.getPrice();
+            int actualCount = 0;
+            switch (prod.getCategory()) {
+                case MERCH -> actualCount = merchCount;
+                case STATIONERY ->  actualCount = stationeryCount;
+                case CLOTHES -> actualCount = clothesCount;
+                case BOOK ->  actualCount = bookCount;
+                case ELECTRONICS -> actualCount = electronicsCount;
+            }
+            if (actualCount > 1) {
+                double actualDiscount = 0.0;
+                switch (prod.getCategory()) {
+                    case MERCH -> actualDiscount = 0.0;
+                    case STATIONERY -> actualDiscount = 0.05;
+                    case CLOTHES -> actualDiscount = 0.07;
+                    case BOOK -> actualDiscount = 0.1;
+                    case ELECTRONICS -> actualDiscount = 0.03;
+                }
+                totalDiscount += actualDiscount;
+                System.out.println(prod + " **discount -" + rounded(actualDiscount));
+            } else {
+                System.out.println(prod);
+            }
         }
+        if (printOkAtEnd) {
+            System.out.println("Total price: " + rounded(totalPrice));
+            System.out.println("Total discount: " + rounded(totalDiscount));
+            System.out.println("Final price: " + rounded(totalPrice - totalDiscount));
+        }
+    }
+
+    private double rounded(double d) {
+        return (d*100.0) / 100.0;
     }
 }

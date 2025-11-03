@@ -180,7 +180,7 @@ public class AppHM {
         try{
             String command = sc.nextLine();
             return command;
-        }catch(NoSuchElementException e){
+        } catch(NoSuchElementException e){
             System.out.println("ERROR: Info not found");
             return "exit";
         }
