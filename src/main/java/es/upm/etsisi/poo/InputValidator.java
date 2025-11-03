@@ -40,7 +40,7 @@ public class InputValidator {
                         //  Acepta nombres con espacios cuando están entre comillas: prod update <id> NAME "nuevo nombre"
                         int first = fullUpdate.indexOf('"');
                         int last = fullUpdate.lastIndexOf('"');
-                        if (first == -1 || last <= first) { return false; }
+                        if (first == -1 || last <= first) { return false; } //tira -1 cuando no lo encuentra
                         String nameValue = fullUpdate.substring(first + 1, last);
                         return isName(nameValue);
                     }
