@@ -5,7 +5,8 @@ public enum Category {
     STATIONERY,
     CLOTHES,
     BOOK,
-    ELECTRONICS
+    ELECTRONICS,
+    EVENT
 }
 
 
