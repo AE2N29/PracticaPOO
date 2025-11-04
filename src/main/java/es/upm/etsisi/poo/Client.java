@@ -1,18 +1,33 @@
 package es.upm.etsisi.poo;
 
 public class Client extends User {
-    private String cashierIdAssociated;
+    private String dni;
+    private Cashier associatedCashier;
 
-    public Client(String name, String dni, String email, String cashierId) {
-        super(name, dni, email);
-        this.cashierIdAssociated = cashierId;
+    public Client(String name, String dni, String email, Cashier associatedCashier) {       // Tengo mis dudas sobre si asociar el Cashier asi
+        super(name, email);
+        this.dni = dni;
+        this.associatedCashier = associatedCashier; // Lo suyo sería que al principio sea null
     }
 
-    public String getCashierIdAssociated() {
-        return cashierIdAssociated;
+    public String getDni() {
+        return dni;
     }
 
     public String toString() {
-        return "{class:Client, dni:" + this.dni + ", name:" + this.name + ", email:" + this.email + ", registeredByCashierDni:" + cashierIdAssociated + "}";
+        if (associatedCashier == null) {
+            return "{class:Client, dni:" + this.dni + ", name:" + this.name + ", email:" + this.email + ", associatedCashierWorkerID: None}";
+        } else {
+            return "{class:Client, dni:" + this.dni + ", name:" + this.name + ", email:" + this.email + ", associatedCashierWorkerID:"
+                    + this.associatedCashier.getUPMWorkerID() + "}";
+        }
+    }
+
+    public Cashier getAssociatedCashier() {
+        return associatedCashier;
+    }
+
+    public void setAssociatedCashier(Cashier attendant) {
+        this.associatedCashier = attendant;
     }
 }

@@ -2,17 +2,17 @@ package es.upm.etsisi.poo;
 import java.util.ArrayList;
 
 public class Cashier extends User {
-    private final String cashId;
+    private final String UPMWorkerID;
     private final ArrayList<Ticket> createdTickets;
 
-    public Cashier(String cashId, String name, String dni, String email, ArrayList<Ticket> createdTickets) {
-        super(name, email, dni);
-        this.cashId = cashId;
+    public Cashier(String UPMWorkerID, String name, String dni, String email, ArrayList<Ticket> createdTickets) {
+        super(name, email);
+        this.UPMWorkerID = UPMWorkerID;
         this.createdTickets = new ArrayList<Ticket>();
     }
 
-    public String getCashId() {
-        return cashId;
+    public String getUPMWorkerID() {
+        return UPMWorkerID;
     }
 
     public ArrayList<Ticket> getCreatedTickets() {
@@ -24,8 +24,8 @@ public class Cashier extends User {
     }
 
     public String toString() {
-        return "{class:Cashier, dni:" + this.dni + ", name:" + this.name +
-                ", email:" + this.email + ", cashId:" + this.cashId +
+        return "{class:Cashier, name:" + this.name +
+                ", email:" + this.email + ", UPMWorkerId:" + this.UPMWorkerID +
                 ", ticketsCount:" + this.createdTickets.size() + "}";
     }
 }
