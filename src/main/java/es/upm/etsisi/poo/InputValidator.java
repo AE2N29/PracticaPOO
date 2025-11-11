@@ -14,6 +14,8 @@ public class InputValidator {
                 return ticketCommandVerification(splittedCommand);
             case "ECHO":
                 return true;
+            case "CLIENT":
+                return clientCommandVerification(splittedCommand);
             default:
                 return false;
         }
@@ -63,6 +65,15 @@ public class InputValidator {
                 return false;
             default:
                 return false;
+        }
+    }
+
+    private static boolean clientCommandVerification(String[] splittedCommand) {
+        switch (splittedCommand[1]) {
+            case "ADD":
+                if (splittedCommand.length < 6) {
+
+                }
         }
     }
 
