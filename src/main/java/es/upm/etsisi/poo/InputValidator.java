@@ -71,9 +71,34 @@ public class InputValidator {
     private static boolean clientCommandVerification(String[] splittedCommand) {
         switch (splittedCommand[1]) {
             case "ADD":
-                if (splittedCommand.length < 6) {
-
+                if (splittedCommand.length < 6) {return false;}
+                String commandString = String.join(" ", splittedCommand);
+                int quotesCount = 0;
+                for (int i=0; i<commandString.length(); i++) {
+                    if (commandString.charAt(i) == '"') {quotesCount++;}
                 }
+                if (quotesCount < 2) {return false;}
+                // Obtener lo que viene después del nombre
+                int lastQuoteIndex = commandString.lastIndexOf('"');
+                String substringAfterName = commandString.substring(lastQuoteIndex + 1).trim();
+                String[] subarray = substringAfterName.split(" ");
+                if (subarray.length != 2) {
+                    return false;
+                }
+                if (/* no es valida la logica de cada campo */) {
+                    return false;
+                }
+                return true;
+            case "REMOVE":
+                if (splittedCommand.length < 3) {return false;}
+                if (/* no es un DNI */) {
+                    return false;
+                }
+                return true;
+            case "LIST":
+                return true;
+            default:
+                return false;
         }
     }
 
