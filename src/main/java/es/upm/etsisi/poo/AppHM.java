@@ -156,49 +156,31 @@ public class AppHM {
 
     private void help() {
         System.out.println(("""
-                Commands:
-                 ticket new [<id>] <cashId> <userId>
-                 ticket add <ticketId><cashId> <prodId> <amount> [--p<txt> --p<txt>]
-                         --p para cada personalización.
-                         Un producto personalizable puede comprarse sin personalizar
-                         amount es el numero de productos a añadir para los productos normales y
-                        personalizados, y el numero de personas para los productos de reuniones y
-                        comidas)
-                         No puede añadirse nuevamente un producto de reunión o comida que ya esta en
-                        el ticket.
-                 ticket remove <ticketId><cashId> <prodId>
-                 ticket print <ticketId> <cashId>
-                         cierra el carro y lo imprime en orden alfabético
-                 ticket list
-                         Muestra los tickets ordenados por id del cajero\s
+               Commands:
                  client add "<nombre>" <DNI> <email> <cashId>
                  client remove <DNI>
-                 client list ( incluye el dato del cash que lo creo y ordenados por nombre)
+                 client list
                  cash add [<id>] "<nombre>"<email>
                  cash remove <id>
-                 cash list ( Ordenados por nombre y sin mostrar sus tickets)
-                 cash tickets <id> (Muestra los tickets del cajero ordenados por el Id del ticket,
-                 mostrando solo el ID y el estado)
-                 prod add [<id>] "<name>" <category> <price> [<maxPers>]
-                         si tiene <maxPers> se considerara que el producto es
-                        personalizable)
-                 prod list
-                 prod addFood [<id>] "< name>" <price> <expiration: yyyy-MM-dd> <max_people>
-                         El precio es por persona apuntada
-                 prod addMeeting [<id>] "<name>" <price> <expiration: yyyy-MM-dd> <max_people>
+                 cash list
+                 cash tickets <id>
+                 ticket new [<id>] <cashId> <userId>
+                 ticket add <ticketId><cashId> <prodId> <amount> [--p<txt> --p<txt>]
+                 ticket remove <ticketId><cashId> <prodId>
+                 ticket print <ticketId> <cashId>
+                 ticket list
+                 prod add <id> "<name>" <category> <price>
                  prod update <id> NAME|CATEGORY|PRICE <value>
+                 prod addFood [<id>] "<name>" <price> <expiration:yyyy-MM-dd> <max_people>
+                 prod addMeeting [<id>] "<name>" <price> <expiration:yyyy-MM-dd> <max_people>
+                 prod list
                  prod remove <id>
-                 ticket new
-                 ticket add <prodId> <quantity>
-                 ticket remove <prodId>
-                 ticket print
-                 echo "<texto>"
                  help
+                 echo “<text>”
                  exit
-                
-                Categories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS
-                Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%,
-                ELECTRONICS 3%.
+               
+               Categories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS
+               Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.
                """));
     }
 
