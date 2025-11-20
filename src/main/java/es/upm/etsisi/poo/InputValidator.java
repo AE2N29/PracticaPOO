@@ -85,13 +85,13 @@ public class InputValidator {
                 if (subarray.length != 2) {
                     return false;
                 }
-                if (!(isDNI(subarray[0]) && isEmail(subarray[1]) && isCashID(subarray[2]))) {
+                if (!isDNI(subarray[0]) || !isEmail(subarray[1]) || !isCashID(subarray[2])) {
                     return false;
                 }
                 return true;
             case "REMOVE":
                 if (splittedCommand.length < 3) {return false;}
-                if (/* no es un DNI */) {
+                if (!isDNI(splittedCommand[3])) {
                     return false;
                 }
                 return true;
