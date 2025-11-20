@@ -5,7 +5,7 @@ public class Cashier extends User {
     private final String UPMWorkerID;
     private final ArrayList<Ticket> createdTickets;
 
-    public Cashier(String UPMWorkerID, String name, String dni, String email, ArrayList<Ticket> createdTickets) {
+    public Cashier(String UPMWorkerID, String name, String email) {
         super(name, email);
         this.UPMWorkerID = UPMWorkerID;
         this.createdTickets = new ArrayList<Ticket>();
