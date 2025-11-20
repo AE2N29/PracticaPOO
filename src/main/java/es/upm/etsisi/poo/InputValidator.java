@@ -85,7 +85,7 @@ public class InputValidator {
                 if (subarray.length != 2) {
                     return false;
                 }
-                if (/* no es valida la logica de cada campo */) {
+                if (!isDNI(subarray[0]) || !isEmail(subarray[1]) || !isCashID(subarray[2])) {
                     return false;
                 }
                 return true;
@@ -145,6 +145,7 @@ public class InputValidator {
             return false;
         }
     }
+
     public static boolean isName(String possibleName) { // false en casos como: isName(null), isName("   "), is name ("")
         if(possibleName == null) {
             return false;
@@ -155,5 +156,24 @@ public class InputValidator {
             return trimmed.length() > 2;
         }
         return trimmed.length() > 0;
+    }
+
+    public static boolean isDNI(String dni) {
+        if (dni.length() != 9) {return false;}
+        String numeros = dni.substring(0, 6);
+        if (!isInteger(numeros)) {return false;}
+        if (!Character.isLetter(dni.charAt(7)) || !Character.isLetter(dni.charAt(8))) {return false;}
+        return true;
+    }
+
+    public static boolean isEmail(String email) {
+        return email.endsWith("@upm.es");
+    }
+
+    public static boolean isCashID(String cashId) {
+        if (cashId.length() != 9) {return false;}
+        if (!cashId.startsWith("UW")) {return false;}
+        if (!isInteger(cashId.substring(2))) {return false;}
+        return true;
     }
 }
