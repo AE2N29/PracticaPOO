@@ -23,9 +23,8 @@ public class Cashier extends User {
         createdTickets.add(ticket);
     }
 
+    @Override
     public String toString() {
-        return "{class:Cashier, name:" + this.name +
-                ", email:" + this.email + ", UPMWorkerId:" + this.UPMWorkerID +
-                ", ticketsCount:" + this.createdTickets.size() + "}";
+        return "Cash{identifier='" + this.UPMWorkerID + "', name='" + this.name + "', email='" + this.email + "'}";
     }
 }
