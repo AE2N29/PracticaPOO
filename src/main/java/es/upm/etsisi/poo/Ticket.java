@@ -18,12 +18,10 @@ public class Ticket {
     }
 
     public Ticket() {
-        this.productList = new ArrayList<>();
-        this.state = TicketState.EMPTY;
-        this.id = createTicketId();
+        this(createTicketId());
     }
 
-    private String createTicketId(){ // crea el Id cuando no se pasa como parámetro
+    private static String createTicketId(){ // crea el Id cuando no se pasa como parámetro
         String pattern = "YY-MM-dd-HH:mm-";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
         LocalDateTime now = LocalDateTime.now();
