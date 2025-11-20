@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Ticket {
     private final int MAX_PRODS_TICKET = 100; //  ticket no puede tener mas de 100 productos
@@ -29,7 +28,7 @@ public class Ticket {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
         LocalDateTime now = LocalDateTime.now();
         String formattedDate = now.format(formatter);
-        int random5DigitsNum = ThreadLocalRandom.current().nextInt(10000, 100000);
+        int random5DigitsNum = (int) (Math.random() * 90000) + 10000;
         return (formattedDate + random5DigitsNum);
     }
 
