@@ -7,7 +7,6 @@ public class AppHM {
     private final Scanner sc = new Scanner(System.in);
     private final Ticket ticket = new Ticket();
 
-
     public static void main( String[] args ) {
         AppHM app = new AppHM();
         app.init();
