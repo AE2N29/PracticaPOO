@@ -18,8 +18,32 @@ public class CashierDatabase {
         return result;
     }
 
-    public static void add(String name, String email) {
+    public static void add(String UPMWorkerID, String name, String email) {
+        if (cashiersList.contains(UPMWorkerID)) {
+            System.out.println("Error: Cashier with ID " + UPMWorkerID + " already exists.");
+            return;
+        }
+        cashiersList.add(new Cashier(UPMWorkerID, name, email));
+    }
 
+    public static void add(String name, String email) {
+        String UPMWorkerID;
+        boolean exists;
+        do {
+            UPMWorkerID = "UW";
+            for (int i = 0; i < 7; i++) {
+                int random = (int) (Math.random() * 10);
+                UPMWorkerID += random;
+            }
+            exists = false;
+            for (Cashier c : cashiersList) {
+                if (c.getUPMWorkerID().equals(UPMWorkerID)) {
+                    exists = true;
+                }
+            }
+        } while (exists);
+
+        cashiersList.add(new Cashier(UPMWorkerID, name, email));
     }
 
     public static void remove(String UPMWorker) {
