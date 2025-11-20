@@ -1,17 +1,36 @@
 package es.upm.etsisi.poo;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Ticket {
     private final int MAX_PRODS_TICKET = 100; //  ticket no puede tener mas de 100 productos
     private final ArrayList<Product> productList;
     private TicketState state;
-    private int id;
+    private String id;
+
+    public Ticket(String id) {
+        this.productList = new ArrayList<>();
+        this.state = TicketState.EMPTY;
+        this.id = id;
+    }
 
     public Ticket() {
         this.productList = new ArrayList<>();
         this.state = TicketState.EMPTY;
+        this.id = createTicketId();
+    }
+
+    private String createTicketId(){
+        String pattern = "YY-MM-dd-HH:mm-";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        LocalDateTime now = LocalDateTime.now();
+        String formattedDate = now.format(formatter);
+        int random5DigitsNum = ThreadLocalRandom.current().nextInt(10000,10000);
+        return (formattedDate + random5DigitsNum);
     }
 
     public void resetTicket() {//  uso de ArrayList.clear para resetear el ticket
@@ -146,11 +165,11 @@ public class Ticket {
         this.state = state;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 }
