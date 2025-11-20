@@ -24,13 +24,21 @@ public class Ticket {
         this.id = createTicketId();
     }
 
-    private String createTicketId(){
+    private String createTicketId(){ // crea el Id cuando no se pasa como parámetro
         String pattern = "YY-MM-dd-HH:mm-";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
         LocalDateTime now = LocalDateTime.now();
         String formattedDate = now.format(formatter);
-        int random5DigitsNum = ThreadLocalRandom.current().nextInt(10000,10000);
+        int random5DigitsNum = ThreadLocalRandom.current().nextInt(10000, 100000);
         return (formattedDate + random5DigitsNum);
+    }
+
+    private String updateTicketId() { // actualiza el id cuando el ticket se cierra
+        String pattern = "-YY-MM-dd-HH:mm";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        LocalDateTime now = LocalDateTime.now();
+        String formattedDate = now.format(formatter);
+        return (this.id + formattedDate);
     }
 
     public void resetTicket() {//  uso de ArrayList.clear para resetear el ticket
@@ -150,6 +158,8 @@ public class Ticket {
             System.out.println("Total price: " + rounded(totalPrice));
             System.out.println("Total discount: " + rounded(totalDiscount));
             System.out.println("Final price: " + rounded(totalPrice - totalDiscount));
+            setState(TicketState.CLOSED);
+            this.id = updateTicketId();
         }
     }
 
