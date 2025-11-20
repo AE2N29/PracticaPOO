@@ -44,6 +44,9 @@ public class AppHM {
                         keepGoing = false;
                         end();
                         break;
+                    case "CLIENT":
+                        clientCommands(commandParts);
+                        break;
                     default:
                         System.out.println("ERROR: Not a valid command");
                 }
@@ -148,6 +151,25 @@ public class AppHM {
                 break;
             case "PRINT":
                 ticket.print();
+                break;
+            default:
+                System.out.println("ERROR: Invalid input");
+        }
+    }
+
+    public void clientCommands(String[] commands) {
+        switch (commands[1].toUpperCase()) {
+            case "ADD":
+                String stringedCommand = String.join(" ", commands);
+                String name = stringedCommand.substring(stringedCommand.indexOf('"') + 1, stringedCommand.lastIndexOf('"'));
+                String restOfCommand = stringedCommand.substring('"' +1).trim();
+                String[] afterName = restOfCommand.split(" ");
+                ClientDatabase.add(name, afterName[0], afterName[1]);
+            case "REMOVE":
+                ClientDatabase.remove(commands[2]);
+                break;
+            case "LIST":
+                ClientDatabase.list();
                 break;
             default:
                 System.out.println("ERROR: Invalid input");
