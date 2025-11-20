@@ -19,11 +19,14 @@ public class CashierDatabase {
     }
 
     public static void add(String UPMWorkerID, String name, String email) {
-        if (cashiersList.contains(UPMWorkerID)) {
+        if (getCashierByUW(UPMWorkerID) != null) {
             System.out.println("Error: Cashier with ID " + UPMWorkerID + " already exists.");
             return;
         }
-        cashiersList.add(new Cashier(UPMWorkerID, name, email));
+        Cashier newCashier = new Cashier(UPMWorkerID, name, email);
+        cashiersList.add(newCashier);
+        System.out.println(newCashier);
+        System.out.println("cash add: ok");
     }
 
     public static void add(String name, String email) {
@@ -43,36 +46,50 @@ public class CashierDatabase {
             }
         } while (exists);
 
-        cashiersList.add(new Cashier(UPMWorkerID, name, email));
+        Cashier newCashier = new Cashier(UPMWorkerID, name, email);
+        cashiersList.add(newCashier);
+        System.out.println(newCashier);
+        System.out.println("cash add: ok");
     }
 
     public static void remove(String UPMWorker) {
-        boolean deleted = false;
-        for (Cashier c: cashiersList) {
-            if (c.getUPMWorkerID().equalsIgnoreCase(UPMWorker)) {
-                cashiersList.remove(c);
-                deleted = true;
+        boolean found = false;
+        int i = 0;
+        while (i < cashiersList.size() && !found) {
+            if (cashiersList.get(i).getUPMWorkerID().equalsIgnoreCase(UPMWorker)) {
+                cashiersList.remove(i);
+                found = true;
+            } else {
+                i++;
             }
         }
-        if (!deleted) {
+        if (found) {
+            System.out.println("cash remove: ok");
+        } else {
             System.out.println("There isn't any cashier with UPMWorker id " + UPMWorker);
         }
     }
 
     public static void list() {
-        for (Cashier c: cashiersList) {
+        System.out.println("Cash:");
+        ArrayList<Cashier> sortedList = new ArrayList<>(cashiersList);
+        sortedList.sort(Comparator.comparing(Cashier::getName));    // Ordena la lista usando el nombre del cajero como criterio de comparación.
+        for (Cashier c: sortedList) {
             if (c != null) {
-                System.out.println(c);
+                System.out.println("  " + c);
             }
         }
     }
 
     public static void tickets(String UPMWorker) {
+        System.out.println("Tickets: ");
         Cashier cashier = getCashierByUW(UPMWorker);
         ArrayList<Ticket> cashierTickets = cashier.getCreatedTickets();
         cashierTickets.sort(Comparator.comparing(Ticket::getId));
+
         for (Ticket t: cashierTickets) {
-            System.out.println("{id: " + t.getId() + ", state: " + t.getState() + "}");
+            System.out.println("  " + t.getId() + "->" + t.getState());
         }
+        System.out.println("cash tickets: ok");
     }
 }

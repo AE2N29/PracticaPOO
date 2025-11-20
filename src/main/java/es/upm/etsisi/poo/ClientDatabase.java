@@ -52,7 +52,7 @@ public class ClientDatabase {
     public static void list() {
         System.out.println("Client:");
         ArrayList<Client> sortedClientList = new ArrayList<>(clientList);
-        sortedClientList.sort(Comparator.comparing(Client::getName));
+        sortedClientList.sort(Comparator.comparing(Client::getName));     // Ordena la lista usando el nombre del cliente como criterio de comparación.
 
         for (Client cliente : sortedClientList) {
             System.out.println("  " + cliente);
