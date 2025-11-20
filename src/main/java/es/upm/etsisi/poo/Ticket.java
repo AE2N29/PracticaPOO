@@ -6,51 +6,70 @@ import java.util.Comparator;
 public class Ticket {
     private final int MAX_PRODS_TICKET = 100; //  ticket no puede tener mas de 100 productos
     private final ArrayList<Product> productList;
+    private TicketState state;
+    private int id;
 
     public Ticket() {
         this.productList = new ArrayList<>();
+        this.state = TicketState.EMPTY;
     }
 
-    public void resetTicket() {  //  uso de ArrayList.clear para resetear el ticket
-        this.productList.clear();
-        System.out.println("ticket new: ok");
+    public void resetTicket() {//  uso de ArrayList.clear para resetear el ticket
+        if (state.equals(TicketState.CLOSED)) {
+            System.out.println("ERROR: Ticket is already closed");
+        } else {
+            this.productList.clear();
+            this.state = TicketState.EMPTY;
+            System.out.println("ticket new: ok");
+        }
     }
 
     public void add(int prodID, int amount) {
-        if (amount <= 0) {
-            System.out.println("ticket add: ok");
-            return;
-        }
-        Product prod = ProductHM.getProduct(prodID);
-        if (prod == null) {
-            System.out.println("ERROR: There isn't any product with " + prodID + " as ID");
-            return;
-        }
-        if (amount + productTotalUnits() <= MAX_PRODS_TICKET){ // verificar que se respete la max cantidad
-            for (int i=0; i<amount; i++) {
-                productList.add(prod);
-            }
+        if (state.equals(TicketState.CLOSED)) {
+            System.out.println("ERROR: Ticket is already closed");
         } else {
-            System.out.println("ERROR: Couldn't add, max products allowed per ticket exceeded!");
-            return;
+            if (amount <= 0) {
+                System.out.println("ticket add: ok");
+                return;
+            }
+            Product prod = ProductHM.getProduct(prodID);
+            if (prod == null) {
+                System.out.println("ERROR: There isn't any product with " + prodID + " as ID");
+                return;
+            }
+            if (amount + productTotalUnits() <= MAX_PRODS_TICKET){ // verificar que se respete la max cantidad
+                for (int i=0; i<amount; i++) {
+                    productList.add(prod);
+                }
+            } else {
+                System.out.println("ERROR: Couldn't add, max products allowed per ticket exceeded!");
+                return;
+            }
+            // Imprimir el contenido del ticket
+            printTicketLinesSorted(false);
+            System.out.println("ticket add: ok");
+            if (!state.equals(TicketState.ACTIVE)) {
+                this.state = TicketState.ACTIVE;
+            }
         }
-        // Imprimir el contenido del ticket
-        printTicketLinesSorted(false);
-        System.out.println("ticket add: ok");
     }
 
     public void remove(int prodID) {
-        Product prod = ProductHM.getProduct(prodID);
-        if (prod == null) {  // si no encuentra el producto con este id en la base de datos
-            System.out.println("ERROR: There isn't any product with " + prodID + " as ID");
-            return;
+        if (state.equals(TicketState.CLOSED)) {
+            System.out.println("ERROR: Ticket is already closed");
+        } else {
+            Product prod = ProductHM.getProduct(prodID);
+            if (prod == null) {  // si no encuentra el producto con este id en la base de datos
+                System.out.println("ERROR: There isn't any product with " + prodID + " as ID");
+                return;
+            }
+            if (!productList.contains(prod)) {  // si no existe producto con ID proporcionada en el ticket, mensaje de error
+                System.out.print("ERROR: the product with " + prodID + " as ID wasn't in the current ticket");
+                return;
+            }
+            productList.remove(prod);
+            System.out.print("ticket remove: ok");  // si existe el producto, se devuelve confirmacion de borrado
         }
-        if (!productList.contains(prod)) {  // si no existe producto con ID proporcionada en el ticket, mensaje de error
-            System.out.print("ERROR: the product with " + prodID + " as ID wasn't in the current ticket");
-            return;
-        }
-        productList.remove(prod);
-        System.out.print("ticket remove: ok");  // si existe el producto, se devuelve confirmacion de borrado
     }
 
     public void print() {
@@ -117,5 +136,21 @@ public class Ticket {
 
     private double rounded(double d) {
         return (d*100.0) / 100.0;
+    }
+
+    public TicketState getState() {
+        return state;
+    }
+
+    public void setState(TicketState state) {
+        this.state = state;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
