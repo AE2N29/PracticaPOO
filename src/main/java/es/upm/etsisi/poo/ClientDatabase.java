@@ -9,55 +9,54 @@ public class ClientDatabase {
     private ClientDatabase(){}
 
     public static Client getClientByDNI(String dni) {
-        Client result = null;
         for (Client client: clientList) {
             if (client.getDni().equals(dni)) {
-                result = client;        // No se detiene ya que se asume que no hay dos personas con el mismo DNI
+                return client;
             }
         }
-        return result;
+        return null;
     }
 
-    public static void add(String name, String dni, String email) {
-        boolean dniError = false;
-        boolean emailError = false;
-        for (Client client: clientList) {
-            if (client.getDni().equals(dni)) {
-                dniError = true;
-            }
-            if (client.getEmail().equals(email)) {
-                emailError = true;
-            }
-        }
-        if (dniError) {
+    public static void add(String name, String dni, String email, String cashID) {    // cashID se refiere a UPMWorkerID
+        if (getClientByDNI(dni) != null) {
             System.out.println("ERROR: " + dni + " identifier is already in use");
-        } else if (emailError) {
-            System.out.println("ERROR: " + email + " e-mail is already in use");
-        } else {
-            clientList.add(new Client(name, dni, email, null));     // Tengo mis dudas
+            return;
         }
+        for (Client client : clientList) {
+            if (client.getEmail().equals(email)) {
+                System.out.println("ERROR: " + email + " e-mail is already in use");
+                return;
+            }
+        }
+        Cashier associatedCashier = CashierDatabase.getCashierByUW(cashID);
+        if (associatedCashier == null) {
+            System.out.println("Error: Cashier with ID " + cashID + " not found");
+            return;
+        }
+        Client newClient = new Client(name, dni, email, associatedCashier);
+        clientList.add(newClient);
+        System.out.println(newClient);
+        System.out.println("client add: ok");
     }
 
     public static void remove(String dni) {
-        boolean eliminated = false;
-        for (int i=0; i<clientList.size(); i++) {
-            if (clientList.get(i).getDni().equals(dni)) {
-                clientList.remove(i);
-                eliminated = true;
-            }
-        }
-        if (!eliminated) {
+        Client clientToRemove = getClientByDNI(dni);
+        if (clientToRemove != null) {
+            clientList.remove(clientToRemove);
+            System.out.println("client remove: ok");
+        } else {
             System.out.println("ERROR: Client with identifier " + dni + " not found");
         }
     }
 
     public static void list() {
-        ArrayList<Client> sortedClientList = clientList;
+        System.out.println("Client:");
+        ArrayList<Client> sortedClientList = new ArrayList<>(clientList);
         sortedClientList.sort(Comparator.comparing(Client::getName));
-        for (Client cliente: clientList) {
-            if (cliente != null) {
-                System.out.println(cliente);
-            }
+
+        for (Client cliente : sortedClientList) {
+            System.out.println("  " + cliente);
         }
+        System.out.println("client list: ok");
     }
 }
