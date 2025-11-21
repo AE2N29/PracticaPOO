@@ -87,7 +87,7 @@ public class InputValidator {
                 return true;
             case "REMOVE":
                 if (splittedCommand.length != 3) {return false;}
-                if (!isDNI(splittedCommand[3])) {
+                if (!isDNI(splittedCommand[2])) {
                     return false;
                 }
                 return true;
