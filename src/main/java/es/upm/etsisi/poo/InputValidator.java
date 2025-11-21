@@ -73,16 +73,12 @@ public class InputValidator {
             case "ADD":
                 if (splittedCommand.length < 6) {return false;}
                 String commandString = String.join(" ", splittedCommand);
-                int quotesCount = 0;
-                for (int i=0; i<commandString.length(); i++) {
-                    if (commandString.charAt(i) == '"') {quotesCount++;}
-                }
-                if (quotesCount < 2) {return false;}
+                if (commandString.split("\"").length < 3) {return false;}
                 // Obtener lo que viene después del nombre
                 int lastQuoteIndex = commandString.lastIndexOf('"');
                 String substringAfterName = commandString.substring(lastQuoteIndex + 1).trim();
                 String[] subarray = substringAfterName.split(" ");
-                if (subarray.length != 2) {
+                if (subarray.length != 3) {
                     return false;
                 }
                 if (!isDNI(subarray[0]) || !isEmail(subarray[1]) || !isCashID(subarray[2])) {
@@ -90,13 +86,13 @@ public class InputValidator {
                 }
                 return true;
             case "REMOVE":
-                if (splittedCommand.length < 3) {return false;}
+                if (splittedCommand.length != 3) {return false;}
                 if (!isDNI(splittedCommand[3])) {
                     return false;
                 }
                 return true;
             case "LIST":
-                return true;
+                return splittedCommand.length == 2;
             default:
                 return false;
         }
@@ -159,20 +155,22 @@ public class InputValidator {
     }
 
     public static boolean isDNI(String dni) {
+        if (dni == null) {return false;}
         if (dni.length() != 9) {return false;}
-        String numeros = dni.substring(0, 6);
+        String numeros = dni.substring(0, 8);
         if (!isInteger(numeros)) {return false;}
-        if (!Character.isLetter(dni.charAt(7)) || !Character.isLetter(dni.charAt(8))) {return false;}
+        if (!Character.isLetter(dni.charAt(8))) {return false;}
         return true;
     }
 
     public static boolean isEmail(String email) {
-        return email.endsWith("@upm.es");
+        return email.endsWith("@upm.es");   // lo que viene despues de la arroba debe estar siempre en minusculas
     }
 
     public static boolean isCashID(String cashId) {
+        if (cashId == null) {return false;}
         if (cashId.length() != 9) {return false;}
-        if (!cashId.startsWith("UW")) {return false;}
+        if (!cashId.toUpperCase().startsWith("UW")) {return false;}
         if (!isInteger(cashId.substring(2))) {return false;}
         return true;
     }
