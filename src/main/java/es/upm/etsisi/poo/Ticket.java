@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -7,11 +9,33 @@ public class Ticket {
     private final int MAX_PRODS_TICKET = 100; //  ticket no puede tener mas de 100 productos
     private final ArrayList<Product> productList;
     private TicketState state;
-    private int id;
+    private String id;
 
-    public Ticket() {
+    public Ticket(String id) {
         this.productList = new ArrayList<>();
         this.state = TicketState.EMPTY;
+        this.id = id;
+    }
+
+    public Ticket() {
+        this(createTicketId());
+    }
+
+    private static String createTicketId(){ // crea el Id cuando no se pasa como parámetro
+        String pattern = "YY-MM-dd-HH:mm-";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        LocalDateTime now = LocalDateTime.now();
+        String formattedDate = now.format(formatter);
+        int random5DigitsNum = (int) (Math.random() * 90000) + 10000;
+        return (formattedDate + random5DigitsNum);
+    }
+
+    private String updateTicketId() { // actualiza el id cuando el ticket se cierra
+        String pattern = "-YY-MM-dd-HH:mm";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        LocalDateTime now = LocalDateTime.now();
+        String formattedDate = now.format(formatter);
+        return (this.id + formattedDate);
     }
 
     public void resetTicket() {//  uso de ArrayList.clear para resetear el ticket
@@ -131,6 +155,8 @@ public class Ticket {
             System.out.println("Total price: " + rounded(totalPrice));
             System.out.println("Total discount: " + rounded(totalDiscount));
             System.out.println("Final price: " + rounded(totalPrice - totalDiscount));
+            setState(TicketState.CLOSED);
+            this.id = updateTicketId();
         }
     }
 
@@ -146,11 +172,11 @@ public class Ticket {
         this.state = state;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 }
