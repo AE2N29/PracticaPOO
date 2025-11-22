@@ -4,23 +4,14 @@ public class Client extends User {
     private String dni;
     private Cashier associatedCashier;
 
-    public Client(String name, String dni, String email, Cashier associatedCashier) {       // Tengo mis dudas sobre si asociar el Cashier asi
+    public Client(String name, String dni, String email, Cashier associatedCashier) {
         super(name, email);
         this.dni = dni;
-        this.associatedCashier = associatedCashier; // Lo suyo sería que al principio sea null
+        this.associatedCashier = associatedCashier;
     }
 
     public String getDni() {
         return dni;
-    }
-
-    public String toString() {
-        if (associatedCashier == null) {
-            return "{class:Client, dni:" + this.dni + ", name:" + this.name + ", email:" + this.email + ", associatedCashierWorkerID: None}";
-        } else {
-            return "{class:Client, dni:" + this.dni + ", name:" + this.name + ", email:" + this.email + ", associatedCashierWorkerID:"
-                    + this.associatedCashier.getUPMWorkerID() + "}";
-        }
     }
 
     public Cashier getAssociatedCashier() {
@@ -29,5 +20,12 @@ public class Client extends User {
 
     public void setAssociatedCashier(Cashier attendant) {
         this.associatedCashier = attendant;
+    }
+
+    @Override
+    public String toString() {
+        return "Client{identifier='" + this.dni + "', name='" + this.name +
+                "', email='" + this.email + "', cash=" + this.associatedCashier.getUPMWorkerID() + "}";
+        }
     }
 }

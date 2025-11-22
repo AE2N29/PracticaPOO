@@ -25,5 +25,6 @@ public abstract class User {
         this.name = name;
     }
 
+    @Override
     public abstract String toString();
 }

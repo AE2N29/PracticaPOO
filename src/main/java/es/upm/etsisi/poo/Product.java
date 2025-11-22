@@ -47,6 +47,7 @@ public class Product {
     }
 
 
+    @Override
     public String toString() {
         return "{class:Product, id:" + this.id + ", name: '" + this.name + "', category:" + this.category.name() +
                 ", price:" + String.format("%.1f", this.price) + "}";  // se usa string.format para devolver solo un decimal
