@@ -163,7 +163,7 @@ public class AppHM {
                 String name = stringedCommand.substring(stringedCommand.indexOf('"') + 1, stringedCommand.lastIndexOf('"'));
                 String restOfCommand = stringedCommand.substring('"' +1).trim();
                 String[] afterName = restOfCommand.split(" ");
-                ClientDatabase.add(name, afterName[0], afterName[1], CashierDatabase.getCashierByUW(afterName[2]));
+                ClientDatabase.add(name, afterName[0], afterName[1], afterName[2]);
             case "REMOVE":
                 ClientDatabase.remove(commands[2]);
                 break;
