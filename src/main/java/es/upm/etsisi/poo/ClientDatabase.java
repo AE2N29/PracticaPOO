@@ -18,7 +18,7 @@ public class ClientDatabase {
         return result;
     }
 
-    public static void add(String name, String dni, String email) {
+    public static void add(String name, String dni, String email, Cashier associatedCashier) {
         boolean dniError = false;
         boolean emailError = false;
         for (Client client: clientList) {
@@ -34,7 +34,7 @@ public class ClientDatabase {
         } else if (emailError) {
             System.out.println("ERROR: " + email + " e-mail is already in use");
         } else {
-            clientList.add(new Client(name, dni, email, null));     // Tengo mis dudas
+            clientList.add(new Client(name, dni, email, associatedCashier));     // Tengo mis dudas
         }
     }
 
