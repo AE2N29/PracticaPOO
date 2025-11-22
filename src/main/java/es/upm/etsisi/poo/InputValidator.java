@@ -149,9 +149,8 @@ public class InputValidator {
         if (dni == null) {return false;}
         if (dni.length() != 9) {return false;}
         String numeros = dni.substring(0, 8);
-        if (!isInteger(numeros)) {return false;}
-        if (!Character.isLetter(dni.charAt(8))) {return false;}
-        return true;
+
+        return isInteger(numeros) && Character.isLetter(dni.charAt(8));
     }
 
     public static boolean isEmail(String email) {
@@ -161,8 +160,7 @@ public class InputValidator {
     public static boolean isCashID(String cashId) {
         if (cashId == null) {return false;}
         if (cashId.length() != 9) {return false;}
-        if (!cashId.startsWith("UW")) {return false;}
-        if (!isInteger(cashId.substring(2))) {return false;}
-        return true;
+
+        return cashId.startsWith("UW") && isInteger(cashId.substring(2);
     }
 }
