@@ -26,6 +26,5 @@ public class Client extends User {
     public String toString() {
         return "Client{identifier='" + this.dni + "', name='" + this.name +
                 "', email='" + this.email + "', cash=" + this.associatedCashier.getUPMWorkerID() + "}";
-        }
     }
 }
