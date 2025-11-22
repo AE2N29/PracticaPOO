@@ -161,9 +161,10 @@ public class AppHM {
             case "ADD":
                 String stringedCommand = String.join(" ", commands);
                 String name = stringedCommand.substring(stringedCommand.indexOf('"') + 1, stringedCommand.lastIndexOf('"'));
-                String restOfCommand = stringedCommand.substring('"' +1).trim();
+                String restOfCommand = stringedCommand.substring(stringedCommand.lastIndexOf('"')+1).trim();
                 String[] afterName = restOfCommand.split(" ");
                 ClientDatabase.add(name, afterName[0], afterName[1], afterName[2]);
+                break;
             case "REMOVE":
                 ClientDatabase.remove(commands[2]);
                 break;

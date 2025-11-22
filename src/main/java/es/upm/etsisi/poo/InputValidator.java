@@ -61,8 +61,7 @@ public class InputValidator {
                 if (splittedCommand.length != 3) { return false; }
                 return isInteger(splittedCommand[2]);
             case "LIST":
-                if (splittedCommand.length == 2){ return true; }
-                return false;
+                return splittedCommand.length == 2;
             default:
                 return false;
         }
@@ -74,23 +73,17 @@ public class InputValidator {
                 if (splittedCommand.length < 6) {return false;}
                 String commandString = String.join(" ", splittedCommand);
                 if (commandString.split("\"").length < 3) {return false;}
+                String name = commandString.substring(commandString.indexOf('"') + 1, commandString.lastIndexOf('"'));
                 // Obtener lo que viene después del nombre
-                int lastQuoteIndex = commandString.lastIndexOf('"');
-                String substringAfterName = commandString.substring(lastQuoteIndex + 1).trim();
+                String substringAfterName = commandString.substring(commandString.lastIndexOf('"') + 1).trim();
                 String[] subarray = substringAfterName.split(" ");
                 if (subarray.length != 3) {
                     return false;
                 }
-                if (!isDNI(subarray[0]) || !isEmail(subarray[1]) || !isCashID(subarray[2])) {
-                    return false;
-                }
-                return true;
+                return isName(name) && isDNI(subarray[0]) && isEmail(subarray[1]) && isCashID(subarray[2]);
             case "REMOVE":
                 if (splittedCommand.length != 3) {return false;}
-                if (!isDNI(splittedCommand[2])) {
-                    return false;
-                }
-                return true;
+                return isDNI(splittedCommand[2]);
             case "LIST":
                 return splittedCommand.length == 2;
             default:
@@ -101,8 +94,7 @@ public class InputValidator {
     private static boolean ticketCommandVerification(String[] splittedCommand) {
         switch (splittedCommand[1]) {
             case "NEW":
-                if (splittedCommand.length == 2) { return true; }
-                return false;
+                return splittedCommand.length == 2;
             case "ADD":
                 if(splittedCommand.length != 4) { return false; }
                 return isInteger(splittedCommand[2]) && isInteger(splittedCommand[3]);
@@ -135,7 +127,7 @@ public class InputValidator {
     }
     public static boolean isCategory(String possibleCategory) {
         try {
-            Category category = Category.valueOf(possibleCategory);
+            Category.valueOf(possibleCategory);
             return true;
         } catch(IllegalArgumentException | NullPointerException e) {
             return false;
@@ -147,11 +139,10 @@ public class InputValidator {
             return false;
         }
         String trimmed = possibleName.trim();
-        if (trimmed.length() == 0) { return false; }
         if (trimmed.startsWith("\"") && trimmed.endsWith("\"")) {
             return trimmed.length() > 2;
         }
-        return trimmed.length() > 0;
+        return !trimmed.isEmpty();
     }
 
     public static boolean isDNI(String dni) {
@@ -164,13 +155,13 @@ public class InputValidator {
     }
 
     public static boolean isEmail(String email) {
-        return email.endsWith("@upm.es");   // lo que viene despues de la arroba debe estar siempre en minusculas
+        return email.toLowerCase().endsWith("@upm.es");   // lo que viene despues de la arroba debe estar siempre en minusculas?
     }
 
     public static boolean isCashID(String cashId) {
         if (cashId == null) {return false;}
         if (cashId.length() != 9) {return false;}
-        if (!cashId.toUpperCase().startsWith("UW")) {return false;}
+        if (!cashId.startsWith("UW")) {return false;}
         if (!isInteger(cashId.substring(2))) {return false;}
         return true;
     }
