@@ -209,8 +209,7 @@ public class AppHM {
     private String typeCommand() {
         System.out.print("tUPM> ");
         try{
-            String command = sc.nextLine();
-            return command;
+            return sc.nextLine();
         } catch(NoSuchElementException e){
             System.out.println("ERROR: Info not found");
             return "exit";

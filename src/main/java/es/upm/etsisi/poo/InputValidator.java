@@ -161,6 +161,6 @@ public class InputValidator {
         if (cashId == null) {return false;}
         if (cashId.length() != 9) {return false;}
 
-        return cashId.startsWith("UW") && isInteger(cashId.substring(2);
+        return cashId.startsWith("UW") && isInteger(cashId.substring(2));
     }
 }
