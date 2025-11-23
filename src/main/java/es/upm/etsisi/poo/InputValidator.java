@@ -16,6 +16,32 @@ public class InputValidator {
                 return true;
             case "CLIENT":
                 return clientCommandVerification(splittedCommand);
+            case "CASHIER":
+                return cashierCommandVerification(splittedCommand);
+            default:
+                return false;
+        }
+    }
+
+    private static boolean cashierCommandVerification(String[] splittedCommand) {
+        switch (splittedCommand[1]) {
+            case "ADD":
+                if (splittedCommand.length == 5) {
+                    String commandStringed = String.join(" ", splittedCommand);
+                    String name = commandStringed.substring(commandStringed.indexOf('"') + 1, commandStringed.lastIndexOf('"'));
+                    String email = commandStringed.substring(commandStringed.lastIndexOf('"') + 1).trim();
+                    return isInteger(splittedCommand[2]) && isName(name) && isEmail(email);
+                } else if (splittedCommand.length == 4) {
+                    String stringedCommand = String.join(" ", splittedCommand);
+                    String name = stringedCommand.substring(stringedCommand.indexOf('"') + 1, stringedCommand.lastIndexOf('"'));
+                    String email = stringedCommand.substring(stringedCommand.lastIndexOf('"') + 1).trim();
+                    return isName(name) && isEmail(email);
+                } else {return false;}
+            case "REMOVE", "TICKETS":
+                if (splittedCommand.length != 3) {return false;}
+                return isInteger(splittedCommand[2]);
+            case "LIST":
+                return true;
             default:
                 return false;
         }
@@ -93,7 +119,7 @@ public class InputValidator {
 
     private static boolean ticketCommandVerification(String[] splittedCommand) {
         switch (splittedCommand[1]) {
-            case "NEW":
+            case "NEW", "PRINT":
                 return splittedCommand.length == 2;
             case "ADD":
                 if(splittedCommand.length != 4) { return false; }
@@ -101,8 +127,6 @@ public class InputValidator {
             case "REMOVE":
                 if(splittedCommand.length != 3) { return false; }
                 return isInteger(splittedCommand[2]);
-            case "PRINT":
-                return splittedCommand.length == 2;
             default:
                 return false;
         }
