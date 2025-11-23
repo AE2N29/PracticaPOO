@@ -71,6 +71,9 @@ public class CashierDatabase {
     }
 
     public static void list() {
+        if (cashiersList.isEmpty()) {
+            System.out.println("ERROR: Cashiers list is empty");
+        }
         System.out.println("Cash:");
         ArrayList<Cashier> sortedList = new ArrayList<>(cashiersList);
         sortedList.sort(Comparator.comparing(Cashier::getName));    // Ordena la lista usando el nombre del cajero como criterio de comparación.
@@ -82,14 +85,45 @@ public class CashierDatabase {
     }
 
     public static void tickets(String UPMWorker) {
-        System.out.println("Tickets: ");
-        Cashier cashier = getCashierByUW(UPMWorker);
-        ArrayList<Ticket> cashierTickets = cashier.getCreatedTickets();
-        cashierTickets.sort(Comparator.comparing(Ticket::getId));
-
-        for (Ticket t: cashierTickets) {
-            System.out.println("  " + t.getId() + "->" + t.getState());
+        Cashier cashier = null;
+        for (Cashier c: cashiersList) {
+            if (c.getUPMWorkerID().equalsIgnoreCase(UPMWorker)) {
+                cashier = c;
+            }
+        }
+        if (cashier == null) {
+            System.out.println("There is no cashier with UPMWorkerID " + UPMWorker);
+        } else {
+            ArrayList<Ticket> cashierTickets = cashier.getCreatedTickets();
+            cashierTickets.sort(Comparator.comparing(Ticket::getId));
+            if (cashier.getCreatedTickets().isEmpty()) {
+                System.out.println("ERROR: Cashier with UPMWorkerID " + UPMWorker + " doesn't have any ticket created yet");
+            } else {
+                System.out.println("Tickets: ");
+                for (Ticket t: cashierTickets) {
+                    System.out.println("  " + t.getId() + "->" + t.getState());
+                }
+            }
         }
         System.out.println("cash tickets: ok");
+    }
+
+    public static String generateCashId() {
+        String UPMWorkerID;
+        boolean exists;
+        do {
+            UPMWorkerID = "UW";
+            for (int i = 0; i < 7; i++) {
+                int random = (int) (Math.random() * 10);
+                UPMWorkerID += random;
+            }
+            exists = false;
+            for (Cashier c : cashiersList) {
+                if (c.getUPMWorkerID().equals(UPMWorkerID)) {
+                    exists = true;
+                }
+            }
+        } while (exists);
+        return UPMWorkerID;
     }
 }

@@ -30,7 +30,7 @@ public class ClientDatabase {
         }
         Cashier associatedCashier = CashierDatabase.getCashierByUW(cashID);
         if (associatedCashier == null) {
-            System.out.println("Error: Cashier with ID " + cashID + " not found");
+            System.out.println("ERROR: Cashier with ID " + cashID + " not found");
             return;
         }
         Client newClient = new Client(name, dni, email, associatedCashier);

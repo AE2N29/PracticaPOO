@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo;
 
+import java.util.ArrayList;
+
 public class InputValidator {
     public static boolean validCommand(String command) {
         String upperCaseCommand = command.toUpperCase();
@@ -16,7 +18,7 @@ public class InputValidator {
                 return true;
             case "CLIENT":
                 return clientCommandVerification(splittedCommand);
-            case "CASHIER":
+            case "CASH":
                 return cashierCommandVerification(splittedCommand);
             default:
                 return false;
@@ -24,22 +26,31 @@ public class InputValidator {
     }
 
     private static boolean cashierCommandVerification(String[] splittedCommand) {
-        switch (splittedCommand[1]) {
+        switch (splittedCommand[1].toUpperCase()) {
             case "ADD":
-                if (splittedCommand.length == 5) {
-                    String commandStringed = String.join(" ", splittedCommand);
-                    String name = commandStringed.substring(commandStringed.indexOf('"') + 1, commandStringed.lastIndexOf('"'));
-                    String email = commandStringed.substring(commandStringed.lastIndexOf('"') + 1).trim();
-                    return isInteger(splittedCommand[2]) && isName(name) && isEmail(email);
-                } else if (splittedCommand.length == 4) {
-                    String stringedCommand = String.join(" ", splittedCommand);
-                    String name = stringedCommand.substring(stringedCommand.indexOf('"') + 1, stringedCommand.lastIndexOf('"'));
-                    String email = stringedCommand.substring(stringedCommand.lastIndexOf('"') + 1).trim();
-                    return isName(name) && isEmail(email);
-                } else {return false;}
+                ArrayList<String> cmndWithNameIncluded = new ArrayList<>();
+                String stringedCommand = String.join(" ", splittedCommand);
+                int firstQuote = stringedCommand.indexOf('"');
+                int lastQuote = stringedCommand.lastIndexOf('"');
+                if (firstQuote == -1 || lastQuote == -1 || firstQuote == lastQuote) return false;
+                String name = stringedCommand.substring(firstQuote + 1, lastQuote).trim();
+                String email = stringedCommand.substring(lastQuote + 1).trim();
+                cmndWithNameIncluded.add("CASH");
+                cmndWithNameIncluded.add("ADD");
+                String possibleID = splittedCommand[2];
+                if (isCashID(possibleID)) {
+                    cmndWithNameIncluded.add(possibleID);
+                }
+                cmndWithNameIncluded.add(name);
+                cmndWithNameIncluded.add(email);
+                if (cmndWithNameIncluded.size() == 5) {
+                    return isCashID(cmndWithNameIncluded.get(2)) && isName(cmndWithNameIncluded.get(3)) && isEmail(cmndWithNameIncluded.get(4));
+                } else if (cmndWithNameIncluded.size() == 4) {
+                    return isName(cmndWithNameIncluded.get(2)) && isEmail(cmndWithNameIncluded.get(3));
+                }
             case "REMOVE", "TICKETS":
-                if (splittedCommand.length != 3) {return false;}
-                return isInteger(splittedCommand[2]);
+                if (splittedCommand.length != 3) return false;
+                return isCashID(splittedCommand[2]);
             case "LIST":
                 return true;
             default:
@@ -184,7 +195,6 @@ public class InputValidator {
     public static boolean isCashID(String cashId) {
         if (cashId == null) {return false;}
         if (cashId.length() != 9) {return false;}
-
         return cashId.startsWith("UW") && isInteger(cashId.substring(2));
     }
 }

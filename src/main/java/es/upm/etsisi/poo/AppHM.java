@@ -46,6 +46,9 @@ public class AppHM {
                     case "CLIENT":
                         clientCommands(commandParts);
                         break;
+                    case "CASH":
+                        cashierCommands(commandParts);
+                        break;
                     default:
                         System.out.println("ERROR: Not a valid command");
                 }
@@ -156,6 +159,45 @@ public class AppHM {
         }
     }
 
+    public void cashierCommands(String[] commands) {
+        switch (commands[1].toUpperCase()) {
+            case "ADD":
+                String[] correctCommand = new String[commands.length];
+                String correctCmdStringed = String.join(" ", commands);
+                String name = correctCmdStringed.substring(correctCmdStringed.indexOf('"') + 1, correctCmdStringed.lastIndexOf('"'));
+                correctCommand[0] = "CLIENT";
+                correctCommand[1] = "ADD";
+                if (InputValidator.isCashID(commands[2])) {
+                    correctCommand[2] = commands[2];
+                    correctCommand[3] = name;
+                    correctCommand[4] = commands[commands.length-1];
+                } else {
+                    correctCommand[2] = name;
+                    correctCommand[3] = commands[commands.length-1];
+                }
+                if (countNotNull(correctCommand) == 5) {
+                    CashierDatabase.add(correctCommand[2], name, correctCommand[4]);
+                } else if (countNotNull(correctCommand) == 4) {
+                    CashierDatabase.add(correctCommand[2], correctCommand[3]);
+                } else {
+                    System.out.println("ERROR: Invalid input");
+                }
+                break;
+            case "REMOVE":
+                CashierDatabase.remove(commands[2]);
+                break;
+            case "LIST":
+                CashierDatabase.list();
+                break;
+            case "TICKETS":
+                CashierDatabase.tickets(commands[2]);
+                break;
+            default:
+                System.out.println("ERROR: Not valid command");
+                break;
+        }
+    }
+
     public void clientCommands(String[] commands) {
         switch (commands[1].toUpperCase()) {
             case "ADD":
@@ -214,5 +256,15 @@ public class AppHM {
             System.out.println("ERROR: Info not found");
             return "exit";
         }
+    }
+
+    private int countNotNull(String[] s) {
+        int c=0;
+        for (String str: s) {
+            if (str != null) {
+                c++;
+            }
+        }
+        return c;
     }
 }
