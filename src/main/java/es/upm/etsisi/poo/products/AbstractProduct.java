@@ -9,7 +9,7 @@ public abstract class AbstractProduct {
     protected String name;
     protected String id;
 
-    public AbstractProduct(String name, String id) {
+    public AbstractProduct(String id, String name) {
         this.name = name;
         this.id = id;
     }

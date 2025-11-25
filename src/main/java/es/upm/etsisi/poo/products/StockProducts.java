@@ -7,7 +7,7 @@ public class StockProducts extends AbstractProduct {
     protected double price;
 
 
-    public StockProducts(String name, String id, Category category, double price) {
+    public StockProducts(String id, String name, Category category, double price) {
         super(id, name);
         this.category = category;
         this.price = price;
