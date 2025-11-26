@@ -3,6 +3,8 @@ package es.upm.etsisi.poo;
 import java.util.ArrayList;
 
 public class InputValidator {
+    private static final String LETRAS_DNI = "TRWAGMYFPDXBNJZSQVHLCKE";
+
     public static boolean validCommand(String command) {
         String upperCaseCommand = command.toUpperCase();
         if("HELP".equals(upperCaseCommand) || "EXIT".equals(upperCaseCommand)) { return true; }
