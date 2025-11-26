@@ -143,7 +143,37 @@ public class AppHM {
     public void ticketCommands(String[] commands) {
         switch (commands[1].toUpperCase()) {
             case "NEW":
-                ticket.resetTicket();
+                String inputCashId, inputUserId, inputTicketId = null;
+                if (commands.length == 4) {
+                    inputCashId = commands[2];
+                    inputUserId = commands[3];
+                } else {
+                    inputTicketId = commands[2];
+                    inputCashId = commands[3];
+                    inputUserId = commands[4];
+                }
+                Cashier cashier = CashierDatabase.getCashierByUW(inputCashId);
+                Client client = ClientDatabase.getClientByDNI(inputUserId);
+                if (cashier == null) {
+                    System.out.println("ERROR: Cashier with ID " + inputCashId + " not found");
+                    return;
+                }
+                if (client == null) {
+                    System.out.println("ERROR: Client with DNI " + inputUserId + " not found");
+                    return;
+                }
+                Ticket newTicket;
+                if (inputTicketId == null) { // cuando no pasan el id del ticket como parametro
+                    newTicket = new Ticket();
+                } else if (Ticket.isIdRegistered(inputTicketId)) { // cuando pasan el id del ticket como parametro
+                    System.out.println("ERROR: Ticket ID " + inputTicketId + " already exists.");
+                    return;
+                } else {
+                    newTicket = new Ticket(inputTicketId);
+                }
+                cashier.addTicket(newTicket);
+                client.addTicket(newTicket);
+                System.out.println("ticket new: ok");
                 break;
             case "ADD":
                 ticket.add(Integer.parseInt(commands[2]), Integer.parseInt(commands[3]));

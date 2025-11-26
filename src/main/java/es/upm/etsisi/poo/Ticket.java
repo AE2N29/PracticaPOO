@@ -10,11 +10,13 @@ public class Ticket {
     private final ArrayList<Product> productList;
     private TicketState state;
     private String id;
+    private static final ArrayList<String> usedIds = new ArrayList<>(); // Guardamos los ids usados para no repetirlos
 
     public Ticket(String id) {
         this.productList = new ArrayList<>();
         this.state = TicketState.EMPTY;
         this.id = id;
+        usedIds.add(id);
     }
 
     public Ticket() {
@@ -27,7 +29,11 @@ public class Ticket {
         LocalDateTime now = LocalDateTime.now();
         String formattedDate = now.format(formatter);
         int random5DigitsNum = (int) (Math.random() * 90000) + 10000;
-        return (formattedDate + random5DigitsNum);
+        if(!isIdRegistered(formattedDate + random5DigitsNum)){
+            return (formattedDate + random5DigitsNum);
+        } else {
+            return createTicketId();
+        }
     }
 
     private String updateTicketId() { // actualiza el id cuando el ticket se cierra
@@ -38,6 +44,7 @@ public class Ticket {
         return (this.id + formattedDate);
     }
 
+    // Este metodo ya no se utiliza en la segunda entrega, el new ticket ya no resetea el ticket. No lo borro por si lo usamos en un futuro
     public void resetTicket() {//  uso de ArrayList.clear para resetear el ticket
         if (state.equals(TicketState.CLOSED)) {
             System.out.println("ERROR: Ticket is already closed");
@@ -178,5 +185,9 @@ public class Ticket {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public static boolean isIdRegistered(String id) {
+        return usedIds.contains(id);
     }
 }
