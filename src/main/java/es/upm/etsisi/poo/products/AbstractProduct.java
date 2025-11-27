@@ -1,5 +1,4 @@
 package es.upm.etsisi.poo.products;
-import es.upm.etsisi.poo.Product;
 import es.upm.etsisi.poo.ProductHM;
 
 import java.util.Map;
@@ -28,20 +27,17 @@ public abstract class AbstractProduct {
     protected abstract double calculatePrice();
     protected abstract boolean availability();
 
-    private static String generateID() { // crea IDs con formato: PRnnnnnnn  (n = numeros)
-        Map<Integer, Product> map = ProductHM.getList();
+    protected static String generateID() { // crea IDs con formato: PRnnnnnnn  (n = numeros)
+        Map<String, AbstractProduct> map = ProductHM.getList();
         Random random = new Random();
         String newID = "";
-        boolean exist = false;
-        while (!exist)
+        boolean exist = true;
+        while (exist)
         {
             int randomNumber = random.nextInt(10000000);
             String filler = String.format("%07d", randomNumber);
             String newId = "PR"+ filler;
-            if(map.containsKey(newId))
-            {
-                exist = true;
-            }
+            exist = map.containsKey(newId);
         }
         return newID;
     }

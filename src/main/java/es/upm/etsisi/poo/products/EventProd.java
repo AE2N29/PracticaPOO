@@ -1,5 +1,4 @@
 package es.upm.etsisi.poo.products;
-
 import java.time.LocalDateTime;
 
 public abstract class EventProd extends AbstractProduct {
@@ -8,11 +7,11 @@ public abstract class EventProd extends AbstractProduct {
     protected LocalDateTime expirationDate;
     protected double pricePerPerson;
 
-    public EventProd(String id, String name, LocalDateTime expirationDate, double pricePerPerson,  int MAX_PEOPLE, int personNumber) {
+    public EventProd(String id, String name, LocalDateTime expirationDate, double pricePerPerson, int personNumber) {
         super(id, name);
 
         if(personNumber > MAX_PEOPLE) {
-            throw new IllegalArgumentException("personNumber > 100");
+            throw new IllegalArgumentException("personNumber > " + MAX_PEOPLE);
         }
 
         this.expirationDate = expirationDate;
