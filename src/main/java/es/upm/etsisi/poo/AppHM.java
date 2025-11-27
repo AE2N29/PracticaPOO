@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo;
 
+import es.upm.etsisi.poo.products.AbstractProduct;
+
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -102,19 +104,40 @@ public class AppHM {
     }
 
     public static String[] processProdAdd(String command) {
-        String[] commandSplitted = command.split(" ");
-        String id = commandSplitted[2];
         String name = command.substring(command.indexOf('"') + 1, command.lastIndexOf('"'));
-        String restOfCommand = command.substring(command.lastIndexOf('"')+1).trim();
-        String[] partsRest = restOfCommand.split(" ");
-        String[] array = new String[6];
-        array[0]= "prod";
-        array[1]= "add";
-        array[2]= id;
-        array[3]= name;
-        array[4] = partsRest[0];
-        array[5] = partsRest[1];
-        return array;
+        String beforeName = command.substring(0, command.indexOf('"')).trim();
+        String afterName = command.substring(command.lastIndexOf('"') + 1).trim();
+        String[] beforeNameParts = beforeName.split(" ");
+        String[] afterNameParts = afterName.split(" ");
+        boolean hasId = (beforeNameParts.length == 3);
+        boolean hasMaxPers = (afterNameParts.length == 3);
+        int size = 0;
+        if (!hasId && !hasMaxPers) {
+            size = 6;
+        }
+        if(hasId && hasMaxPers) {
+            size = 7;
+        }
+        if(!hasId && hasMaxPers)
+        {
+            size = 7;
+        }
+        if(hasId && !hasMaxPers){
+            size = 6;
+        }
+
+        String[] result = new String[size];
+        result[0] = "Prodd";
+        result[1] = "add";
+        if(hasId){result[2] = beforeNameParts[2];}
+        else{result[2] = "GENERATE";
+        }
+        result[3] = name;
+        result[4] = afterNameParts[0]; // category
+        result[5] = afterNameParts[1]; //price
+
+        if(hasMaxPers){result[6] = afterNameParts[2];} //maxPers si tiene
+        return result;
     }
 
     public void prodUpdateManage(int id, String CategoryToChange, String change) {
