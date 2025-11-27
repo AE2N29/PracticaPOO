@@ -3,6 +3,8 @@ package es.upm.etsisi.poo;
 import java.util.ArrayList;
 
 public class InputValidator {
+    private static final String LETRAS_DNI = "TRWAGMYFPDXBNJZSQVHLCKE";
+
     public static boolean validCommand(String command) {
         String upperCaseCommand = command.toUpperCase();
         if("HELP".equals(upperCaseCommand) || "EXIT".equals(upperCaseCommand)) { return true; }
@@ -189,11 +191,41 @@ public class InputValidator {
     }
 
     public static boolean isDNI(String dni) {
-        if (dni == null) {return false;}
-        if (dni.length() != 9) {return false;}
-        String numeros = dni.substring(0, 8);
+        if (dni == null || dni.length() != 9) { return false; }
+        char letter = dni.charAt(8);
+        if (!Character.isLetter(letter)) { return false; }
 
-        return isInteger(numeros) && Character.isLetter(dni.charAt(8));
+        String numbers = dni.substring(0, 8);
+        char firstChar = numbers.charAt(0);
+
+        if (firstChar == 'X' || firstChar == 'Y' || firstChar == 'Z') { // Si es NIE:sustituimos la letra inicial por su número correspondiente
+            char sustitute = '0'; // Lo inicializamos al primer valor para evitar errores
+
+            switch(firstChar) {
+                case 'X':
+                    sustitute = '0';
+                    break;
+                case 'Y':
+                    sustitute = '1';
+                    break;
+                case 'Z':
+                    sustitute = '2';
+                    break;
+            }
+
+            numbers = sustitute + numbers.substring(1);
+
+        } else if(Character.isDigit(firstChar)){
+            // Dejamos pasar a la validacion al posible DNI
+        } else {
+          return false;
+        }
+
+        if(!isInteger(numbers)){ return false; }
+        int number = Integer.parseInt(numbers);
+        int rest = number % 23;
+
+        return LETRAS_DNI.charAt(rest) == letter;  // Se verifica si la letra final es la correspondiente (si el DNI/NIE es valido)
     }
 
     public static boolean isEmail(String email) {

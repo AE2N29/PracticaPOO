@@ -14,6 +14,10 @@ public class ProductHM {
         return list.get(id);
     }
 
+    public static Map<Integer, Product> getList()
+    {
+        return list;
+    }
 
     public static void add(int id, Product product) {   //Si el prod no existe y se respeta la max cantidad con HashMap.put lo agrega
 
