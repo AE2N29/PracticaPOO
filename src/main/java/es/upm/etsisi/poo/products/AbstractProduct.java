@@ -27,7 +27,7 @@ public abstract class AbstractProduct {
     protected abstract double calculatePrice();
     protected abstract boolean availability();
 
-    protected static String generateID() { // crea IDs con formato: PRnnnnnnn  (n = numeros)
+    public static String generateID() { // crea IDs con formato: PRnnnnnnn  (n = numeros)
         Map<String, AbstractProduct> map = ProductHM.getList();
         Random random = new Random();
         String newID = "";

@@ -2,7 +2,6 @@ package es.upm.etsisi.poo;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
@@ -65,12 +64,7 @@ public class InputValidator {
         }
     }
 
-    public static boolean validProductID(String id) {
-        if(id == null || id.trim().isEmpty()){return false;}
-        if(id.toUpperCase() == "GENERATE"){return true;}
-        String pattern = "^[A-Z]{2}\\d{7}$";  //admite formatos con dos letras mayusculas y que termine por una secuencia de 7 numeros
-        return id.matches(pattern);
-    }
+
     //prod add [<id>] "<name>" <category> <price> [<maxPers>]
             // si tiene <maxPers> se considerara que el producto es personalizable)
     private static boolean validateProdAdd(String[] splittedCommand) {
@@ -104,8 +98,9 @@ public class InputValidator {
         catch (NoSuchElementException | NumberFormatException e){return false;}
     }
 
-    private static boolean validateProdAddFood(String[] splittedCommand) {
+    private static boolean validateProdAddEvent(String[] splittedCommand) {
         //prod addFood [<id>] "< name>" <price> <expiration: yyyy-MM-dd> <max_people>
+        //prod addMeeting [<id>] "<name>" <price> < expiration: yyyy-MM-dd> <max_people>
         if(splittedCommand.length < 6 || splittedCommand.length > 7){return false;}
         String fullCommand = String.join(" ", splittedCommand);
         if(fullCommand.split("\"").length < 3){return false;}
@@ -150,40 +145,43 @@ public class InputValidator {
             }catch (Exception e){return false;}
     }
 
+    private static boolean validateProdUpdate(String[] splittedCommand) {
+
+        if (splittedCommand.length < 4) {
+            return false;
+        }
+        if (!isInteger(splittedCommand[2])) { return false; }
+        String fullUpdate = String.join(" ", splittedCommand);
+        switch (splittedCommand[3]) {
+            case "NAME": {
+                //  Acepta nombres con espacios cuando están entre comillas: prod update <id> NAME "nuevo nombre"
+                int first = fullUpdate.indexOf('"');
+                int last = fullUpdate.lastIndexOf('"');
+                if (first == -1 || last <= first) { return false; } //tira -1 cuando no lo encuentra
+                String nameValue = fullUpdate.substring(first + 1, last);
+                return isName(nameValue);
+            }
+            case "PRICE":
+                if (splittedCommand.length != 5) { return false; }
+                return isDouble(splittedCommand[4]);
+            case "CATEGORY":
+                if (splittedCommand.length != 5) { return false; }
+                return isCategory(splittedCommand[4]);
+            default:
+                return false;
+        }
+    }
+
     private static boolean prodCommandVerification(String[] splittedCommand) {
         switch (splittedCommand[1]) {
             case "ADD":
                 validateProdAdd(splittedCommand);
             case "ADDFOOD":
-                validateProdAddFood(splittedCommand);
+                validateProdAddEvent(splittedCommand);
             case "ADDMEETING":
-
+                validateProdAddEvent(splittedCommand);
             case "UPDATE":
-                if (splittedCommand.length < 4) {
-                    return false;
-                }
-                if (!isInteger(splittedCommand[2])) { return false; }
-                String fullUpdate = String.join(" ", splittedCommand);
-                switch (splittedCommand[3]) {
-                    case "NAME": {
-                        //  Acepta nombres con espacios cuando están entre comillas: prod update <id> NAME "nuevo nombre"
-                        int first = fullUpdate.indexOf('"');
-                        int last = fullUpdate.lastIndexOf('"');
-                        if (first == -1 || last <= first) { return false; } //tira -1 cuando no lo encuentra
-                        String nameValue = fullUpdate.substring(first + 1, last);
-                        return isName(nameValue);
-                    }
-                    case "PRICE":
-                        if (splittedCommand.length != 5) { return false; }
-                        return isDouble(splittedCommand[4]);
-                    case "CATEGORY":
-                        if (splittedCommand.length != 5) { return false; }
-                        return isCategory(splittedCommand[4]);
-                    default:
-                        return false;
-                }
-
-
+                validateProdUpdate(splittedCommand);
             case "REMOVE":
                 if (splittedCommand.length != 3) { return false; }
                 return isInteger(splittedCommand[2]);
@@ -233,7 +231,6 @@ public class InputValidator {
         }
     }
 
-
     public static boolean isInteger(String possibleInteger) {
         try {
             Integer.parseInt(possibleInteger);
@@ -258,7 +255,6 @@ public class InputValidator {
             return false;
         }
     }
-
     public static boolean isName(String possibleName) { // false en casos como: isName(null), isName("   "), is name ("")
         if(possibleName == null) {
             return false;
@@ -269,7 +265,6 @@ public class InputValidator {
         }
         return !trimmed.isEmpty();
     }
-
     public static boolean isDNI(String dni) {
         if (dni == null || dni.length() != 9) { return false; }
         char letter = dni.charAt(8);
@@ -307,23 +302,25 @@ public class InputValidator {
 
         return LETRAS_DNI.charAt(rest) == letter;  // Se verifica si la letra final es la correspondiente (si el DNI/NIE es valido)
     }
-
     public static boolean isEmail(String email) {
         return email.toLowerCase().endsWith("@upm.es");   // lo que viene despues de la arroba debe estar siempre en minusculas?
     }
-
     public static boolean isCashID(String cashId) {
         if (cashId == null) {return false;}
         if (cashId.length() != 9) {return false;}
         return cashId.startsWith("UW") && isInteger(cashId.substring(2));
     }
-
-    public static boolean isDate(String date)
-    {
+    public static boolean isDate(String date) {
         if(date == null){return false;}
         try{
             LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             return true;
         }catch (DateTimeException e){return false;}
+    }
+    public static boolean validProductID(String id) {
+        if(id == null || id.trim().isEmpty()){return false;}
+        if(id.toUpperCase() == "GENERATE"){return true;}
+        String pattern = "^[A-Z]{2}\\d{7}$";  //admite formatos con dos letras mayusculas y que termine por una secuencia de 7 numeros
+        return id.matches(pattern);
     }
 }
