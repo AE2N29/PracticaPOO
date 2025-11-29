@@ -4,8 +4,8 @@ import es.upm.etsisi.poo.persistance.ProductCatalog;
 import java.util.Map;
 
 public abstract class AbstractProduct {
-    protected String name;
-    protected String id;
+    private String name;
+    private String id;
 
     public AbstractProduct(String id, String name) {
         this.name = name;
