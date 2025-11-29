@@ -85,7 +85,7 @@ public class Ticket {
         if (state.equals(TicketState.CLOSED)) {
             System.out.println("ERROR: Ticket is already closed");
         } else {
-            Product prod = ProductCatalog.getProduct(prodID);
+            Product prod = ProductCatalog.getProductD(prodID);
             if (prod == null) {  // si no encuentra el producto con este id en la base de datos
                 System.out.println("ERROR: There isn't any product with " + prodID + " as ID");
                 return;
