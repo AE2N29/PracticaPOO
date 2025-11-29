@@ -149,7 +149,7 @@ public class StoreApp {
                 if(beforeNamePartsMeeting[2] == "GENERATE") {
                     EventMeeting product = new EventMeeting(nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
                     String idFood = product.getId();
-                    ProductHM.add(idFood,product);
+                    ProductCatalog.add(idFood,product);
                 }
                 else {
                     String idFood = beforeNamePartsMeeting[2];
