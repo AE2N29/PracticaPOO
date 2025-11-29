@@ -6,7 +6,7 @@ import java.util.Map;
 
 public abstract class AbstractProduct {
     private String name;
-    private String id;
+    private final String id;
 
     public AbstractProduct(String id, String name) {
         if (name == null || name.isBlank()) {
