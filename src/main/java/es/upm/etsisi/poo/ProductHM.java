@@ -60,16 +60,15 @@ public class ProductHM {
     }
 
     public static void list() {
-
         if (list.isEmpty()) {
             System.out.println("There are no products in the list");
             return;
         }
         System.out.println("Catalog:");
-
-        for (Map.Entry<String, AbstractProduct> couple : list.entrySet()) {  //  bucle que itera sobre cada pareja de datos (id, product) y los llama couple
-            System.out.println(couple.getValue());
+        java.util.ArrayList<AbstractProduct> sortedList = new java.util.ArrayList<>(list.values());
+        sortedList.sort(java.util.Comparator.comparing(AbstractProduct::getId));
+        for (AbstractProduct product : sortedList) {
+            System.out.println(product);
         }
         System.out.println("prod list: ok");
     }
-}
