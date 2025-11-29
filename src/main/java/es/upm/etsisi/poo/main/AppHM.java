@@ -8,6 +8,8 @@ import es.upm.etsisi.poo.persistance.ClientDatabase;
 import es.upm.etsisi.poo.persistance.ProductCatalog;
 import es.upm.etsisi.poo.utils.InputValidator;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -77,18 +79,83 @@ public class AppHM {
             case "ADD":
                 String fullCommand = String.join(" ", commands); // conseguimos el comando original(String)
                 String[] commandPartsAdd = processProdAdd(fullCommand);
-                int id1 = Integer.parseInt(commandPartsAdd[2]);
+                String id1 = (commandPartsAdd[2]);
+                if(id1.equals("GENERATE")) {
+                    id1 = AbstractProduct.generateID();
+                }
                 String name = commandPartsAdd[3];
                 Category category = Category.valueOf(commandPartsAdd[4].toUpperCase());
                 double price = Double.parseDouble(commandPartsAdd[5]);
-                Product product = new Product(id1, name, category, price);
-                ProductCatalog.add(id1, product);
+                if(commandPartsAdd.length == 7) {  // si el comando tiene length 7, es del tipo personalizable
+                    int maxPers =  Integer.parseInt(commandPartsAdd[6]);
+                    WrapProduct product = new WrapProduct(id1, name, category, price, maxPers);
+                    ProductHM.add(id1, product);
+                }
+                else {
+                    StockProducts product = new StockProducts(id1, name, category, price);
+                    ProductHM.add(id1, product);
+                }
                 break;
+
+            case "ADDFOOD":
+
+                String commandsStringFood = String.join(" ", commands);
+                String nameFood = commandsStringFood.substring(commandsStringFood.indexOf('"') + 1, commandsStringFood.lastIndexOf('"'));
+                String beforeNameFood = commandsStringFood.substring(0, commandsStringFood.indexOf('"')).trim();
+                String afterName = commandsStringFood.substring(commandsStringFood.lastIndexOf('"') + 1).trim();
+                String[] beforeNameParts = beforeNameFood.split(" ");
+                String[] afterNameParts = afterName.split(" ");
+                String dateStringFood = afterNameParts[1];
+
+                LocalDate dateFood = LocalDate.parse(dateStringFood);
+                LocalDateTime eventTimeFood = dateFood.atStartOfDay();
+                double priceFood = Double.parseDouble(afterNameParts[0]);
+                int personNumberFood = Integer.parseInt(afterNameParts[2]);
+
+                if(beforeNameParts[2] == "GENERATE") {
+                    EventFood product = new EventFood(nameFood,eventTimeFood,priceFood,personNumberFood);
+                    String idFood = product.getId();
+                    ProductHM.add(idFood,product);
+                }
+                else {
+                    String idFood = beforeNameParts[2];
+                    EventFood product = new EventFood(idFood,nameFood,eventTimeFood,priceFood,personNumberFood);
+                    ProductHM.add(idFood,product);
+                }
+                break;
+
+            case "ADDMEETING":
+
+                String commandsStringMeeting = String.join(" ", commands);
+                String nameMeeting = commandsStringMeeting.substring(commandsStringMeeting.indexOf('"') + 1, commandsStringMeeting.lastIndexOf('"'));
+                String beforeName = commandsStringMeeting.substring(0, commandsStringMeeting.indexOf('"')).trim();
+                String afterNameMeeting = commandsStringMeeting.substring(commandsStringMeeting.lastIndexOf('"') + 1).trim();
+                String[] beforeNamePartsMeeting = beforeName.split(" ");
+                String[] afterNamePartsMeeting = afterNameMeeting.split(" ");
+                String dateStringMeeting = afterNamePartsMeeting[1];
+
+                LocalDate dateMeeting = LocalDate.parse(dateStringMeeting);
+                LocalDateTime eventTimeMeeting = dateMeeting.atStartOfDay();
+                double priceMeeting = Double.parseDouble(afterNamePartsMeeting[0]);
+                int personNumberMeeting = Integer.parseInt(afterNamePartsMeeting[2]);
+
+                if(beforeNamePartsMeeting[2] == "GENERATE") {
+                    EventReunion product = new EventReunion(nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
+                    String idFood = product.getId();
+                    ProductHM.add(idFood,product);
+                }
+                else {
+                    String idFood = beforeNamePartsMeeting[2];
+                    EventReunion product = new EventReunion(idFood,nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
+                    ProductHM.add(idFood,product);
+                }
+                break;
+
             case "LIST":
-                ProductCatalog.list();
+                ProductHM.list();
                 break;
             case "UPDATE":
-                int id2 = Integer.parseInt(commands[2]);
+                String id2 = (commands[2]);
                 String categoryToChange = commands[3].toUpperCase();
                 String change;
                 if ("NAME".equals(categoryToChange)) {
@@ -100,8 +167,8 @@ public class AppHM {
                 prodUpdateManage(id2, categoryToChange, change);
                 break;
             case "REMOVE":
-                int id3 = Integer.parseInt(commands[2]);
-                ProductCatalog.remove(id3);
+                String id3 =(commands[2]);
+                ProductHM.remove(id3);
                 break;
             default:
                 System.out.println("ERROR: Invalid input");
@@ -146,8 +213,8 @@ public class AppHM {
         return result;
     }
 
-    public void prodUpdateManage(int id, String CategoryToChange, String change) {
-        Product product = ProductCatalog.getProduct(id);
+    public void prodUpdateManage(String id, String CategoryToChange, String change) {
+        AbstractProduct product = ProductHM.getProduct(id);
         if (product == null) {
             System.out.println("ERROR: Product with id " + id + " does not exist!");
             return;
@@ -155,18 +222,49 @@ public class AppHM {
         switch (CategoryToChange) {
             case "NAME":
                 product.setName(change);
+                ProductHM.update(id, product);
+                System.out.println(product);
+                System.out.println("product update: ok");
                 break;
             case "PRICE":
-                product.setPrice(Double.parseDouble(change));
+                try{
+                    double newPrice = Double.parseDouble(change);
+                    if(newPrice <= 0) {
+                        System.out.println("ERROR: Invalid input");
+                        return;
+                    }
+                    if(product.setPrice(newPrice)) { //setPrice booleanos, da positivo si la clase permite el set(tiene precio)
+                        ProductHM.update(id, product);
+                        System.out.println(product);
+                        System.out.println("product update: ok");
+                    }else{
+                        System.out.println("ERROR: Invalid input");
+                    }
+                }catch(NumberFormatException e){
+                    System.out.println("ERROR: Invalid input");
+                }
                 break;
             case "CATEGORY":
-                product.setCategory(Category.valueOf(change.toUpperCase()));
+                if(product.hasCategory()){   //No todos los productos guardables tiene Category ( por ello este if)
+                    try {
+                        Category newCategory = Category.valueOf(change.toUpperCase());
+                        if(product.setCategory(newCategory)) {
+                            ProductHM.update(id, product);
+                            System.out.println(product);
+                            System.out.println("product update: ok");
+                        }
+                    }catch(IllegalArgumentException e){
+                        System.out.println("ERROR: Invalid input");
+                    }
+                }else{
+                    System.out.println("ERROR: Invalid input");
+                }
                 break;
             default:
                 System.out.println("ERROR: Invalid input");
                 return;
         }
-        ProductCatalog.update(id, product);
+        ProductHM.update(id, product);
     }
 
     public void ticketCommands(String[] commands) {
