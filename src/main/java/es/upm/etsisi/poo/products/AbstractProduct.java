@@ -1,6 +1,6 @@
 package es.upm.etsisi.poo.products;
+import es.upm.etsisi.poo.Category;
 import es.upm.etsisi.poo.ProductHM;
-
 import java.util.Map;
 import java.util.Random;
 
@@ -17,11 +17,25 @@ public abstract class AbstractProduct {
         this.id = generateID();
     }
 
+    public boolean setPrice(double price) {
+        return false;
+    }
+    public boolean setCategory(Category category) {
+        return false;
+    }
+    public boolean hasCategory() {
+        return false;
+    }
+
     public String getName() {
         return name;
     }
     public String getId() {
         return id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     protected abstract double calculatePrice();

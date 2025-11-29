@@ -25,6 +25,15 @@ public abstract class EventProd extends AbstractProduct {
     public double getPricePerPerson() {
         return pricePerPerson;
     }
+
+    @Override
+    public boolean setPrice(double price) {
+        if (price > 0) {
+            this.pricePerPerson = price;
+            return true;
+        }
+        return false;
+    }
     public int getPersonNumber() {
         return personNumber;
     }
