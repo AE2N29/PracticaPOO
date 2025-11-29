@@ -2,7 +2,6 @@ package es.upm.etsisi.poo.products;
 import es.upm.etsisi.poo.ProductHM;
 
 import java.util.Map;
-import java.util.Random;
 
 public abstract class AbstractProduct {
     protected String name;
@@ -27,18 +26,14 @@ public abstract class AbstractProduct {
     protected abstract double calculatePrice();
     protected abstract boolean availability();
 
-    protected static String generateID() { // crea IDs con formato: PRnnnnnnn  (n = numeros)
+    protected static String generateID() {
         Map<String, AbstractProduct> map = ProductHM.getList();
-        Random random = new Random();
-        String newID = "";
-        boolean exist = true;
-        while (exist)
-        {
-            int randomNumber = random.nextInt(10000000);
-            String filler = String.format("%07d", randomNumber);
-            String newId = "PR"+ filler;
-            exist = map.containsKey(newId);
-        }
+        String newID;
+        do {
+            int randomNumber = (int) (Math.random() * 10000000);
+            newID = String.format("PR%07d", randomNumber);
+        } while (map.containsKey(newID));
+
         return newID;
     }
 }
