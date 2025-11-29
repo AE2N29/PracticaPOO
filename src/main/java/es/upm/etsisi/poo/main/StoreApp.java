@@ -2,10 +2,10 @@ package es.upm.etsisi.poo.main;
 
 import es.upm.etsisi.poo.model.products.AbstractProduct;
 import es.upm.etsisi.poo.model.products.Category;
-import es.upm.etsisi.poo.model.products.StockProducts;
-import es.upm.etsisi.poo.model.products.WrapProduct;
+import es.upm.etsisi.poo.model.products.StockProduct;
+import es.upm.etsisi.poo.model.products.PersonalizedProduct;
 import es.upm.etsisi.poo.model.products.EventFood;
-import es.upm.etsisi.poo.model.products.EventReunion;
+import es.upm.etsisi.poo.model.products.EventMeeting;
 
 import es.upm.etsisi.poo.model.sales.Ticket;
 
@@ -95,11 +95,11 @@ public class StoreApp {
                 double price = Double.parseDouble(commandPartsAdd[5]);
                 if(commandPartsAdd.length == 7) {  // si el comando tiene length 7, es del tipo personalizable
                     int maxPers =  Integer.parseInt(commandPartsAdd[6]);
-                    WrapProduct product = new WrapProduct(id1, name, category, price, maxPers);
+                    PersonalizedProduct product = new PersonalizedProduct(id1, name, category, price, maxPers);
                     ProductCatalog.add(id1, product);
                 }
                 else {
-                    StockProducts product = new StockProducts(id1, name, category, price);
+                    StockProduct product = new StockProduct(id1, name, category, price);
                     ProductCatalog.add(id1, product);
                 }
                 break;
@@ -147,13 +147,13 @@ public class StoreApp {
                 int personNumberMeeting = Integer.parseInt(afterNamePartsMeeting[2]);
 
                 if(beforeNamePartsMeeting[2] == "GENERATE") {
-                    EventReunion product = new EventReunion(nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
+                    EventMeeting product = new EventMeeting(nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
                     String idFood = product.getId();
                     ProductHM.add(idFood,product);
                 }
                 else {
                     String idFood = beforeNamePartsMeeting[2];
-                    EventReunion product = new EventReunion(idFood,nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
+                    EventMeeting product = new EventMeeting(idFood,nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
                     ProductCatalog.add(idFood,product);
                 }
                 break;

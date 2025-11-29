@@ -1,17 +1,17 @@
 package es.upm.etsisi.poo.model.products;
 
-public class StockProducts extends AbstractProduct {
+public class StockProduct extends AbstractProduct {
     protected Category category;
     protected double price;
 
 
-    public StockProducts(String id, String name, Category category, double price) {
+    public StockProduct(String id, String name, Category category, double price) {
         super(id, name);
         this.category = category;
         this.price = price;
     }
 
-    public StockProducts(String name, Category category, double price) {
+    public StockProduct(String name, Category category, double price) {
         super(name);
         this.category = category;
         this.price = price;
@@ -53,7 +53,7 @@ public class StockProducts extends AbstractProduct {
                 ", price:" + String.format("%.1f", this.price) + "}";
     }
 
-    public boolean equals(StockProducts product) {
+    public boolean equals(StockProduct product) {
         return getId().equals(product.getId()) &&
                 getName().equals(product.getName()) &&
                 this.category.equals(product.getCategory()) &&

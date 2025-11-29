@@ -2,7 +2,7 @@ package es.upm.etsisi.poo.model.products;
 
 import java.time.LocalDateTime;
 
-public class EventFood extends EventProd {
+public class EventFood extends Event {
 
     private static void validateTime(LocalDateTime eventTime) {
         if(eventTime.isBefore(LocalDateTime.now().plusDays(3))) {
@@ -18,6 +18,16 @@ public class EventFood extends EventProd {
     public EventFood(String name, LocalDateTime eventTime, double pricePerPerson, int maxPeopleAllowed) {
         super(AbstractProduct.generateID(), name, eventTime, pricePerPerson, maxPeopleAllowed);
         validateTime(eventTime);
+    }
+
+    @Override
+    public String toString() {
+        // Forzamos "Food" en lugar de que salga "EventFood"
+        return "{class:Food, id:" + getId() +
+                ", name:'" + getName() + "'" +
+                ", price:" + String.format("%.1f", 0.0) +
+                ", date of Event:" + getExpirationDate().toLocalDate() +
+                ", max people allowed:" + getMaxPeopleAllowed() + "}";
     }
 
 }

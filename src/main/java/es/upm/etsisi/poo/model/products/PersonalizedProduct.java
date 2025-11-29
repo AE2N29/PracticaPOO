@@ -3,18 +3,18 @@ package es.upm.etsisi.poo.model.products;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WrapProduct extends StockProducts {
+public class PersonalizedProduct extends StockProduct {
 
     private final List<String> customTexts;
     private final int maxCustomTexts;
 
-    public WrapProduct(String id, String name, Category category, double price, int maxCustomTexts) {
+    public PersonalizedProduct(String id, String name, Category category, double price, int maxCustomTexts) {
         super(id, name, category, price);
         this.maxCustomTexts = maxCustomTexts;
         this.customTexts = new ArrayList<>();
     }
 
-    public WrapProduct(String name, Category category, double price, int maxCustomTexts) {
+    public PersonalizedProduct(String name, Category category, double price, int maxCustomTexts) {
         super(name, category, price);
         this.maxCustomTexts = maxCustomTexts;
         this.customTexts = new ArrayList<>();
