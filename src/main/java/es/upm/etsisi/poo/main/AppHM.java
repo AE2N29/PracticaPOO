@@ -147,7 +147,7 @@ public class AppHM {
     }
 
     public void prodUpdateManage(int id, String CategoryToChange, String change) {
-        Product product = ProductHM.getProduct(id);
+        Product product = ProductCatalog.getProduct(id);
         if (product == null) {
             System.out.println("ERROR: Product with id " + id + " does not exist!");
             return;
@@ -166,7 +166,7 @@ public class AppHM {
                 System.out.println("ERROR: Invalid input");
                 return;
         }
-        ProductHM.update(id, product);
+        ProductCatalog.update(id, product);
     }
 
     public void ticketCommands(String[] commands) {

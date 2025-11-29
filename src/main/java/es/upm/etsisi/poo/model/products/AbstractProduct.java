@@ -1,5 +1,5 @@
 package es.upm.etsisi.poo.model.products;
-import es.upm.etsisi.poo.ProductHM;
+import es.upm.etsisi.poo.persistance.ProductCatalog;
 
 import java.util.Map;
 
@@ -24,7 +24,7 @@ public abstract class AbstractProduct {
     }
 
     protected static String generateID() {
-        Map<String, AbstractProduct> map = ProductHM.getList();
+        Map<String, AbstractProduct> map = ProductCatalog.getList();
         String newID;
         do {
             int randomNumber = (int) (Math.random() * 10000000);
