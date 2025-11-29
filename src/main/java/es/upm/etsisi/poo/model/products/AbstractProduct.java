@@ -16,11 +16,25 @@ public abstract class AbstractProduct {
         this.id = generateID();
     }
 
+    public boolean setPrice(double price) {
+        return false;
+    }
+    public boolean setCategory(Category category) {
+        return false;
+    }
+    public boolean hasCategory() {
+        return false;
+    }
+
     public String getName() {
         return name;
     }
     public String getId() {
         return id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     protected static String generateID() {
