@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.products;
+package es.upm.etsisi.poo.model.products;
 import es.upm.etsisi.poo.ProductHM;
 
 import java.util.Map;
@@ -23,9 +23,6 @@ public abstract class AbstractProduct {
         return id;
     }
 
-    protected abstract double calculatePrice();
-    protected abstract boolean availability();
-
     protected static String generateID() {
         Map<String, AbstractProduct> map = ProductHM.getList();
         String newID;
@@ -36,4 +33,12 @@ public abstract class AbstractProduct {
 
         return newID;
     }
+
+
+    protected abstract boolean availability();
+
+    protected abstract double getUnitPrice();
+
+    @Override
+    public abstract String toString();
 }

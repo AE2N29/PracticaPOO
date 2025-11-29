@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.products;
+package es.upm.etsisi.poo.model.products;
 
 import java.time.LocalDateTime;
 
@@ -6,7 +6,7 @@ public class EventFood extends EventProd {
 
     private static void validateTime(LocalDateTime eventTime) {
         if(eventTime.isBefore(LocalDateTime.now().plusDays(3))) {
-            throw new IllegalArgumentException("Cualquier comida necesita 3 dias de antelacion para crearse");
+            throw new IllegalArgumentException("A food must be created at least 3 days in advance of its scheduled time.");
         }
     }
 

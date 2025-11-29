@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.products;
+package es.upm.etsisi.poo.model.products;
 
 import java.time.LocalDateTime;
 
@@ -6,7 +6,7 @@ public class EventReunion extends EventProd {
 
     private static void validateTime(LocalDateTime eventTime) {
         if (eventTime.isBefore(LocalDateTime.now().plusHours(12))) {
-            throw new IllegalArgumentException("Cualquier reunion necesita 12 horas de antelacion para crearse");
+            throw new IllegalArgumentException("A meeting must be created at least 12 hours in advance of its scheduled time.");
         }
     }
 
@@ -22,8 +22,6 @@ public class EventReunion extends EventProd {
 
     @Override
     public String toString() {
-        // En el enunciado el tipo se llama 'Meeting' en el output, no 'EventReunion'
-        // Truco: Usamos "Meeting" hardcodeado para cumplir con el output exacto
         return "{class:Meeting, id:" + this.id +
                 ", name:'" + this.name + "'" +
                 ", price:" + String.format("%.1f", 0.0) +

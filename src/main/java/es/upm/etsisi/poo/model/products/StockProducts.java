@@ -1,6 +1,4 @@
-package es.upm.etsisi.poo.products;
-
-import es.upm.etsisi.poo.Category;
+package es.upm.etsisi.poo.model.products;
 
 public class StockProducts extends AbstractProduct {
     protected Category category;
@@ -23,7 +21,7 @@ public class StockProducts extends AbstractProduct {
         return category;
     }
     public double getPrice() {
-        return calculatePrice();
+        return getUnitPrice();
     }
 
     public void setCategory(Category category) {
@@ -37,7 +35,7 @@ public class StockProducts extends AbstractProduct {
     }
 
     @Override
-    protected double calculatePrice() { // el precio es el mismo siempre, a diferencia con los personalizables
+    protected double getUnitPrice() { // el precio es el mismo siempre, a diferencia con los personalizables
         return price;
     }
 
