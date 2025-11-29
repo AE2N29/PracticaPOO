@@ -1,4 +1,6 @@
-package es.upm.etsisi.poo;
+package es.upm.etsisi.poo.model.sales;
+
+import es.upm.etsisi.poo.model.products.Product;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

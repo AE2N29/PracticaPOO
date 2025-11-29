@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo;
+package es.upm.etsisi.poo.model.products;
 
 public enum Category {
     MERCH,

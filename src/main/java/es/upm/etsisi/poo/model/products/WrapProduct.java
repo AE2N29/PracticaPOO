@@ -1,5 +1,4 @@
-package es.upm.etsisi.poo.products;
-import es.upm.etsisi.poo.Category;
+package es.upm.etsisi.poo.model.products;
 
 import java.util.ArrayList;
 import java.util.List;

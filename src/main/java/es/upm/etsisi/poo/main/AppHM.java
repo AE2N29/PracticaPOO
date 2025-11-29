@@ -1,6 +1,12 @@
-package es.upm.etsisi.poo;
+package es.upm.etsisi.poo.main;
 
-import es.upm.etsisi.poo.products.AbstractProduct;
+import es.upm.etsisi.poo.model.products.Category;
+import es.upm.etsisi.poo.model.products.Product;
+import es.upm.etsisi.poo.model.sales.Ticket;
+import es.upm.etsisi.poo.persistance.CashierDatabase;
+import es.upm.etsisi.poo.persistance.ClientDatabase;
+import es.upm.etsisi.poo.persistance.ProductCatalog;
+import es.upm.etsisi.poo.utils.InputValidator;
 
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -76,10 +82,10 @@ public class AppHM {
                 Category category = Category.valueOf(commandPartsAdd[4].toUpperCase());
                 double price = Double.parseDouble(commandPartsAdd[5]);
                 Product product = new Product(id1, name, category, price);
-                ProductHM.add(id1, product);
+                ProductCatalog.add(id1, product);
                 break;
             case "LIST":
-                ProductHM.list();
+                ProductCatalog.list();
                 break;
             case "UPDATE":
                 int id2 = Integer.parseInt(commands[2]);
@@ -95,7 +101,7 @@ public class AppHM {
                 break;
             case "REMOVE":
                 int id3 = Integer.parseInt(commands[2]);
-                ProductHM.remove(id3);
+                ProductCatalog.remove(id3);
                 break;
             default:
                 System.out.println("ERROR: Invalid input");

@@ -1,15 +1,15 @@
-package es.upm.etsisi.poo;
+package es.upm.etsisi.poo.persistance;
 
-import es.upm.etsisi.poo.products.AbstractProduct;
+import es.upm.etsisi.poo.model.products.AbstractProduct;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProductHM {
+public class ProductCatalog {
     private static final int MAX_PRODUCTS = 200;
     private static final HashMap<String, AbstractProduct> list = new HashMap<>();
 
-    private ProductHM(){}
+    private ProductCatalog(){}
 
     public static AbstractProduct getProduct(String id)
     {

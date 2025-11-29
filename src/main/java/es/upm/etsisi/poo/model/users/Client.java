@@ -1,4 +1,6 @@
-package es.upm.etsisi.poo;
+package es.upm.etsisi.poo.model.users;
+
+import es.upm.etsisi.poo.model.sales.Ticket;
 
 import java.util.ArrayList;
 

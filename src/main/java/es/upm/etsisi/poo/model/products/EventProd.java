@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.products;
+package es.upm.etsisi.poo.model.products;
 import java.time.LocalDateTime;
 
 public abstract class EventProd extends AbstractProduct {
@@ -26,6 +26,8 @@ public abstract class EventProd extends AbstractProduct {
     public int getMaxPeopleAllowed() {
         return maxPeopleAllowed;
     }
+
+
 
     @Override
     public double getUnitPrice() {

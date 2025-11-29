@@ -1,4 +1,7 @@
-package es.upm.etsisi.poo;
+package es.upm.etsisi.poo.persistance;
+
+import es.upm.etsisi.poo.model.users.Cashier;
+import es.upm.etsisi.poo.model.users.Client;
 
 import java.util.ArrayList;
 import java.util.Comparator;
