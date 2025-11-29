@@ -1,5 +1,12 @@
 package es.upm.etsisi.poo;
 
+import es.upm.etsisi.poo.products.AbstractProduct;
+import es.upm.etsisi.poo.products.EventFood;
+import es.upm.etsisi.poo.products.StockProducts;
+import es.upm.etsisi.poo.products.WrapProduct;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -69,18 +76,83 @@ public class AppHM {
             case "ADD":
                 String fullCommand = String.join(" ", commands); // conseguimos el comando original(String)
                 String[] commandPartsAdd = processProdAdd(fullCommand);
-                int id1 = Integer.parseInt(commandPartsAdd[2]);
+                String id1 = (commandPartsAdd[2]);
+                if(id1.equals("GENERATE")) {
+                    id1 = AbstractProduct.generateID();
+                }
                 String name = commandPartsAdd[3];
                 Category category = Category.valueOf(commandPartsAdd[4].toUpperCase());
                 double price = Double.parseDouble(commandPartsAdd[5]);
-                Product product = new Product(id1, name, category, price);
-                ProductHM.add(id1, product);
+                if(commandPartsAdd.length == 7) {  // si el comando tiene length 7, es del tipo personalizable
+                    int maxPers =  Integer.parseInt(commandPartsAdd[6]);
+                    WrapProduct product = new WrapProduct(id1, name, category, price, maxPers);
+                    ProductHM.add(id1, product);
+                }
+                else {
+                    StockProducts product = new StockProducts(id1, name, category, price);
+                    ProductHM.add(id1, product);
+                }
                 break;
+
+            case "ADDFOOD":
+
+                String commandsStringFood = String.join(" ", commands);
+                String nameFood = commandsStringFood.substring(commandsStringFood.indexOf('"') + 1, commandsStringFood.lastIndexOf('"'));
+                String beforeNameFood = commandsStringFood.substring(0, commandsStringFood.indexOf('"')).trim();
+                String afterName = commandsStringFood.substring(commandsStringFood.lastIndexOf('"') + 1).trim();
+                String[] beforeNameParts = beforeNameFood.split(" ");
+                String[] afterNameParts = afterName.split(" ");
+                String dateStringFood = afterNameParts[1];
+
+                LocalDate dateFood = LocalDate.parse(dateStringFood);
+                LocalDateTime eventTimeFood = dateFood.atStartOfDay();
+                double priceFood = Double.parseDouble(afterNameParts[0]);
+                int personNumberFood = Integer.parseInt(afterNameParts[2]);
+
+                if(beforeNameParts[2] == "GENERATE") {
+                    EventFood product = new EventFood(nameFood,eventTimeFood,priceFood,personNumberFood);
+                    String idFood = product.getId();
+                    ProductHM.add(idFood,product);
+                }
+                else {
+                    String idFood = beforeNameParts[2];
+                    EventFood product = new EventFood(idFood,nameFood,eventTimeFood,priceFood,personNumberFood);
+                    ProductHM.add(idFood,product);
+                }
+                break;
+
+            case "ADDMEETING":
+                
+                String commandsStringMeeting = String.join(" ", commands);
+                String nameMeeting = commandsStringMeeting.substring(commandsStringMeeting.indexOf('"') + 1, commandsStringMeeting.lastIndexOf('"'));
+                String beforeName = commandsStringMeeting.substring(0, commandsStringMeeting.indexOf('"')).trim();
+                String afterNameMeeting = commandsStringMeeting.substring(commandsStringMeeting.lastIndexOf('"') + 1).trim();
+                String[] beforeNamePartsMeeting = beforeName.split(" ");
+                String[] afterNamePartsMeeting = afterNameMeeting.split(" ");
+                String dateStringMeeting = afterNamePartsMeeting[1];
+
+                LocalDate dateMeeting = LocalDate.parse(dateStringMeeting);
+                LocalDateTime eventTimeMeeting = dateMeeting.atStartOfDay();
+                double priceMeeting = Double.parseDouble(afterNamePartsMeeting[0]);
+                int personNumberMeeting = Integer.parseInt(afterNamePartsMeeting[2]);
+
+                if(beforeNamePartsMeeting[2] == "GENERATE") {
+                    EventFood product = new EventFood(nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
+                    String idFood = product.getId();
+                    ProductHM.add(idFood,product);
+                }
+                else {
+                    String idFood = beforeNamePartsMeeting[2];
+                    EventFood product = new EventFood(idFood,nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
+                    ProductHM.add(idFood,product);
+                }
+                break;
+
             case "LIST":
                 ProductHM.list();
                 break;
             case "UPDATE":
-                int id2 = Integer.parseInt(commands[2]);
+                String id2 = (commands[2]);
                 String categoryToChange = commands[3].toUpperCase();
                 String change;
                 if ("NAME".equals(categoryToChange)) {
@@ -92,7 +164,7 @@ public class AppHM {
                 prodUpdateManage(id2, categoryToChange, change);
                 break;
             case "REMOVE":
-                int id3 = Integer.parseInt(commands[2]);
+                String id3 =(commands[2]);
                 ProductHM.remove(id3);
                 break;
             default:
@@ -102,23 +174,44 @@ public class AppHM {
     }
 
     public static String[] processProdAdd(String command) {
-        String[] commandSplitted = command.split(" ");
-        String id = commandSplitted[2];
         String name = command.substring(command.indexOf('"') + 1, command.lastIndexOf('"'));
-        String restOfCommand = command.substring(command.lastIndexOf('"')+1).trim();
-        String[] partsRest = restOfCommand.split(" ");
-        String[] array = new String[6];
-        array[0]= "prod";
-        array[1]= "add";
-        array[2]= id;
-        array[3]= name;
-        array[4] = partsRest[0];
-        array[5] = partsRest[1];
-        return array;
+        String beforeName = command.substring(0, command.indexOf('"')).trim();
+        String afterName = command.substring(command.lastIndexOf('"') + 1).trim();
+        String[] beforeNameParts = beforeName.split(" ");
+        String[] afterNameParts = afterName.split(" ");
+        boolean hasId = (beforeNameParts.length == 3);
+        boolean hasMaxPers = (afterNameParts.length == 3);
+        int size = 0;
+        if (!hasId && !hasMaxPers) {
+            size = 6;
+        }
+        if(hasId && hasMaxPers) {
+            size = 7;
+        }
+        if(!hasId && hasMaxPers)
+        {
+            size = 7;
+        }
+        if(hasId && !hasMaxPers){
+            size = 6;
+        }
+
+        String[] result = new String[size];
+        result[0] = "Prodd";
+        result[1] = "add";
+        if(hasId){result[2] = beforeNameParts[2];}
+        else{result[2] = "GENERATE";
+        }
+        result[3] = name;
+        result[4] = afterNameParts[0]; // category
+        result[5] = afterNameParts[1]; //price
+
+        if(hasMaxPers){result[6] = afterNameParts[2];} //maxPers si tiene
+        return result;
     }
 
-    public void prodUpdateManage(int id, String CategoryToChange, String change) {
-        Product product = ProductHM.getProduct(id);
+    public void prodUpdateManage(String id, String CategoryToChange, String change) {
+        AbstractProduct product = ProductHM.getProduct(id);
         if (product == null) {
             System.out.println("ERROR: Product with id " + id + " does not exist!");
             return;

@@ -1,6 +1,10 @@
 package es.upm.etsisi.poo;
 
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 public class InputValidator {
     private static final String LETRAS_DNI = "TRWAGMYFPDXBNJZSQVHLCKE";
@@ -60,42 +64,124 @@ public class InputValidator {
         }
     }
 
+
+    //prod add [<id>] "<name>" <category> <price> [<maxPers>]
+            // si tiene <maxPers> se considerara que el producto es personalizable)
+    private static boolean validateProdAdd(String[] splittedCommand) {
+        if (splittedCommand.length < 6) {return false;}
+        String fullCommand = String.join(" ", splittedCommand);
+        if(fullCommand.split("\"").length < 3){return false;}
+        try{
+            String[] processedCommand = AppHM.processProdAdd(fullCommand);
+            if(!validProductID(processedCommand[2])){return false;}
+            if(processedCommand.length < 6 || processedCommand.length > 7 ) {
+                return false;
+            }
+            if(processedCommand.length == 7) //caso donde tiene MAX Personas
+            {
+                return isName(processedCommand[3])
+                        && isCategory(processedCommand[4])
+                        && isDouble(processedCommand[5])
+                        && Double.parseDouble(processedCommand[5]) > 0
+                        && isInteger(processedCommand[6])
+                        && Integer.parseInt(processedCommand[6]) > 0;
+            }
+            if(processedCommand.length == 6)  //caso donde NO tiene MAX Personas
+            {
+                return isName(processedCommand[3])
+                        && isCategory(processedCommand[4])
+                        && isDouble(processedCommand[5])
+                        && Double.parseDouble(processedCommand[5]) > 0;
+            }
+            return false;
+        }
+        catch (NoSuchElementException | NumberFormatException e){return false;}
+    }
+
+    private static boolean validateProdAddEvent(String[] splittedCommand) {
+        //prod addFood [<id>] "< name>" <price> <expiration: yyyy-MM-dd> <max_people>
+        //prod addMeeting [<id>] "<name>" <price> < expiration: yyyy-MM-dd> <max_people>
+        if(splittedCommand.length < 6 || splittedCommand.length > 7){return false;}
+        String fullCommand = String.join(" ", splittedCommand);
+        if(fullCommand.split("\"").length < 3){return false;}
+        try {
+            int firstQuote = fullCommand.indexOf('"');
+            int lastQuote = fullCommand.lastIndexOf('"');
+            if(firstQuote == -1 || lastQuote <= firstQuote)
+            {return false;}
+            String name = fullCommand.substring(firstQuote + 1, lastQuote);
+
+            String beforeName = fullCommand.substring(0, firstQuote).trim();
+            String[] beforeNameParts = beforeName.split(" ");
+
+            String afterName = fullCommand.substring(lastQuote + 1).trim();
+            String[] afterNameParts = afterName.split(" ");
+
+            boolean hasId = false;
+            if(splittedCommand.length == 6){
+                hasId = false;
+                if(beforeNameParts.length != 2 || afterNameParts.length != 3){return false;}
+            }
+            else if(splittedCommand.length == 7){
+                hasId = true;
+                if(beforeNameParts.length != 3 || afterNameParts.length != 3){return false;}
+            }
+            if(hasId){return validProductID(beforeNameParts[2])
+                    && isName(name)
+                    && isDouble(afterNameParts[0])
+                    && Double.parseDouble(afterNameParts[0]) > 0
+                    && isDate(afterNameParts[1])
+                    && isInteger(afterNameParts[2])
+                    && Integer.parseInt(afterNameParts[2]) > 0
+                    && Integer.parseInt(afterNameParts[2]) <= 100;}
+            else {
+                return isName(name)
+                    && isDouble(afterNameParts[0])
+                    && Double.parseDouble(afterNameParts[0]) > 0
+                    && isDate(afterNameParts[1])
+                    && isInteger(afterNameParts[2])
+                    && Integer.parseInt(afterNameParts[2]) > 0
+                    && Integer.parseInt(afterNameParts[2]) <= 100;}
+            }catch (Exception e){return false;}
+    }
+
+    private static boolean validateProdUpdate(String[] splittedCommand) {
+
+        if (splittedCommand.length < 4) {
+            return false;
+        }
+        if (!isInteger(splittedCommand[2])) { return false; }
+        String fullUpdate = String.join(" ", splittedCommand);
+        switch (splittedCommand[3]) {
+            case "NAME": {
+                //  Acepta nombres con espacios cuando están entre comillas: prod update <id> NAME "nuevo nombre"
+                int first = fullUpdate.indexOf('"');
+                int last = fullUpdate.lastIndexOf('"');
+                if (first == -1 || last <= first) { return false; } //tira -1 cuando no lo encuentra
+                String nameValue = fullUpdate.substring(first + 1, last);
+                return isName(nameValue);
+            }
+            case "PRICE":
+                if (splittedCommand.length != 5) { return false; }
+                return isDouble(splittedCommand[4]);
+            case "CATEGORY":
+                if (splittedCommand.length != 5) { return false; }
+                return isCategory(splittedCommand[4]);
+            default:
+                return false;
+        }
+    }
+
     private static boolean prodCommandVerification(String[] splittedCommand) {
         switch (splittedCommand[1]) {
             case "ADD":
-                if (splittedCommand.length < 6) {return false;}
-                String fullCommand = String.join(" ", splittedCommand);  // Obtiene el comando original (String)
-                if (fullCommand.split("\"").length < 3) { return false; }  // Verifica el uso correcto de las comillas "<name>" antes
-                                                                                 // de llamar al metodo AppHM.processProdAdd() para evitar excepciones
-                String[] commandPartsAdd = AppHM.processProdAdd(fullCommand);
-                if (commandPartsAdd[5].contains(",") || !isDouble(commandPartsAdd[5]) ||commandPartsAdd.length != 6 || Double.parseDouble(commandPartsAdd[5]) == 0) { return false; }
-                return (isInteger(commandPartsAdd[2]) && isName(commandPartsAdd[3]) && isCategory(commandPartsAdd[4]) && isDouble(commandPartsAdd[5]));
+                validateProdAdd(splittedCommand);
+            case "ADDFOOD":
+                validateProdAddEvent(splittedCommand);
+            case "ADDMEETING":
+                validateProdAddEvent(splittedCommand);
             case "UPDATE":
-                if (splittedCommand.length < 4) {
-                    return false;
-                }
-                if (!isInteger(splittedCommand[2])) { return false; }
-                String fullUpdate = String.join(" ", splittedCommand);
-                switch (splittedCommand[3]) {
-                    case "NAME": {
-                        //  Acepta nombres con espacios cuando están entre comillas: prod update <id> NAME "nuevo nombre"
-                        int first = fullUpdate.indexOf('"');
-                        int last = fullUpdate.lastIndexOf('"');
-                        if (first == -1 || last <= first) { return false; } //tira -1 cuando no lo encuentra
-                        String nameValue = fullUpdate.substring(first + 1, last);
-                        return isName(nameValue);
-                    }
-                    case "PRICE":
-                        if (splittedCommand.length != 5) { return false; }
-                        return isDouble(splittedCommand[4]);
-                    case "CATEGORY":
-                        if (splittedCommand.length != 5) { return false; }
-                        return isCategory(splittedCommand[4]);
-                    default:
-                        return false;
-                }
-
-
+                validateProdUpdate(splittedCommand);
             case "REMOVE":
                 if (splittedCommand.length != 3) { return false; }
                 return isInteger(splittedCommand[2]);
@@ -153,7 +239,6 @@ public class InputValidator {
         }
     }
 
-
     public static boolean isInteger(String possibleInteger) {
         try {
             Integer.parseInt(possibleInteger);
@@ -178,7 +263,6 @@ public class InputValidator {
             return false;
         }
     }
-
     public static boolean isName(String possibleName) { // false en casos como: isName(null), isName("   "), is name ("")
         if(possibleName == null) {
             return false;
@@ -189,7 +273,6 @@ public class InputValidator {
         }
         return !trimmed.isEmpty();
     }
-
     public static boolean isDNI(String dni) {
         if (dni == null || dni.length() != 9) { return false; }
         char letter = dni.charAt(8);
@@ -251,5 +334,18 @@ public class InputValidator {
                 isInteger(ticketId.substring(9, 11)) &&
                 isInteger(ticketId.substring(12, 14)));
         return separators && datesAreNumbers && isInteger(ticketId.substring(15, 20));
+    }
+    public static boolean isDate(String date) {
+        if(date == null){return false;}
+        try{
+            LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            return true;
+        }catch (DateTimeException e){return false;}
+    }
+    public static boolean validProductID(String id) {
+        if(id == null || id.trim().isEmpty()){return false;}
+        if(id.toUpperCase() == "GENERATE"){return true;}
+        String pattern = "^[A-Z]{2}\\d{7}$";  //admite formatos con dos letras mayusculas y que termine por una secuencia de 7 numeros
+        return id.matches(pattern);
     }
 }
