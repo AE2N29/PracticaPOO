@@ -1,11 +1,18 @@
 package es.upm.etsisi.poo.main;
 
+import es.upm.etsisi.poo.model.products.AbstractProduct;
 import es.upm.etsisi.poo.model.products.Category;
-import es.upm.etsisi.poo.model.products.Product;
+import es.upm.etsisi.poo.model.products.StockProducts;
+import es.upm.etsisi.poo.model.products.WrapProduct;
+import es.upm.etsisi.poo.model.products.EventFood;
+import es.upm.etsisi.poo.model.products.EventReunion;
+
 import es.upm.etsisi.poo.model.sales.Ticket;
+
 import es.upm.etsisi.poo.persistance.CashierDatabase;
 import es.upm.etsisi.poo.persistance.ClientDatabase;
 import es.upm.etsisi.poo.persistance.ProductCatalog;
+
 import es.upm.etsisi.poo.utils.InputValidator;
 
 import java.time.LocalDate;
@@ -13,12 +20,12 @@ import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class AppHM {
+public class StoreApp {
     private final Scanner sc = new Scanner(System.in);
     private final Ticket ticket = new Ticket();
 
     public static void main( String[] args ) {
-        AppHM app = new AppHM();
+        StoreApp app = new StoreApp();
         app.init();
     }
 
@@ -89,11 +96,11 @@ public class AppHM {
                 if(commandPartsAdd.length == 7) {  // si el comando tiene length 7, es del tipo personalizable
                     int maxPers =  Integer.parseInt(commandPartsAdd[6]);
                     WrapProduct product = new WrapProduct(id1, name, category, price, maxPers);
-                    ProductHM.add(id1, product);
+                    ProductCatalog.add(id1, product);
                 }
                 else {
                     StockProducts product = new StockProducts(id1, name, category, price);
-                    ProductHM.add(id1, product);
+                    ProductCatalog.add(id1, product);
                 }
                 break;
 
@@ -115,12 +122,12 @@ public class AppHM {
                 if(beforeNameParts[2] == "GENERATE") {
                     EventFood product = new EventFood(nameFood,eventTimeFood,priceFood,personNumberFood);
                     String idFood = product.getId();
-                    ProductHM.add(idFood,product);
+                    ProductCatalog.add(idFood,product);
                 }
                 else {
                     String idFood = beforeNameParts[2];
                     EventFood product = new EventFood(idFood,nameFood,eventTimeFood,priceFood,personNumberFood);
-                    ProductHM.add(idFood,product);
+                    ProductCatalog.add(idFood,product);
                 }
                 break;
 
@@ -147,12 +154,12 @@ public class AppHM {
                 else {
                     String idFood = beforeNamePartsMeeting[2];
                     EventReunion product = new EventReunion(idFood,nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
-                    ProductHM.add(idFood,product);
+                    ProductCatalog.add(idFood,product);
                 }
                 break;
 
             case "LIST":
-                ProductHM.list();
+                ProductCatalog.list();
                 break;
             case "UPDATE":
                 String id2 = (commands[2]);
@@ -168,7 +175,7 @@ public class AppHM {
                 break;
             case "REMOVE":
                 String id3 =(commands[2]);
-                ProductHM.remove(id3);
+                ProductCatalog.remove(id3);
                 break;
             default:
                 System.out.println("ERROR: Invalid input");
@@ -214,7 +221,7 @@ public class AppHM {
     }
 
     public void prodUpdateManage(String id, String CategoryToChange, String change) {
-        AbstractProduct product = ProductHM.getProduct(id);
+        AbstractProduct product = ProductCatalog.getProduct(id);
         if (product == null) {
             System.out.println("ERROR: Product with id " + id + " does not exist!");
             return;
@@ -222,7 +229,7 @@ public class AppHM {
         switch (CategoryToChange) {
             case "NAME":
                 product.setName(change);
-                ProductHM.update(id, product);
+                ProductCatalog.update(id, product);
                 System.out.println(product);
                 System.out.println("product update: ok");
                 break;
@@ -234,7 +241,7 @@ public class AppHM {
                         return;
                     }
                     if(product.setPrice(newPrice)) { //setPrice booleanos, da positivo si la clase permite el set(tiene precio)
-                        ProductHM.update(id, product);
+                        ProductCatalog.update(id, product);
                         System.out.println(product);
                         System.out.println("product update: ok");
                     }else{
@@ -249,7 +256,7 @@ public class AppHM {
                     try {
                         Category newCategory = Category.valueOf(change.toUpperCase());
                         if(product.setCategory(newCategory)) {
-                            ProductHM.update(id, product);
+                            ProductCatalog.update(id, product);
                             System.out.println(product);
                             System.out.println("product update: ok");
                         }
@@ -264,7 +271,7 @@ public class AppHM {
                 System.out.println("ERROR: Invalid input");
                 return;
         }
-        ProductHM.update(id, product);
+        ProductCatalog.update(id, product);
     }
 
     public void ticketCommands(String[] commands) {

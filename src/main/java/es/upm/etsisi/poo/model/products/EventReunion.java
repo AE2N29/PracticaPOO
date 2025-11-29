@@ -22,8 +22,8 @@ public class EventReunion extends EventProd {
 
     @Override
     public String toString() {
-        return "{class:Meeting, id:" + this.id +
-                ", name:'" + this.name + "'" +
+        return "{class:Meeting, id:" + getId() +
+                ", name:'" + getName() + "'" +
                 ", price:" + String.format("%.1f", 0.0) +
                 ", date of Event:" + this.expirationDate.toLocalDate() +
                 ", max people allowed:" + this.maxPeopleAllowed + "}";

@@ -1,4 +1,5 @@
 package es.upm.etsisi.poo.model.products;
+
 import es.upm.etsisi.poo.persistance.ProductCatalog;
 
 import java.util.Map;
@@ -8,22 +9,18 @@ public abstract class AbstractProduct {
     private String id;
 
     public AbstractProduct(String id, String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Product name cannot be empty.");
+        }
+        if (name.length() >= 100) {
+            throw new IllegalArgumentException("Product name must be less than 100 characters.");
+        }
         this.name = name;
         this.id = id;
     }
     public AbstractProduct(String name) {
         this.name = name;
         this.id = generateID();
-    }
-
-    public boolean setPrice(double price) {
-        return false;
-    }
-    public boolean setCategory(Category category) {
-        return false;
-    }
-    public boolean hasCategory() {
-        return false;
     }
 
     public String getName() {
@@ -34,8 +31,18 @@ public abstract class AbstractProduct {
     }
 
     public void setName(String name) {
+        if (name == null || name.isBlank() || name.length() >= 100) {
+            System.out.println("Invalid name update.");
+            return;
+        }
         this.name = name;
     }
+
+    public boolean hasCategory() { //devuelve false por defecto, solo StockProducts devuelve true
+        return false;
+    }
+
+    public boolean setCategory(Category category) { return false; } //igual
 
     protected static String generateID() {
         Map<String, AbstractProduct> map = ProductCatalog.getList();
@@ -49,9 +56,12 @@ public abstract class AbstractProduct {
     }
 
 
-    protected abstract boolean availability();
 
-    protected abstract double getUnitPrice();
+    public abstract boolean isAvailable();
+
+    public abstract double getPrice();
+
+    public abstract boolean setPrice(double price);
 
     @Override
     public abstract String toString();

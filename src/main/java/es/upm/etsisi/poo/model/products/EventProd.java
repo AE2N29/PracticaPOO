@@ -9,11 +9,9 @@ public abstract class EventProd extends AbstractProduct {
 
     public EventProd(String id, String name, LocalDateTime expirationDate, double pricePerPerson, int maxPeopleAllowed) {
         super(id, name);
-
         if(maxPeopleAllowed > MAX_PEOPLE) {
             throw new IllegalArgumentException("maxPeopleAllowed > " + MAX_PEOPLE);
         }
-
         this.expirationDate = expirationDate;
         this.pricePerPerson = pricePerPerson;
         this.maxPeopleAllowed = maxPeopleAllowed;
@@ -27,15 +25,22 @@ public abstract class EventProd extends AbstractProduct {
         return maxPeopleAllowed;
     }
 
-
-
     @Override
-    public double getUnitPrice() {
+    public double getPrice() {
         return pricePerPerson;
     }
 
     @Override
-    protected boolean availability() {
+    public boolean setPrice(double price) {
+        if (price > 0) {
+            this.pricePerPerson = price;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isAvailable() {
         return LocalDateTime.now().isBefore(expirationDate);
     }
 
@@ -43,8 +48,8 @@ public abstract class EventProd extends AbstractProduct {
     public String toString() {
         // Implementación en EventProd para que EventFood y EventReunion lo hereden
         return "{class:" + this.getClass().getSimpleName() +
-                ", id:" + this.id +
-                ", name:'" + this.name + "'" +
+                ", id:" + getId() +
+                ", name:'" + getName() + "'" +
                 ", price:" + String.format("%.1f", 0.0) +
                 ", date of Event:" + this.expirationDate.toLocalDate() +
                 ", max people allowed:" + this.maxPeopleAllowed + "}";

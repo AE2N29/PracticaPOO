@@ -6,21 +6,22 @@ import java.util.List;
 public class WrapProduct extends StockProducts {
 
     private final List<String> customTexts;
-    private final int maxCutomTexts;
+    private final int maxCustomTexts;
 
-    public WrapProduct(String id, String name, Category category, double price, int maxCutomTexts) {
+    public WrapProduct(String id, String name, Category category, double price, int maxCustomTexts) {
         super(id, name, category, price);
-        this.maxCutomTexts = maxCutomTexts;
+        this.maxCustomTexts = maxCustomTexts;
         this.customTexts = new ArrayList<>();
     }
-    public WrapProduct(String name, Category category, double price, int maxCutomTexts) {
+
+    public WrapProduct(String name, Category category, double price, int maxCustomTexts) {
         super(name, category, price);
-        this.maxCutomTexts = 0;
+        this.maxCustomTexts = maxCustomTexts;
         this.customTexts = new ArrayList<>();
     }
 
     public boolean addCustomText(String text) {
-        if(this.customTexts.size() < this.maxCutomTexts) {
+        if(this.customTexts.size() < this.maxCustomTexts) {
             this.customTexts.add(text);
             return true;
         }
@@ -30,16 +31,29 @@ public class WrapProduct extends StockProducts {
     public List<String> getCustomTexts() {
         return new ArrayList<>(this.customTexts);
     }
-    public int getMaxCutomTexts() {
-        return this.maxCutomTexts;
+
+    public int getMaxCustomTexts() {
+        return this.maxCustomTexts;
     }
 
     @Override
-    public double calculatePrice(){
+    public double getPrice() {
         int textsNumber = customTexts.size();
-        double base = super.calculatePrice();
-        double finalprice =  base * (1+(0.10 * textsNumber));
-        return finalprice;
+        double base = super.getPrice();
+        return base * (1 + (0.10 * textsNumber));
     }
 
+    @Override
+    public String toString() {
+        String base = "{class:ProductPersonalized, id:" + getId() +
+                ", name:'" + getName() +
+                "', category:" + getCategory().name() +
+                ", price:" + String.format("%.1f", getPrice()) +
+                ", maxPersonal:" + maxCustomTexts;
+
+        if (!customTexts.isEmpty()) {
+            base += ", personalizationList:" + customTexts;
+        }
+        return base + "}";
+    }
 }

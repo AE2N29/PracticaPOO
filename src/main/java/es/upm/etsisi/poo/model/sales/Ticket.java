@@ -1,6 +1,5 @@
 package es.upm.etsisi.poo.model.sales;
 
-import es.upm.etsisi.poo.model.products.Product;
 import es.upm.etsisi.poo.persistance.ProductCatalog;
 
 import java.time.LocalDateTime;
