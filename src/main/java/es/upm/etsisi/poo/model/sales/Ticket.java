@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo.model.sales;
 
 import es.upm.etsisi.poo.model.products.Product;
+import es.upm.etsisi.poo.persistance.ProductCatalog;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -58,7 +59,7 @@ public class Ticket {
                 System.out.println("ticket add: ok");
                 return;
             }
-            Product prod = ProductHM.getProduct(prodID);
+            Product prod = ProductCatalog.getProduct(prodID);
             if (prod == null) {
                 System.out.println("ERROR: There isn't any product with " + prodID + " as ID");
                 return;
@@ -84,7 +85,7 @@ public class Ticket {
         if (state.equals(TicketState.CLOSED)) {
             System.out.println("ERROR: Ticket is already closed");
         } else {
-            Product prod = ProductHM.getProduct(prodID);
+            Product prod = ProductCatalog.getProduct(prodID);
             if (prod == null) {  // si no encuentra el producto con este id en la base de datos
                 System.out.println("ERROR: There isn't any product with " + prodID + " as ID");
                 return;
