@@ -1,28 +1,32 @@
-package es.upm.etsisi.poo.products;
+package es.upm.etsisi.poo.model.products;
 import java.time.LocalDateTime;
 
-public abstract class EventProd extends AbstractProduct {
+public abstract class Event extends AbstractProduct {
     protected static final int MAX_PEOPLE = 100;
-    protected int personNumber;
+    protected int maxPeopleAllowed;
     protected LocalDateTime expirationDate;
     protected double pricePerPerson;
 
-    public EventProd(String id, String name, LocalDateTime expirationDate, double pricePerPerson, int personNumber) {
+    public Event(String id, String name, LocalDateTime expirationDate, double pricePerPerson, int maxPeopleAllowed) {
         super(id, name);
-
-        if(personNumber > MAX_PEOPLE) {
-            throw new IllegalArgumentException("personNumber > " + MAX_PEOPLE);
+        if(maxPeopleAllowed > MAX_PEOPLE) {
+            throw new IllegalArgumentException("maxPeopleAllowed > " + MAX_PEOPLE);
         }
-
         this.expirationDate = expirationDate;
         this.pricePerPerson = pricePerPerson;
-        this.personNumber = personNumber;
+        this.maxPeopleAllowed = maxPeopleAllowed;
     }
 
     public LocalDateTime getExpirationDate() {
         return expirationDate;
     }
-    public double getPricePerPerson() {
+
+    public int getMaxPeopleAllowed() {
+        return maxPeopleAllowed;
+    }
+
+    @Override
+    public double getPrice() {
         return pricePerPerson;
     }
 
@@ -34,17 +38,9 @@ public abstract class EventProd extends AbstractProduct {
         }
         return false;
     }
-    public int getPersonNumber() {
-        return personNumber;
-    }
 
     @Override
-    public boolean availability() {
+    public boolean isAvailable() {
         return LocalDateTime.now().isBefore(expirationDate);
-    }
-
-    @Override
-    public double calculatePrice() {
-        return pricePerPerson*personNumber;
     }
 }

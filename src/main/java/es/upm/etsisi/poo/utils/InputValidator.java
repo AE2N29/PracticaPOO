@@ -1,4 +1,7 @@
-package es.upm.etsisi.poo;
+package es.upm.etsisi.poo.utils;
+
+import es.upm.etsisi.poo.model.products.Category;
+import es.upm.etsisi.poo.main.StoreApp;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -72,7 +75,7 @@ public class InputValidator {
         String fullCommand = String.join(" ", splittedCommand);
         if(fullCommand.split("\"").length < 3){return false;}
         try{
-            String[] processedCommand = AppHM.processProdAdd(fullCommand);
+            String[] processedCommand = StoreApp.processProdAdd(fullCommand);
             if(!validProductID(processedCommand[2])){return false;}
             if(processedCommand.length < 6 || processedCommand.length > 7 ) {
                 return false;

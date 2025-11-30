@@ -1,4 +1,7 @@
-package es.upm.etsisi.poo;
+package es.upm.etsisi.poo.persistance;
+
+import es.upm.etsisi.poo.model.sales.Ticket;
+import es.upm.etsisi.poo.model.users.Cashier;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -30,26 +33,8 @@ public class CashierDatabase {
     }
 
     public static void add(String name, String email) {
-        String UPMWorkerID;
-        boolean exists;
-        do {
-            UPMWorkerID = "UW";
-            for (int i = 0; i < 7; i++) {
-                int random = (int) (Math.random() * 10);
-                UPMWorkerID += random;
-            }
-            exists = false;
-            for (Cashier c : cashiersList) {
-                if (c.getUPMWorkerID().equals(UPMWorkerID)) {
-                    exists = true;
-                }
-            }
-        } while (exists);
-
-        Cashier newCashier = new Cashier(UPMWorkerID, name, email);
-        cashiersList.add(newCashier);
-        System.out.println(newCashier);
-        System.out.println("cash add: ok");
+        String id = generateCashId();
+        this(id, name, email);
     }
 
     public static void remove(String UPMWorker) {

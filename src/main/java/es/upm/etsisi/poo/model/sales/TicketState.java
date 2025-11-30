@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo;
+package es.upm.etsisi.poo.model.sales;
 
 public enum TicketState {
     EMPTY,
