@@ -39,12 +39,12 @@ public abstract class EventProd extends AbstractProduct {
     }
 
     @Override
-    protected boolean availability() {
+    public boolean availability() {
         return LocalDateTime.now().isBefore(expirationDate);
     }
 
     @Override
-    protected double calculatePrice() {
+    public double calculatePrice() {
         return pricePerPerson*personNumber;
     }
 }

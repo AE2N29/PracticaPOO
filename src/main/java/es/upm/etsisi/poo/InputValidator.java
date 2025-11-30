@@ -218,14 +218,44 @@ public class InputValidator {
 
     private static boolean ticketCommandVerification(String[] splittedCommand) {
         switch (splittedCommand[1]) {
-            case "NEW", "PRINT":
-                return splittedCommand.length == 2;
+            case "NEW":
+                if(splittedCommand.length == 4){
+                    return isCashID(splittedCommand[2]) && isDNI(splittedCommand[3]);
+                }
+                if(splittedCommand.length == 5){
+                    return isTicketID(splittedCommand[2]) && isCashID(splittedCommand[3]) && isDNI(splittedCommand[4]);
+                }
+                return false;
             case "ADD":
-                if(splittedCommand.length != 4) { return false; }
-                return isInteger(splittedCommand[2]) && isInteger(splittedCommand[3]);
+                if (splittedCommand.length == 6) {
+                    return isTicketID(splittedCommand[2])
+                            && isCashID(splittedCommand[3])
+                            && validProductID(splittedCommand[4])
+                            && isInteger(splittedCommand[5]);
+                }
+                if (splittedCommand.length > 6) {
+                    return isTicketID(splittedCommand[2])
+                            && isCashID(splittedCommand[3])
+                            && validProductID(splittedCommand[4])
+                            && isInteger(splittedCommand[5])
+                            && validCustomCommand(splittedCommand);
+                }
+                return false;
             case "REMOVE":
-                if(splittedCommand.length != 3) { return false; }
-                return isInteger(splittedCommand[2]);
+                if(splittedCommand.length == 5) {
+                    return isTicketID(splittedCommand[2])
+                            && isCashID(splittedCommand[3])
+                            && validProductID(splittedCommand[4]);
+                }
+                return false;
+            case "PRINT":
+                if(splittedCommand.length == 4) {
+                    return isTicketID(splittedCommand[2])
+                            && isCashID(splittedCommand[3]);
+                }
+                return false;
+            case "LIST":
+                return splittedCommand.length == 2;
             default:
                 return false;
         }
@@ -302,13 +332,30 @@ public class InputValidator {
 
         return LETRAS_DNI.charAt(rest) == letter;  // Se verifica si la letra final es la correspondiente (si el DNI/NIE es valido)
     }
+
     public static boolean isEmail(String email) {
         return email.toLowerCase().endsWith("@upm.es");   // lo que viene despues de la arroba debe estar siempre en minusculas?
     }
+
     public static boolean isCashID(String cashId) {
         if (cashId == null) {return false;}
         if (cashId.length() != 9) {return false;}
         return cashId.startsWith("UW") && isInteger(cashId.substring(2));
+    }
+
+    public static boolean isTicketID(String ticketId) {
+        if (ticketId == null || ticketId.length() != 20) { return false; }
+        boolean separators = (ticketId.charAt(2) == '-' &&
+                ticketId.charAt(5) == '-' &&
+                ticketId.charAt(8) == '-' &&
+                ticketId.charAt(11) == ':' &&
+                ticketId.charAt(14) == '-');
+        boolean datesAreNumbers = (isInteger(ticketId.substring(0, 2)) &&
+                isInteger(ticketId.substring(3, 5)) &&
+                isInteger(ticketId.substring(6, 8)) &&
+                isInteger(ticketId.substring(9, 11)) &&
+                isInteger(ticketId.substring(12, 14)));
+        return separators && datesAreNumbers && isInteger(ticketId.substring(15, 20));
     }
     public static boolean isDate(String date) {
         if(date == null){return false;}
@@ -322,5 +369,22 @@ public class InputValidator {
         if(id.toUpperCase() == "GENERATE"){return true;}
         String pattern = "^[A-Z]{2}\\d{7}$";  //admite formatos con dos letras mayusculas y que termine por una secuencia de 7 numeros
         return id.matches(pattern);
+    }
+
+    public static boolean validCustomCommand (String[] customCommand) {
+        for (int i = 6; i < customCommand.length; i++) {
+            if (customCommand[i].equals("--p")) {
+                if (!(i + 1 < customCommand.length)) {
+                    return false;
+                }
+                i++;
+            } else if (!(customCommand[i].length() > 3)) {
+                return false;
+            } else if (!(customCommand[i].charAt(0) == '-' && customCommand[i].charAt(1) == '-'
+                    && customCommand[i].charAt(2) == 'p')) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -4,6 +4,7 @@ import es.upm.etsisi.poo.products.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -263,16 +264,118 @@ public class AppHM {
     public void ticketCommands(String[] commands) {
         switch (commands[1].toUpperCase()) {
             case "NEW":
-                ticket.resetTicket();
+                String inputCashId, inputUserId, inputTicketId = null;
+                if (commands.length == 4) {
+                    inputCashId = commands[2];
+                    inputUserId = commands[3];
+                } else {
+                    inputTicketId = commands[2];
+                    inputCashId = commands[3];
+                    inputUserId = commands[4];
+                }
+                Cashier cashier = CashierDatabase.getCashierByUW(inputCashId);
+                Client client = ClientDatabase.getClientByDNI(inputUserId);
+                if (cashier == null) {
+                    System.out.println("ERROR: Cashier with ID " + inputCashId + " not found");
+                    return;
+                }
+                if (client == null) {
+                    System.out.println("ERROR: Client with DNI " + inputUserId + " not found");
+                    return;
+                }
+                Ticket newTicket;
+                if (inputTicketId == null) { // cuando no pasan el id del ticket como parametro
+                    newTicket = new Ticket();
+                } else if (Ticket.isIdRegistered(inputTicketId)) { // cuando pasan el id del ticket como parametro
+                    System.out.println("ERROR: Ticket ID " + inputTicketId + " already exists.");
+                    return;
+                } else {
+                    newTicket = new Ticket(inputTicketId);
+                }
+                cashier.addTicket(newTicket);
+                client.addTicket(newTicket);
+                System.out.println("ticket new: ok");
                 break;
             case "ADD":
-                ticket.add(Integer.parseInt(commands[2]), Integer.parseInt(commands[3]));
+                String ticketId = commands[2];
+                String cashId = commands[3];
+                String prodId = commands[4];
+                int amount = Integer.parseInt(commands[5]);
+                ArrayList<String> customs = new ArrayList<>();
+                Cashier cash = CashierDatabase.getCashierByUW(cashId);
+                if (cash == null) {
+                    System.out.println("ERROR: Cashier with ID " + cashId + " not found");
+                    return;
+                }
+                Ticket t = cash.getTicketById(ticketId);
+                if (t == null) {
+                    System.out.println("ERROR: Ticket with ID " + ticketId + " not found");
+                    return;
+                }
+                if (commands.length > 6) {
+                    for (int i = 6; i < commands.length; i++) {
+                        if (commands[i].equals("--p") && i + 1 < commands.length) {
+                            String text = commands[i + 1];
+                            if (text.length() >= 2 && text.charAt(0) == '"' && text.charAt(text.length() - 1) == '"') {
+                                text = text.substring(1, text.length() - 1);
+                            }
+                            customs.add(text);
+                            i++;
+                        } else if (commands[i].length() > 3 && commands[i].charAt(0) == '-' && commands[i].charAt(1) == '-'
+                                && commands[i].charAt(2) == 'p') {
+                            String[] text = commands[i].split("--p");
+                            for (int j = 1; j < text.length; j++) {
+                                if (text[j].length() >= 2 && text[j].charAt(0) == '"' && text[j].charAt(text[j].length() - 1) == '"') {
+                                    text[j] = text[j].substring(1, text[j].length() - 1);
+                                }
+                                customs.add(text[j]);
+                            }
+                        }
+                    }
+                }
+                t.add(prodId, amount, customs);
                 break;
             case "REMOVE":
-                ticket.remove(Integer.parseInt(commands[2]));
+                String tId = commands[2];
+                String cId = commands[3];
+                String pId = commands[4];
+                Cashier c = CashierDatabase.getCashierByUW(cId);
+                if (c == null) {
+                    System.out.println("ERROR: Cashier with ID " + cId + " not found");
+                    return;
+                }
+                Ticket ticket = c.getTicketById(tId);
+                if (ticket == null) {
+                    System.out.println("ERROR: Ticket with ID " + tId + " not found");
+                    return;
+                }
+                ticket.remove(pId);
                 break;
             case "PRINT":
-                ticket.print();
+                String idTicket = commands[2];
+                String idCash = commands[3];
+                Cashier cashierC = CashierDatabase.getCashierByUW(idCash);
+                if (cashierC == null) {
+                    System.out.println("ERROR: Cashier with ID " + idCash + " not found");
+                    return;
+                }
+                Ticket ticketT = cashierC.getTicketById(idTicket);
+                if (ticketT == null) {
+                    System.out.println("ERROR: Ticket with ID " + idTicket + " not found");
+                    return;
+                }
+                ticketT.print();
+                break;
+            case "LIST":
+                System.out.println("Ticket List:");
+                ArrayList<Cashier> sortedCashiers = CashierDatabase.getCashiersSortedById();
+                for (Cashier cashierc : sortedCashiers) {
+                    ArrayList<Ticket> tickets = cashierc.getTicketsSortedById();
+                    for (Ticket tickett : tickets) {
+                        System.out.println("  " + tickett.getId() + " - " + tickett.getState());
+                    }
+                }
+                System.out.println("ticket list: ok");
                 break;
             default:
                 System.out.println("ERROR: Invalid input");
@@ -386,5 +489,46 @@ public class AppHM {
             }
         }
         return c;
+    }
+
+    private static boolean validateCustomizations(String[] splittedCommand) {
+        if (!splittedCommand[6].toLowerCase().contains("--p")) {
+            return false;
+        }
+        for (int i = 6; i < splittedCommand.length; i++) {
+            splittedCommand[i].split("--p");
+        }
+        String tail = sb.toString().trim();
+        if (!tail.contains("--P")) {
+            return false;
+        }
+
+        // 3. DIVISIÓN INTELIGENTE: Usamos la bandera como separador
+        // Esto funciona igual para "--PTEXTO" (pegado) y "--P TEXTO" (separado)
+        String[] parts = tail.split("--P");
+
+        // 4. VALIDACIÓN DE PARTES
+
+        // a) La parte antes del primer --P debe estar vacía
+        if (!parts[0].trim().isEmpty()) {
+            return false; // Había basura antes del primer --P
+        }
+
+        // b) Cada parte cortada debe tener contenido (el texto de la personalización)
+        for (int i = 1; i < parts.length; i++) {
+            String text = parts[i].trim();
+
+            // Error si encontramos huecos vacíos (ej: "--P  --P")
+            if (text.isEmpty()) {
+                return false;
+            }
+
+            // (Opcional) Error si son comillas vacías ("")
+            if (text.equals("\"\"")) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

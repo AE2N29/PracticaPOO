@@ -8,5 +8,3 @@ public enum Category {
     ELECTRONICS,
     EVENT
 }
-
-

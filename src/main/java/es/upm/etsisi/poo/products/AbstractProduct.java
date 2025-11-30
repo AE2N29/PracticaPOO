@@ -1,6 +1,6 @@
 package es.upm.etsisi.poo.products;
-import es.upm.etsisi.poo.Category;
 import es.upm.etsisi.poo.ProductHM;
+
 import java.util.Map;
 import java.util.Random;
 
