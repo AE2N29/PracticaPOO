@@ -1,6 +1,8 @@
-package es.upm.etsisi.poo;
+package es.upm.etsisi.poo.model.sales;
 
-import es.upm.etsisi.poo.products.*;
+import es.upm.etsisi.poo.model.products.*;
+import es.upm.etsisi.poo.persistance.ProductCatalog;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -63,22 +65,22 @@ public class Ticket {
             if (amount <= 0) {
                 System.out.println("ERROR: Amount must be greater than 0");
             }else {
-                AbstractProduct prod = ProductHM.getProduct(prodID);
+                AbstractProduct prod = ProductCatalog.getProduct(prodID);
                 if (prod == null) {
                     System.out.println("ERROR: There isn't any product with " + prodID + " as ID");
                     return;
                 }
-                if (!prod.availability()) {
+                if (!prod.isAvailable()) {
                     System.out.println("ERROR: Product " + prod.getName() + " is not available (expired or time restrictions).");
                     return;
                 }
-                if (prod instanceof EventProd && productList.contains(prod)) {
+                if (prod instanceof Event && productList.contains(prod)) {
                     System.out.println("ERROR: Event/Food product " + prodID + " is already in the ticket.");
                     return;
                 }
-                if (prod instanceof WrapProduct) {
+                if (prod instanceof PersonalizedProduct) {
                     if (customizations != null && !customizations.isEmpty()) {
-                        WrapProduct wrapProd = (WrapProduct) prod;
+                        PersonalizedProduct wrapProd = (PersonalizedProduct) prod;
                         for (String text : customizations) {
                             boolean added = wrapProd.addCustomText(text);
                             if (!added) {
@@ -112,7 +114,7 @@ public class Ticket {
         if (state.equals(TicketState.CLOSE)) {
             System.out.println("ERROR: Ticket is already closed");
         } else {
-            AbstractProduct prod = ProductHM.getProduct(prodID);
+            AbstractProduct prod = ProductCatalog.getProduct(prodID);
             if (prod == null) {  // si no encuentra el producto con este id en la base de datos
                 System.out.println("ERROR: There isn't any product with " + prodID + " as ID");
                 return;
@@ -147,8 +149,8 @@ public class Ticket {
         int merchCount = 0, clothesCount = 0, electronicsCount = 0, stationeryCount = 0, bookCount = 0;
         for (AbstractProduct prod : sorted) {
             if (prod != null) {
-                if (prod instanceof StockProducts) {
-                    switch (((StockProducts) prod).getCategory()) {
+                if (prod instanceof StockProduct) {
+                    switch (((StockProduct) prod).getCategory()) {
                         case MERCH -> merchCount++;
                         case STATIONERY -> stationeryCount++;
                         case CLOTHES -> clothesCount++;
@@ -159,10 +161,10 @@ public class Ticket {
             }
         }
         for (AbstractProduct prod : sorted) {
-            totalPrice += prod.calculatePrice();
+            totalPrice += prod.getPrice();
             int actualCount = 0;
-            if (prod instanceof StockProducts) {
-                switch (((StockProducts) prod).getCategory()) {
+            if (prod instanceof StockProduct) {
+                switch (((StockProduct) prod).getCategory()) {
                     case MERCH -> actualCount = merchCount;
                     case STATIONERY ->  actualCount = stationeryCount;
                     case CLOTHES -> actualCount = clothesCount;
@@ -172,8 +174,8 @@ public class Ticket {
             }
             if (actualCount > 1) {
                 double actualDiscount = 0.0;
-                if (prod instanceof StockProducts) {
-                    switch (((StockProducts) prod).getCategory()) {
+                if (prod instanceof StockProduct) {
+                    switch (((StockProduct) prod).getCategory()) {
                         case MERCH -> actualDiscount = 0.0;
                         case STATIONERY -> actualDiscount = 0.05;
                         case CLOTHES -> actualDiscount = 0.07;

@@ -1,19 +1,11 @@
 package es.upm.etsisi.poo.main;
 
-import es.upm.etsisi.poo.model.products.AbstractProduct;
-import es.upm.etsisi.poo.model.products.Category;
-import es.upm.etsisi.poo.model.products.StockProduct;
-import es.upm.etsisi.poo.model.products.PersonalizedProduct;
-import es.upm.etsisi.poo.model.products.EventFood;
-import es.upm.etsisi.poo.model.products.EventMeeting;
-
+import es.upm.etsisi.poo.model.products.*;
 import es.upm.etsisi.poo.model.sales.Ticket;
-
-import es.upm.etsisi.poo.persistance.CashierDatabase;
-import es.upm.etsisi.poo.persistance.ClientDatabase;
-import es.upm.etsisi.poo.persistance.ProductCatalog;
-
-import es.upm.etsisi.poo.utils.InputValidator;
+import es.upm.etsisi.poo.model.users.Cashier;
+import es.upm.etsisi.poo.model.users.Client;
+import es.upm.etsisi.poo.persistance.*;
+import es.upm.etsisi.poo.utils.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

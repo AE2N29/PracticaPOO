@@ -34,7 +34,7 @@ public class CashierDatabase {
 
     public static void add(String name, String email) {
         String id = generateCashId();
-        this(id, name, email);
+        add(id, name, email);
     }
 
     public static void remove(String UPMWorker) {

@@ -44,7 +44,7 @@ public abstract class AbstractProduct {
 
     public boolean setCategory(Category category) { return false; } //igual
 
-    protected static String generateID() {
+    public static String generateID() {
         Map<String, AbstractProduct> map = ProductCatalog.getList();
         String newID;
         do {
@@ -54,8 +54,6 @@ public abstract class AbstractProduct {
 
         return newID;
     }
-
-
 
     public abstract boolean isAvailable();
 
