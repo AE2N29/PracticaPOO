@@ -242,10 +242,20 @@ public class InputValidator {
                 }
                 return false;
             case "REMOVE":
-                if(splittedCommand.length != 3) { return false; }
-                return isInteger(splittedCommand[2]);
+                if(splittedCommand.length == 5) {
+                    return isTicketID(splittedCommand[2])
+                            && isCashID(splittedCommand[3])
+                            && validProductID(splittedCommand[4]);
+                }
+                return false;
             case "PRINT":
-                return true;
+                if(splittedCommand.length == 4) {
+                    return isTicketID(splittedCommand[2])
+                            && isCashID(splittedCommand[3]);
+                }
+                return false;
+            case "LIST":
+                return splittedCommand.length == 2;
             default:
                 return false;
         }

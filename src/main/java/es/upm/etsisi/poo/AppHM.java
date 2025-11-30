@@ -336,10 +336,46 @@ public class AppHM {
                 t.add(prodId, amount, customs);
                 break;
             case "REMOVE":
-
+                String tId = commands[2];
+                String cId = commands[3];
+                String pId = commands[4];
+                Cashier c = CashierDatabase.getCashierByUW(cId);
+                if (c == null) {
+                    System.out.println("ERROR: Cashier with ID " + cId + " not found");
+                    return;
+                }
+                Ticket ticket = c.getTicketById(tId);
+                if (ticket == null) {
+                    System.out.println("ERROR: Ticket with ID " + tId + " not found");
+                    return;
+                }
+                ticket.remove(pId);
                 break;
             case "PRINT":
-                ticket.print();
+                String idTicket = commands[2];
+                String idCash = commands[3];
+                Cashier cashierC = CashierDatabase.getCashierByUW(idCash);
+                if (cashierC == null) {
+                    System.out.println("ERROR: Cashier with ID " + idCash + " not found");
+                    return;
+                }
+                Ticket ticketT = cashierC.getTicketById(idTicket);
+                if (ticketT == null) {
+                    System.out.println("ERROR: Ticket with ID " + idTicket + " not found");
+                    return;
+                }
+                ticketT.print();
+                break;
+            case "LIST":
+                System.out.println("Ticket List:");
+                ArrayList<Cashier> sortedCashiers = CashierDatabase.getCashiersSortedById();
+                for (Cashier cashierc : sortedCashiers) {
+                    ArrayList<Ticket> tickets = cashierc.getTicketsSortedById();
+                    for (Ticket tickett : tickets) {
+                        System.out.println("  " + tickett.getId() + " - " + tickett.getState());
+                    }
+                }
+                System.out.println("ticket list: ok");
                 break;
             default:
                 System.out.println("ERROR: Invalid input");

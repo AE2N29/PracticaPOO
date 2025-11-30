@@ -47,7 +47,7 @@ public class Ticket {
 
     // Este metodo ya no se utiliza en la segunda entrega, el new ticket ya no resetea el ticket. No lo borro por si lo usamos en un futuro
     public void resetTicket() {//  uso de ArrayList.clear para resetear el ticket
-        if (state.equals(TicketState.CLOSED)) {
+        if (state.equals(TicketState.CLOSE)) {
             System.out.println("ERROR: Ticket is already closed");
         } else {
             this.productList.clear();
@@ -57,7 +57,7 @@ public class Ticket {
     }
 
     public void add(String prodID, int amount, ArrayList<String> customizations) {
-        if (state.equals(TicketState.CLOSED)) {
+        if (state.equals(TicketState.CLOSE)) {
             System.out.println("ERROR: Ticket is already closed");
         } else {
             if (amount <= 0) {
@@ -101,15 +101,15 @@ public class Ticket {
                 printTicketLinesSorted(false);
                 System.out.println("ticket add: ok");
 
-                if (!state.equals(TicketState.ACTIVE)) {
-                    this.setState(TicketState.ACTIVE);
+                if (!state.equals(TicketState.OPEN)) {
+                    this.setState(TicketState.OPEN);
                 }
             }
         }
     }
 
     public void remove(String prodID) {
-        if (state.equals(TicketState.CLOSED)) {
+        if (state.equals(TicketState.CLOSE)) {
             System.out.println("ERROR: Ticket is already closed");
         } else {
             AbstractProduct prod = ProductHM.getProduct(prodID);
@@ -191,7 +191,7 @@ public class Ticket {
             System.out.println("Total price: " + rounded(totalPrice));
             System.out.println("Total discount: " + rounded(totalDiscount));
             System.out.println("Final price: " + rounded(totalPrice - totalDiscount));
-            setState(TicketState.CLOSED);
+            setState(TicketState.CLOSE);
             setId(updateTicketId());
         }
     }

@@ -84,6 +84,12 @@ public class CashierDatabase {
         }
     }
 
+    public static ArrayList<Cashier> getCashiersSortedById() {
+        ArrayList<Cashier> sortedList = new ArrayList<>(cashiersList);
+        sortedList.sort(Comparator.comparing(Cashier::getUPMWorkerID));  // Ordena la lista usando el id del cajero como criterio de comparacion
+        return sortedList;
+    }
+
     public static void tickets(String UPMWorker) {
         Cashier cashier = null;
         for (Cashier c: cashiersList) {
@@ -125,5 +131,9 @@ public class CashierDatabase {
             }
         } while (exists);
         return UPMWorkerID;
+    }
+
+    public static ArrayList<Cashier> getCashiers() {
+        return cashiersList;
     }
 }

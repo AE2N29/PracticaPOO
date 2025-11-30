@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Cashier extends User {
     private final String UPMWorkerID;
@@ -37,5 +38,11 @@ public class Cashier extends User {
             }
         }
         return result;
+    }
+
+    public ArrayList<Ticket> getTicketsSortedById() {
+        ArrayList<Ticket> sortedTickets = new ArrayList<>(this.createdTickets);
+        sortedTickets.sort(Comparator.comparing(Ticket::getId));
+        return sortedTickets;
     }
 }
