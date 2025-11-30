@@ -28,4 +28,14 @@ public class Cashier extends User {
     public String toString() {
         return "Cash{identifier='" + this.UPMWorkerID + "', name='" + this.name + "', email='" + this.email + "'}";
     }
+
+    public Ticket getTicketById(String id) {
+        Ticket result = null;
+        for (Ticket t : createdTickets) {
+            if (t.getId().equalsIgnoreCase(id)) {
+                result = t;
+            }
+        }
+        return result;
+    }
 }

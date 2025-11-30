@@ -24,8 +24,8 @@ public abstract class AbstractProduct {
         return id;
     }
 
-    protected abstract double calculatePrice();
-    protected abstract boolean availability();
+    public abstract double calculatePrice();
+    public abstract boolean availability();
 
     public static String generateID() { // crea IDs con formato: PRnnnnnnn  (n = numeros)
         Map<String, AbstractProduct> map = ProductHM.getList();

@@ -227,8 +227,20 @@ public class InputValidator {
                 }
                 return false;
             case "ADD":
-                if(splittedCommand.length != 4) { return false; }
-                return isInteger(splittedCommand[2]) && isInteger(splittedCommand[3]);
+                if (splittedCommand.length == 6) {
+                    return isTicketID(splittedCommand[2])
+                            && isCashID(splittedCommand[3])
+                            && validProductID(splittedCommand[4])
+                            && isInteger(splittedCommand[5]);
+                }
+                if (splittedCommand.length > 6) {
+                    return isTicketID(splittedCommand[2])
+                            && isCashID(splittedCommand[3])
+                            && validProductID(splittedCommand[4])
+                            && isInteger(splittedCommand[5])
+                            && validCustomCommand(splittedCommand);
+                }
+                return false;
             case "REMOVE":
                 if(splittedCommand.length != 3) { return false; }
                 return isInteger(splittedCommand[2]);
@@ -347,5 +359,22 @@ public class InputValidator {
         if(id.toUpperCase() == "GENERATE"){return true;}
         String pattern = "^[A-Z]{2}\\d{7}$";  //admite formatos con dos letras mayusculas y que termine por una secuencia de 7 numeros
         return id.matches(pattern);
+    }
+
+    public static boolean validCustomCommand (String[] customCommand) {
+        for (int i = 6; i < customCommand.length; i++) {
+            if (customCommand[i].equals("--p")) {
+                if (!(i + 1 < customCommand.length)) {
+                    return false;
+                }
+                i++;
+            } else if (!(customCommand[i].length() > 3)) {
+                return false;
+            } else if (!(customCommand[i].charAt(0) == '-' && customCommand[i].charAt(1) == '-'
+                    && customCommand[i].charAt(2) == 'p')) {
+                return false;
+            }
+        }
+        return true;
     }
 }

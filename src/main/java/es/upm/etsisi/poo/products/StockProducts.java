@@ -37,12 +37,12 @@ public class StockProducts extends AbstractProduct {
     }
 
     @Override
-    protected double calculatePrice() { // el precio es el mismo siempre, a diferencia con los personalizables
+    public double calculatePrice() { // el precio es el mismo siempre, a diferencia con los personalizables
         return price;
     }
 
     @Override
-    protected boolean availability() { //siempre true, no ha que validar nada como en los eventos
+    public boolean availability() { //siempre true, no ha que validar nada como en los eventos
         return true;
     }
 
