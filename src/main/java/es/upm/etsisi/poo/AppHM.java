@@ -1,9 +1,6 @@
 package es.upm.etsisi.poo;
 
-import es.upm.etsisi.poo.products.AbstractProduct;
-import es.upm.etsisi.poo.products.EventFood;
-import es.upm.etsisi.poo.products.StockProducts;
-import es.upm.etsisi.poo.products.WrapProduct;
+import es.upm.etsisi.poo.products.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -138,13 +135,13 @@ public class AppHM {
                 int personNumberMeeting = Integer.parseInt(afterNamePartsMeeting[2]);
 
                 if(beforeNamePartsMeeting[2] == "GENERATE") {
-                    EventFood product = new EventFood(nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
+                    EventReunion product = new EventReunion(nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
                     String idFood = product.getId();
                     ProductHM.add(idFood,product);
                 }
                 else {
                     String idFood = beforeNamePartsMeeting[2];
-                    EventFood product = new EventFood(idFood,nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
+                    EventReunion product = new EventReunion(idFood,nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
                     ProductHM.add(idFood,product);
                 }
                 break;
@@ -220,18 +217,48 @@ public class AppHM {
         switch (CategoryToChange) {
             case "NAME":
                 product.setName(change);
+                ProductHM.update(id, product);
+                System.out.println(product);
+                System.out.println("product update: ok");
                 break;
             case "PRICE":
-                product.setPrice(Double.parseDouble(change));
+                try{
+                    double newPrice = Double.parseDouble(change);
+                    if(newPrice <= 0) {
+                        System.out.println("ERROR: Invalid input");
+                        return;
+                    }
+                    if(product.setPrice(newPrice)) { //setPrice booleanos, da positivo si la clase permite el set(tiene precio)
+                        ProductHM.update(id, product);
+                        System.out.println(product);
+                        System.out.println("product update: ok");
+                    }else{
+                        System.out.println("ERROR: Invalid input");
+                    }
+                }catch(NumberFormatException e){
+                    System.out.println("ERROR: Invalid input");
+                }
                 break;
             case "CATEGORY":
-                product.setCategory(Category.valueOf(change.toUpperCase()));
+                if(product.hasCategory()){   //No todos los productos guardables tiene Category ( por ello este if)
+                    try {
+                        Category newCategory = Category.valueOf(change.toUpperCase());
+                        if(product.setCategory(newCategory)) {
+                            ProductHM.update(id, product);
+                            System.out.println(product);
+                            System.out.println("product update: ok");
+                        }
+                    }catch(IllegalArgumentException e){
+                        System.out.println("ERROR: Invalid input");
+                    }
+                }else{
+                    System.out.println("ERROR: Invalid input");
+                }
                 break;
             default:
                 System.out.println("ERROR: Invalid input");
                 return;
         }
-        ProductHM.update(id, product);
     }
 
     public void ticketCommands(String[] commands) {

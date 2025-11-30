@@ -17,6 +17,16 @@ public abstract class AbstractProduct {
         this.id = generateID();
     }
 
+    public boolean setPrice(double price) {
+        return false;
+    }
+    public boolean setCategory(Category category) {
+        return false;
+    }
+    public boolean hasCategory() {
+        return false;
+    }
+
     public String getName() {
         return name;
     }
@@ -24,8 +34,12 @@ public abstract class AbstractProduct {
         return id;
     }
 
-    public abstract double calculatePrice();
-    public abstract boolean availability();
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    protected abstract double calculatePrice();
+    protected abstract boolean availability();
 
     public static String generateID() { // crea IDs con formato: PRnnnnnnn  (n = numeros)
         Map<String, AbstractProduct> map = ProductHM.getList();

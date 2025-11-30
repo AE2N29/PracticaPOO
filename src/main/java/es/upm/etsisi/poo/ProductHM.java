@@ -11,8 +11,7 @@ public class ProductHM {
 
     private ProductHM(){}
 
-    public static AbstractProduct getProduct(String id)
-    {
+    public static AbstractProduct getProduct(String id) {
         return list.get(id);
     }
 

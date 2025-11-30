@@ -26,11 +26,25 @@ public class StockProducts extends AbstractProduct {
         return calculatePrice();
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    @Override
+    public boolean setPrice(double price) {
+        if (price > 0) {
+            this.price = price;
+            return true;
+        }
+        return false;
     }
-    public void setPrice(double price) {
-        this.price = price;
+
+    @Override
+    public boolean setCategory(Category category) {
+        this.category = category;
+        return true;
+    }
+
+    @Override
+    public boolean hasCategory()
+    {
+        return true;
     }
     public void  setName(String name) {
         this.name = name;
