@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo;
+package es.upm.etsisi.poo.model.users;
 
 public abstract class User {
     protected String name;
@@ -25,5 +25,6 @@ public abstract class User {
         this.name = name;
     }
 
+    @Override
     public abstract String toString();
 }
