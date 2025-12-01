@@ -23,7 +23,7 @@ public class StoreApp {
     }
 
     private void init() {
-        System.out.println("\nWelcome to the ticket module App.");
+        System.out.println("Welcome to the ticket module App.");
         System.out.println("Ticket module. Type 'help' to see commands.");
         start();
     }
@@ -223,8 +223,6 @@ public class StoreApp {
             case "NAME":
                 product.setName(change);
                 ProductCatalog.update(id, product);
-                System.out.println(product);
-                System.out.println("product update: ok");
                 break;
             case "PRICE":
                 try{
@@ -235,8 +233,6 @@ public class StoreApp {
                     }
                     if(product.setPrice(newPrice)) { //setPrice booleanos, da positivo si la clase permite el set(tiene precio)
                         ProductCatalog.update(id, product);
-                        System.out.println(product);
-                        System.out.println("product update: ok");
                     }else{
                         System.out.println("ERROR: Invalid input");
                     }
@@ -250,8 +246,6 @@ public class StoreApp {
                         Category newCategory = Category.valueOf(change.toUpperCase());
                         if(product.setCategory(newCategory)) {
                             ProductCatalog.update(id, product);
-                            System.out.println(product);
-                            System.out.println("product update: ok");
                         }
                     }catch(IllegalArgumentException e){
                         System.out.println("ERROR: Invalid input");
@@ -264,7 +258,6 @@ public class StoreApp {
                 System.out.println("ERROR: Invalid input");
                 return;
         }
-        ProductCatalog.update(id, product);
     }
 
     public void ticketCommands(String[] commands) {
@@ -497,7 +490,9 @@ public class StoreApp {
         return c;
     }
 
+    /*
     private static boolean validateCustomizations(String[] splittedCommand) {
+
         if (!splittedCommand[6].toLowerCase().contains("--p")) {
             return false;
         }
@@ -537,4 +532,5 @@ public class StoreApp {
 
         return true;
     }
+    */
 }
