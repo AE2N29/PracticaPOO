@@ -92,7 +92,6 @@ public class Ticket {
                         }
                     }
                     prod = copy;
-                    System.out.println("   (Added with customizations)");
                 } else if (customizations != null && !customizations.isEmpty()) {
                     System.out.println("WARNING: Product " + prod.getName() + " is not customizable. Ignoring texts.");
                 }
