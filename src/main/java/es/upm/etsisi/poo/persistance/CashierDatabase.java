@@ -89,7 +89,7 @@ public class CashierDatabase {
             ArrayList<Ticket> cashierTickets = cashier.getCreatedTickets();
             cashierTickets.sort(Comparator.comparing(Ticket::getId));
             if (cashier.getCreatedTickets().isEmpty()) {
-                System.out.println("ERROR: Cashier with UPMWorkerID " + UPMWorker + " doesn't have any ticket created yet");
+                System.out.println("Tickets: ");
             } else {
                 System.out.println("Tickets: ");
                 for (Ticket t: cashierTickets) {

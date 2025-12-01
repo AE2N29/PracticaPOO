@@ -204,6 +204,15 @@ public class Ticket {
         }
     }
 
+    public void printInitialState() {
+        System.out.println("Ticket: " + this.id);
+        System.out.println("""
+                  Total price: 0.0
+                  Total discount: 0.0
+                  Final Price: 0.0
+                """);
+    }
+
     private String rounded(double d) {
         double val = Math.round(d * 1000.0) / 1000.0;
         return String.valueOf(val);

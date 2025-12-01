@@ -295,8 +295,7 @@ public class StoreApp {
                 }
                 cashier.addTicket(newTicket);
                 client.addTicket(newTicket);
-                newTicket.print();
-                newTicket.setState(TicketState.EMPTY);
+                newTicket.printInitialState();
                 System.out.println("ticket new: ok");
                 break;
             case "ADD":
