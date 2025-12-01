@@ -32,35 +32,40 @@ public class StoreApp {
         boolean keepGoing = true;
         while (keepGoing) {
             String command = typeCommand().trim();
+            if (command.isEmpty()) continue;
             if (!InputValidator.validCommand(command)) {
                 System.out.println("ERROR: Not a valid command");
             } else {
                 String[] commandParts = command.split(" ");
-                switch (commandParts[0].toUpperCase()) {
-                    case "PROD":
-                        prodCommands(commandParts);
-                        break;
-                    case "TICKET":
-                        ticketCommands(commandParts);
-                        break;
-                    case "HELP":
-                        help();
-                        break;
-                    case "ECHO":
-                        System.out.println(command.substring(5)); // no hace falta llamar a toString(), es redundante
-                        break;                                              // .substring(5) crea un substring desde index 5 hasta el final
-                    case "EXIT":
-                        keepGoing = false;
-                        end();
-                        break;
-                    case "CLIENT":
-                        clientCommands(commandParts);
-                        break;
-                    case "CASH":
-                        cashierCommands(commandParts);
-                        break;
-                    default:
-                        System.out.println("ERROR: Not a valid command");
+                try {
+                    switch (commandParts[0].toUpperCase()) {
+                        case "PROD":
+                            prodCommands(commandParts);
+                            break;
+                        case "TICKET":
+                            ticketCommands(commandParts, command); // Pasamos command completo para parseo
+                            break;
+                        case "HELP":
+                            help();
+                            break;
+                        case "ECHO":
+                            System.out.println(command.substring(5));
+                            break;
+                        case "EXIT":
+                            keepGoing = false;
+                            end();
+                            break;
+                        case "CLIENT":
+                            clientCommands(commandParts);
+                            break;
+                        case "CASH":
+                            cashierCommands(commandParts);
+                            break;
+                        default:
+                            System.out.println("ERROR: Not a valid command");
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error processing ->" + commandParts[0].toLowerCase() + " " + commandParts[1].toLowerCase() + " ->" + e.getMessage());
                 }
                 System.out.println();
             }
@@ -185,31 +190,26 @@ public class StoreApp {
         boolean hasId = (beforeNameParts.length == 3);
         boolean hasMaxPers = (afterNameParts.length == 3);
         int size = 0;
-        if (!hasId && !hasMaxPers) {
-            size = 6;
-        }
-        if(hasId && hasMaxPers) {
-            size = 7;
-        }
-        if(!hasId && hasMaxPers)
-        {
-            size = 7;
-        }
-        if(hasId && !hasMaxPers){
-            size = 6;
-        }
+        if (!hasId && !hasMaxPers) size = 6;
+        if (hasId && hasMaxPers) size = 7;
+        if (!hasId && hasMaxPers) size = 7;
+        if (hasId && !hasMaxPers) size = 6;
 
         String[] result = new String[size];
         result[0] = "Prodd";
         result[1] = "add";
-        if(hasId){result[2] = beforeNameParts[2];}
-        else{result[2] = "GENERATE";
+        if (hasId) {
+            result[2] = beforeNameParts[2];
+        } else {
+            result[2] = "GENERATE";
         }
         result[3] = name;
         result[4] = afterNameParts[0]; // category
         result[5] = afterNameParts[1]; //price
 
-        if(hasMaxPers){result[6] = afterNameParts[2];} //maxPers si tiene
+        if (hasMaxPers) { //maxPers si tiene
+            result[6] = afterNameParts[2];
+        }
         return result;
     }
 
@@ -223,34 +223,40 @@ public class StoreApp {
             case "NAME":
                 product.setName(change);
                 ProductCatalog.update(id, product);
+                System.out.println(product);
+                System.out.println("product update: ok");
                 break;
             case "PRICE":
-                try{
+                try {
                     double newPrice = Double.parseDouble(change);
-                    if(newPrice <= 0) {
+                    if (newPrice <= 0) {
                         System.out.println("ERROR: Invalid input");
                         return;
                     }
-                    if(product.setPrice(newPrice)) { //setPrice booleanos, da positivo si la clase permite el set(tiene precio)
+                    if (product.setPrice(newPrice)) {//setPrice booleanos, da positivo si la clase permite el set(tiene precio)
                         ProductCatalog.update(id, product);
-                    }else{
+                        System.out.println(product);
+                        System.out.println("product update: ok");
+                    } else {
                         System.out.println("ERROR: Invalid input");
                     }
-                }catch(NumberFormatException e){
+                } catch (NumberFormatException e) {
                     System.out.println("ERROR: Invalid input");
                 }
                 break;
             case "CATEGORY":
-                if(product.hasCategory()){   //No todos los productos guardables tiene Category ( por ello este if)
+                if (product.hasCategory()) {
                     try {
                         Category newCategory = Category.valueOf(change.toUpperCase());
-                        if(product.setCategory(newCategory)) {
+                        if (product.setCategory(newCategory)) {
                             ProductCatalog.update(id, product);
+                            System.out.println(product);
+                            System.out.println("product update: ok");
                         }
-                    }catch(IllegalArgumentException e){
+                    } catch (IllegalArgumentException e) {
                         System.out.println("ERROR: Invalid input");
                     }
-                }else{
+                } else {
                     System.out.println("ERROR: Invalid input");
                 }
                 break;
@@ -258,9 +264,10 @@ public class StoreApp {
                 System.out.println("ERROR: Invalid input");
                 return;
         }
+        ProductCatalog.update(id, product);
     }
 
-    public void ticketCommands(String[] commands) {
+    public void ticketCommands(String[] commands, String fullCommand) {
         switch (commands[1].toUpperCase()) {
             case "NEW":
                 String inputCashId, inputUserId, inputTicketId = null;
@@ -301,6 +308,7 @@ public class StoreApp {
                 String prodId = commands[4];
                 int amount = Integer.parseInt(commands[5]);
                 ArrayList<String> customs = new ArrayList<>();
+
                 Cashier cash = CashierDatabase.getCashierByUW(cashId);
                 if (cash == null) {
                     System.out.println("ERROR: Cashier with ID " + cashId + " not found");
@@ -311,24 +319,17 @@ public class StoreApp {
                     System.out.println("ERROR: Ticket with ID " + ticketId + " not found");
                     return;
                 }
-                if (commands.length > 6) {
-                    for (int i = 6; i < commands.length; i++) {
-                        if (commands[i].equals("--p") && i + 1 < commands.length) {
-                            String text = commands[i + 1];
-                            if (text.length() >= 2 && text.charAt(0) == '"' && text.charAt(text.length() - 1) == '"') {
-                                text = text.substring(1, text.length() - 1);
-                            }
+
+                if (fullCommand.toLowerCase().contains("--p")) {
+                    String tail = fullCommand.substring(fullCommand.toLowerCase().indexOf("--p"));
+                    String[] parts = tail.split("(?i)--p"); // Split insensible a mayúsculas
+                    for (String part : parts) {
+                        String text = part.trim();
+                        if (text.startsWith("\"") && text.endsWith("\"") && text.length() > 1) {
+                            text = text.substring(1, text.length() - 1);
+                        }
+                        if (!text.isEmpty()) {
                             customs.add(text);
-                            i++;
-                        } else if (commands[i].length() > 3 && commands[i].charAt(0) == '-' && commands[i].charAt(1) == '-'
-                                && commands[i].charAt(2) == 'p') {
-                            String[] text = commands[i].split("--p");
-                            for (int j = 1; j < text.length; j++) {
-                                if (text[j].length() >= 2 && text[j].charAt(0) == '"' && text[j].charAt(text[j].length() - 1) == '"') {
-                                    text[j] = text[j].substring(1, text[j].length() - 1);
-                                }
-                                customs.add(text[j]);
-                            }
                         }
                     }
                 }
@@ -392,10 +393,10 @@ public class StoreApp {
                 if (InputValidator.isCashID(commands[2])) {
                     correctCommand[2] = commands[2];
                     correctCommand[3] = name;
-                    correctCommand[4] = commands[commands.length-1];
+                    correctCommand[4] = commands[commands.length - 1];
                 } else {
                     correctCommand[2] = name;
-                    correctCommand[3] = commands[commands.length-1];
+                    correctCommand[3] = commands[commands.length - 1];
                 }
                 if (countNotNull(correctCommand) == 5) {
                     CashierDatabase.add(correctCommand[2], name, correctCommand[4]);
@@ -425,7 +426,7 @@ public class StoreApp {
             case "ADD":
                 String stringedCommand = String.join(" ", commands);
                 String name = stringedCommand.substring(stringedCommand.indexOf('"') + 1, stringedCommand.lastIndexOf('"'));
-                String restOfCommand = stringedCommand.substring(stringedCommand.lastIndexOf('"')+1).trim();
+                String restOfCommand = stringedCommand.substring(stringedCommand.lastIndexOf('"') + 1).trim();
                 String[] afterName = restOfCommand.split(" ");
                 ClientDatabase.add(name, afterName[0], afterName[1], afterName[2]);
                 break;
@@ -481,56 +482,10 @@ public class StoreApp {
     }
 
     private int countNotNull(String[] s) {
-        int c=0;
-        for (String str: s) {
-            if (str != null) {
-                c++;
-            }
+        int c = 0;
+        for (String str : s) {
+            if (str != null) c++;
         }
         return c;
     }
-
-    /*
-    private static boolean validateCustomizations(String[] splittedCommand) {
-
-        if (!splittedCommand[6].toLowerCase().contains("--p")) {
-            return false;
-        }
-        for (int i = 6; i < splittedCommand.length; i++) {
-            splittedCommand[i].split("--p");
-        }
-        String tail = sb.toString().trim();
-        if (!tail.contains("--P")) {
-            return false;
-        }
-
-        // 3. DIVISIÓN INTELIGENTE: Usamos la bandera como separador
-        // Esto funciona igual para "--PTEXTO" (pegado) y "--P TEXTO" (separado)
-        String[] parts = tail.split("--P");
-
-        // 4. VALIDACIÓN DE PARTES
-
-        // a) La parte antes del primer --P debe estar vacía
-        if (!parts[0].trim().isEmpty()) {
-            return false; // Había basura antes del primer --P
-        }
-
-        // b) Cada parte cortada debe tener contenido (el texto de la personalización)
-        for (int i = 1; i < parts.length; i++) {
-            String text = parts[i].trim();
-
-            // Error si encontramos huecos vacíos (ej: "--P  --P")
-            if (text.isEmpty()) {
-                return false;
-            }
-
-            // (Opcional) Error si son comillas vacías ("")
-            if (text.equals("\"\"")) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-    */
 }
