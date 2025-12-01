@@ -191,10 +191,10 @@ public class Ticket {
                 System.out.println(prod);
             }
         }
+        System.out.println("Total price: " + rounded(totalPrice));
+        System.out.println("Total discount: " + rounded(totalDiscount));
+        System.out.println("Final Price: " + rounded(totalPrice - totalDiscount));
         if (printOkAtEnd) {
-            System.out.println("Total price: " + rounded(totalPrice));
-            System.out.println("Total discount: " + rounded(totalDiscount));
-            System.out.println("Final Price: " + rounded(totalPrice - totalDiscount));
 
             if (state != TicketState.CLOSE) {
                 setState(TicketState.CLOSE);
