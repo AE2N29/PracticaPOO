@@ -195,11 +195,11 @@ public class Ticket {
         System.out.println("Total discount: " + rounded(totalDiscount));
         System.out.println("Final Price: " + rounded(totalPrice - totalDiscount));
         if (printOkAtEnd) {
-
             if (state != TicketState.CLOSE) {
                 setState(TicketState.CLOSE);
                 this.id = headerId;
             }
+            System.out.println("ticket print: ok");
         }
     }
 
