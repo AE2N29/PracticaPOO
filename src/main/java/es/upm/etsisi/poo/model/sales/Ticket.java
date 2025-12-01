@@ -32,7 +32,7 @@ public class Ticket {
         LocalDateTime now = LocalDateTime.now();
         String formattedDate = now.format(formatter);
         int random5DigitsNum = (int) (Math.random() * 90000) + 10000;
-        if(!isIdRegistered(formattedDate + random5DigitsNum)){
+        if (!isIdRegistered(formattedDate + random5DigitsNum)) {
             return (formattedDate + random5DigitsNum);
         } else {
             return createTicketId();
@@ -64,7 +64,7 @@ public class Ticket {
         } else {
             if (amount <= 0) {
                 System.out.println("ERROR: Amount must be greater than 0");
-            }else {
+            } else {
                 AbstractProduct prod = ProductCatalog.getProduct(prodID);
                 if (prod == null) {
                     System.out.println("ERROR: There isn't any product with " + prodID + " as ID");
@@ -78,20 +78,25 @@ public class Ticket {
                     System.out.println("ERROR: Event/Food product " + prodID + " is already in the ticket.");
                     return;
                 }
-                if (prod instanceof PersonalizedProduct) {
-                    if (customizations != null && !customizations.isEmpty()) {
-                        PersonalizedProduct wrapProd = (PersonalizedProduct) prod;
-                        for (String text : customizations) {
-                            boolean added = wrapProd.addCustomText(text);
-                            if (!added) {
-                                System.out.println("WARNING: Could not add text '" + text + "'. Max limit reached.");
-                            }
+                if (prod instanceof PersonalizedProduct && customizations != null && !customizations.isEmpty()) {
+                    PersonalizedProduct original = (PersonalizedProduct) prod;
+                    PersonalizedProduct copy = new PersonalizedProduct(
+                            original.getId(), original.getName(), original.getCategory(),
+                            original.getPrice(), original.getMaxCustomTexts()
+                    );
+
+                    for (String text : customizations) {
+                        boolean added = copy.addCustomText(text);
+                        if (!added) {
+                            System.out.println("WARNING: Could not add text '" + text + "'. Max limit reached.");
                         }
-                        System.out.println("   (Added with customizations)");
                     }
+                    prod = copy;
+                    System.out.println("   (Added with customizations)");
                 } else if (customizations != null && !customizations.isEmpty()) {
                     System.out.println("WARNING: Product " + prod.getName() + " is not customizable. Ignoring texts.");
                 }
+
                 if (amount + productTotalUnits() > MAX_PRODS_TICKET) {
                     System.out.println("ERROR: Max products allowed per ticket exceeded!");
                     return;
@@ -114,17 +119,14 @@ public class Ticket {
         if (state.equals(TicketState.CLOSE)) {
             System.out.println("ERROR: Ticket is already closed");
         } else {
-            AbstractProduct prod = ProductCatalog.getProduct(prodID);
-            if (prod == null) {  // si no encuentra el producto con este id en la base de datos
-                System.out.println("ERROR: There isn't any product with " + prodID + " as ID");
-                return;
-            }
-            if (!productList.contains(prod)) {  // si no existe producto con ID proporcionada en el ticket, mensaje de error
+            boolean removed = productList.removeIf(p -> p.getId().equals(prodID));
+
+            if (!removed) {
                 System.out.print("ERROR: the product with " + prodID + " as ID wasn't in the current ticket");
-                return;
+            } else {
+                System.out.print("ticket remove: ok");
+                if (productList.isEmpty()) this.state = TicketState.EMPTY;
             }
-            productList.remove(prod);
-            System.out.print("ticket remove: ok");  // si existe el producto, se devuelve confirmacion de borrado
         }
     }
 
@@ -132,59 +134,60 @@ public class Ticket {
         printTicketLinesSorted(true);
     }
 
-    private int productTotalUnits(){ // metodo que devuelve la cantidad de productos que haya en el mapa
-        int sum = 0;
-        for (AbstractProduct prod: productList) {  // recorre todas las cantidades del mapa, llamando a cada una units
-            if (prod != null) {
-                sum++;
-            }
-        }
-        return sum;
+    private int productTotalUnits() {
+        return productList.size();
     }
 
     private void printTicketLinesSorted(boolean printOkAtEnd) {
         double totalPrice = 0.0, totalDiscount = 0.0;
-        ArrayList<AbstractProduct> sorted = this.productList;
+        ArrayList<AbstractProduct> sorted = new ArrayList<>(this.productList); // Copia segura
         sorted.sort(Comparator.comparing(AbstractProduct::getName));
         int merchCount = 0, clothesCount = 0, electronicsCount = 0, stationeryCount = 0, bookCount = 0;
         for (AbstractProduct prod : sorted) {
-            if (prod != null) {
-                if (prod instanceof StockProduct) {
-                    switch (((StockProduct) prod).getCategory()) {
-                        case MERCH -> merchCount++;
-                        case STATIONERY -> stationeryCount++;
-                        case CLOTHES -> clothesCount++;
-                        case BOOK -> bookCount++;
-                        case ELECTRONICS -> electronicsCount++;
-                    }
+            if (prod instanceof StockProduct) {
+                switch (((StockProduct) prod).getCategory()) {
+                    case MERCH -> merchCount++;
+                    case STATIONERY -> stationeryCount++;
+                    case CLOTHES -> clothesCount++;
+                    case BOOK -> bookCount++;
+                    case ELECTRONICS -> electronicsCount++;
                 }
             }
         }
+
+        String headerId = this.id;
+        String futureClosedId = null;
+        if (printOkAtEnd && state != TicketState.CLOSE) {
+            futureClosedId = updateTicketId();
+            headerId = futureClosedId;
+        }
+        System.out.println("Ticket : " + headerId);
         for (AbstractProduct prod : sorted) {
             totalPrice += prod.getPrice();
-            int actualCount = 0;
+            double discountPct = 0.0;
             if (prod instanceof StockProduct) {
-                switch (((StockProduct) prod).getCategory()) {
-                    case MERCH -> actualCount = merchCount;
-                    case STATIONERY ->  actualCount = stationeryCount;
-                    case CLOTHES -> actualCount = clothesCount;
-                    case BOOK ->  actualCount = bookCount;
-                    case ELECTRONICS -> actualCount = electronicsCount;
+                Category cat = ((StockProduct) prod).getCategory();
+                boolean applies = false;
+                switch (cat) {
+                    case MERCH -> applies = merchCount >= 2;
+                    case STATIONERY -> applies = stationeryCount >= 2;
+                    case CLOTHES -> applies = clothesCount >= 2;
+                    case BOOK -> applies = bookCount >= 2;
+                    case ELECTRONICS -> applies = electronicsCount >= 2;
                 }
-            }
-            if (actualCount > 1) {
-                double actualDiscount = 0.0;
-                if (prod instanceof StockProduct) {
-                    switch (((StockProduct) prod).getCategory()) {
-                        case MERCH -> actualDiscount = 0.0;
-                        case STATIONERY -> actualDiscount = 0.05;
-                        case CLOTHES -> actualDiscount = 0.07;
-                        case BOOK -> actualDiscount = 0.1;
-                        case ELECTRONICS -> actualDiscount = 0.03;
+                if (applies) {
+                    switch (cat) {
+                        case STATIONERY -> discountPct = 0.05;
+                        case CLOTHES -> discountPct = 0.07;
+                        case BOOK -> discountPct = 0.1;
+                        case ELECTRONICS -> discountPct = 0.03;
                     }
                 }
-                totalDiscount += actualDiscount;
-                System.out.println(prod + " **discount -" + rounded(actualDiscount));
+            }
+            if (discountPct > 0) {
+                double moneySaved = prod.getPrice() * discountPct;
+                totalDiscount += moneySaved;
+                System.out.println(prod + " **discount -" + rounded(moneySaved));
             } else {
                 System.out.println(prod);
             }
@@ -192,14 +195,17 @@ public class Ticket {
         if (printOkAtEnd) {
             System.out.println("Total price: " + rounded(totalPrice));
             System.out.println("Total discount: " + rounded(totalDiscount));
-            System.out.println("Final price: " + rounded(totalPrice - totalDiscount));
-            setState(TicketState.CLOSE);
-            setId(updateTicketId());
+            System.out.println("Final Price: " + rounded(totalPrice - totalDiscount));
+
+            if (state != TicketState.CLOSE) {
+                setState(TicketState.CLOSE);
+                this.id = headerId;
+            }
         }
     }
 
     private double rounded(double d) {
-        return (d*100.0) / 100.0;
+        return d;
     }
 
     public TicketState getState() {
