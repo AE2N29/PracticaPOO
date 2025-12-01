@@ -2,7 +2,6 @@ package es.upm.etsisi.poo.main;
 
 import es.upm.etsisi.poo.model.products.*;
 import es.upm.etsisi.poo.model.sales.Ticket;
-import es.upm.etsisi.poo.model.sales.TicketState;
 import es.upm.etsisi.poo.model.users.Cashier;
 import es.upm.etsisi.poo.model.users.Client;
 import es.upm.etsisi.poo.persistance.*;
@@ -50,6 +49,7 @@ public class StoreApp {
                             break;
                         case "ECHO":
                             System.out.println(command);
+                            System.out.println(command.substring(5));
                             break;
                         case "EXIT":
                             keepGoing = false;
