@@ -230,20 +230,11 @@ public class InputValidator {
                 }
                 return false;
             case "ADD":
-                if (splittedCommand.length == 6) {
-                    return isTicketID(splittedCommand[2])
-                            && isCashID(splittedCommand[3])
-                            && validProductID(splittedCommand[4])
-                            && isInteger(splittedCommand[5]);
-                }
-                if (splittedCommand.length > 6) {
-                    return isTicketID(splittedCommand[2])
-                            && isCashID(splittedCommand[3])
-                            && validProductID(splittedCommand[4])
-                            && isInteger(splittedCommand[5])
-                            && validCustomCommand(splittedCommand);
-                }
-                return false;
+                if (splittedCommand.length < 6) return false;
+                return isTicketID(splittedCommand[2])
+                        && isCashID(splittedCommand[3])
+                        && validProductID(splittedCommand[4])
+                        && isInteger(splittedCommand[5]);
             case "REMOVE":
                 if(splittedCommand.length == 5) {
                     return isTicketID(splittedCommand[2])
@@ -347,18 +338,7 @@ public class InputValidator {
     }
 
     public static boolean isTicketID(String ticketId) {
-        if (ticketId == null || ticketId.length() != 20) { return false; }
-        boolean separators = (ticketId.charAt(2) == '-' &&
-                ticketId.charAt(5) == '-' &&
-                ticketId.charAt(8) == '-' &&
-                ticketId.charAt(11) == ':' &&
-                ticketId.charAt(14) == '-');
-        boolean datesAreNumbers = (isInteger(ticketId.substring(0, 2)) &&
-                isInteger(ticketId.substring(3, 5)) &&
-                isInteger(ticketId.substring(6, 8)) &&
-                isInteger(ticketId.substring(9, 11)) &&
-                isInteger(ticketId.substring(12, 14)));
-        return separators && datesAreNumbers && isInteger(ticketId.substring(15, 20));
+        return ticketId != null && !ticketId.isBlank();
     }
     public static boolean isDate(String date) {
         if(date == null){return false;}
@@ -376,20 +356,20 @@ public class InputValidator {
         return id.matches(pattern);  // acepta ( ids generados internamente)
     }
 
-    public static boolean validCustomCommand (String[] customCommand) {
-        for (int i = 6; i < customCommand.length; i++) {
-            if (customCommand[i].equals("--p")) {
-                if (!(i + 1 < customCommand.length)) {
-                    return false;
-                }
-                i++;
-            } else if (!(customCommand[i].length() > 3)) {
-                return false;
-            } else if (!(customCommand[i].charAt(0) == '-' && customCommand[i].charAt(1) == '-'
-                    && customCommand[i].charAt(2) == 'p')) {
-                return false;
-            }
-        }
-        return true;
-    }
+    // public static boolean validCustomCommand (String[] customCommand) {
+        // for (int i = 6; i < customCommand.length; i++) {
+           // if (customCommand[i].equals("--p")) {
+               // if (!(i + 1 < customCommand.length)) {
+                   // return false;
+               // }
+               // i++;
+           // } else if (!(customCommand[i].length() > 3)) {
+               // return false;
+           // } else if (!(customCommand[i].charAt(0) == '-' && customCommand[i].charAt(1) == '-'
+                   // && customCommand[i].charAt(2) == 'p')) {
+               // return false;
+           // }
+       // }
+       // return true;
+   // }
 }
