@@ -67,6 +67,7 @@ public class CashierDatabase {
                 System.out.println("  " + c);
             }
         }
+        System.out.println("cash list: ok");
     }
 
     public static ArrayList<Cashier> getCashiersSortedById() {
@@ -83,7 +84,7 @@ public class CashierDatabase {
             }
         }
         if (cashier == null) {
-            System.out.println("There is no cashier with UPMWorkerID " + UPMWorker);
+            System.out.println("Tickets: ");
         } else {
             ArrayList<Ticket> cashierTickets = cashier.getCreatedTickets();
             cashierTickets.sort(Comparator.comparing(Ticket::getId));

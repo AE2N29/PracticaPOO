@@ -2,6 +2,7 @@ package es.upm.etsisi.poo.main;
 
 import es.upm.etsisi.poo.model.products.*;
 import es.upm.etsisi.poo.model.sales.Ticket;
+import es.upm.etsisi.poo.model.sales.TicketState;
 import es.upm.etsisi.poo.model.users.Cashier;
 import es.upm.etsisi.poo.model.users.Client;
 import es.upm.etsisi.poo.persistance.*;
@@ -223,7 +224,6 @@ public class StoreApp {
             case "NAME":
                 product.setName(change);
                 ProductCatalog.update(id, product);
-                System.out.println("product update: ok");
                 break;
             case "PRICE":
                 try {
@@ -234,8 +234,6 @@ public class StoreApp {
                     }
                     if (product.setPrice(newPrice)) {//setPrice booleanos, da positivo si la clase permite el set(tiene precio)
                         ProductCatalog.update(id, product);
-                        System.out.println(product);
-                        System.out.println("product update: ok");
                     } else {
                         System.out.println("ERROR: Invalid input");
                     }
@@ -297,6 +295,8 @@ public class StoreApp {
                 }
                 cashier.addTicket(newTicket);
                 client.addTicket(newTicket);
+                newTicket.print();
+                newTicket.setState(TicketState.EMPTY);
                 System.out.println("ticket new: ok");
                 break;
             case "ADD":
