@@ -48,7 +48,6 @@ public class StoreApp {
                             help();
                             break;
                         case "ECHO":
-                            System.out.println(command);
                             System.out.println(command.substring(5));
                             break;
                         case "EXIT":
