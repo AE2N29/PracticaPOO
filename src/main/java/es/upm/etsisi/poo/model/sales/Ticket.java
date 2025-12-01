@@ -204,8 +204,9 @@ public class Ticket {
         }
     }
 
-    private double rounded(double d) {
-        return d;
+    private String rounded(double d) {
+        double val = Math.round(d * 1000.0) / 1000.0;
+        return String.valueOf(val);
     }
 
     public TicketState getState() {
