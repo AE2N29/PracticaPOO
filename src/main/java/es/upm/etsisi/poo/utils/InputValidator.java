@@ -178,13 +178,13 @@ public class InputValidator {
     private static boolean prodCommandVerification(String[] splittedCommand) {
         switch (splittedCommand[1]) {
             case "ADD":
-                validateProdAdd(splittedCommand);
+                return validateProdAdd(splittedCommand);
             case "ADDFOOD":
-                validateProdAddEvent(splittedCommand);
+                return validateProdAddEvent(splittedCommand);
             case "ADDMEETING":
-                validateProdAddEvent(splittedCommand);
+                return validateProdAddEvent(splittedCommand);
             case "UPDATE":
-                validateProdUpdate(splittedCommand);
+                return validateProdUpdate(splittedCommand);
             case "REMOVE":
                 if (splittedCommand.length != 3) { return false; }
                 return isInteger(splittedCommand[2]);
@@ -369,9 +369,11 @@ public class InputValidator {
     }
     public static boolean validProductID(String id) {
         if(id == null || id.trim().isEmpty()){return false;}
-        if(id.toUpperCase() == "GENERATE"){return true;}
+        String upperId = id.toUpperCase();
+        if(upperId.equals("GENERATE") ){return true;}
+        if(id.matches("^\\d+$")){return true;} //Tambien debe de aceptar IDs solamente numericos
         String pattern = "^[A-Z]{2}\\d{7}$";  //admite formatos con dos letras mayusculas y que termine por una secuencia de 7 numeros
-        return id.matches(pattern);
+        return id.matches(pattern);  // acepta ( ids generados internamente)
     }
 
     public static boolean validCustomCommand (String[] customCommand) {

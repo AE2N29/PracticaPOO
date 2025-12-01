@@ -23,7 +23,7 @@ public class StoreApp {
     }
 
     private void init() {
-        System.out.println("\nWelcome to the ticket module App.");
+        System.out.println("Welcome to the ticket module App.");
         System.out.println("Ticket module. Type 'help' to see commands.");
         start();
     }
@@ -207,9 +207,9 @@ public class StoreApp {
         result[4] = afterNameParts[0]; // category
         result[5] = afterNameParts[1]; //price
 
-        if (hasMaxPers) {
+        if (hasMaxPers) { //maxPers si tiene
             result[6] = afterNameParts[2];
-        } //maxPers si tiene
+        }
         return result;
     }
 
@@ -233,7 +233,7 @@ public class StoreApp {
                         System.out.println("ERROR: Invalid input");
                         return;
                     }
-                    if (product.setPrice(newPrice)) {
+                    if (product.setPrice(newPrice)) {//setPrice booleanos, da positivo si la clase permite el set(tiene precio)
                         ProductCatalog.update(id, product);
                         System.out.println(product);
                         System.out.println("product update: ok");
@@ -264,6 +264,7 @@ public class StoreApp {
                 System.out.println("ERROR: Invalid input");
                 return;
         }
+        ProductCatalog.update(id, product);
     }
 
     public void ticketCommands(String[] commands, String fullCommand) {
@@ -289,9 +290,9 @@ public class StoreApp {
                     return;
                 }
                 Ticket newTicket;
-                if (inputTicketId == null) {
+                if (inputTicketId == null) { // cuando no pasan el id del ticket como parametro
                     newTicket = new Ticket();
-                } else if (Ticket.isIdRegistered(inputTicketId)) {
+                } else if (Ticket.isIdRegistered(inputTicketId)) { // cuando pasan el id del ticket como parametro
                     System.out.println("ERROR: Ticket ID " + inputTicketId + " already exists.");
                     return;
                 } else {
@@ -332,7 +333,6 @@ public class StoreApp {
                         }
                     }
                 }
-
                 t.add(prodId, amount, customs);
                 break;
             case "REMOVE":
@@ -368,7 +368,13 @@ public class StoreApp {
                 break;
             case "LIST":
                 System.out.println("Ticket List:");
-                CashierDatabase.list();
+                ArrayList<Cashier> sortedCashiers = CashierDatabase.getCashiersSortedById();
+                for (Cashier cashierc : sortedCashiers) {
+                    ArrayList<Ticket> tickets = cashierc.getTicketsSortedById();
+                    for (Ticket tickett : tickets) {
+                        System.out.println("  " + tickett.getId() + " - " + tickett.getState());
+                    }
+                }
                 System.out.println("ticket list: ok");
                 break;
             default:
@@ -384,7 +390,6 @@ public class StoreApp {
                 String name = correctCmdStringed.substring(correctCmdStringed.indexOf('"') + 1, correctCmdStringed.lastIndexOf('"'));
                 correctCommand[0] = "CLIENT";
                 correctCommand[1] = "ADD";
-
                 if (InputValidator.isCashID(commands[2])) {
                     correctCommand[2] = commands[2];
                     correctCommand[3] = name;
