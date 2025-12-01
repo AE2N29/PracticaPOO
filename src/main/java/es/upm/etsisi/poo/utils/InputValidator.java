@@ -96,12 +96,14 @@ public class InputValidator {
     }
 
     private static boolean validateProdAddEvent(String[] splittedCommand, String fullCommand) {
-        if (splittedCommand.length < 6 || splittedCommand.length > 7){ return false; }
+        if (splittedCommand.length < 6){ return false; }
         if (fullCommand.split("\"").length < 3){ return false; }
         try {
             int firstQuote = fullCommand.indexOf('"');
             int lastQuote = fullCommand.lastIndexOf('"');
-            if(firstQuote == -1 || lastQuote <= firstQuote) { return false; }
+            if (firstQuote == -1 || lastQuote == -1 || lastQuote <= firstQuote) {
+                return false;
+            }
 
             String name = fullCommand.substring(firstQuote + 1, lastQuote);
             String beforeName = fullCommand.substring(0, firstQuote).trim();
@@ -124,16 +126,15 @@ public class InputValidator {
                     && Double.parseDouble(afterNameParts[0]) > 0
                     && isDate(afterNameParts[1])
                     && isInteger(afterNameParts[2])
-                    && Integer.parseInt(afterNameParts[2]) > 0
-                    && Integer.parseInt(afterNameParts[2]) <= 100;}
+                    && Integer.parseInt(afterNameParts[2]) > 0;
+            }
             else {
                 return isName(name)
                     && isDouble(afterNameParts[0])
                     && Double.parseDouble(afterNameParts[0]) > 0
                     && isDate(afterNameParts[1])
                     && isInteger(afterNameParts[2])
-                    && Integer.parseInt(afterNameParts[2]) > 0
-                    && Integer.parseInt(afterNameParts[2]) <= 100;}
+                    && Integer.parseInt(afterNameParts[2]) > 0;}
             }catch (Exception e){return false;}
     }
 
@@ -165,6 +166,7 @@ public class InputValidator {
             case "ADD":
                 return validateProdAdd(splittedCommand, fullCommand);
             case "ADDFOOD":
+                return validateProdAddEvent(splittedCommand, fullCommand);
             case "ADDMEETING":
                 return validateProdAddEvent(splittedCommand, fullCommand);
             case "UPDATE":
