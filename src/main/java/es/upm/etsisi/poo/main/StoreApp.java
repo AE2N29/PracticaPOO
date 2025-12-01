@@ -49,7 +49,7 @@ public class StoreApp {
                             help();
                             break;
                         case "ECHO":
-                            System.out.println(command.substring(5));
+                            System.out.println(command);
                             break;
                         case "EXIT":
                             keepGoing = false;
@@ -182,7 +182,7 @@ public class StoreApp {
         }
     }
 
-    public static String[] processProdAdd(String command) {
+    public String[] processProdAdd(String command) {
         String name = command.substring(command.indexOf('"') + 1, command.lastIndexOf('"'));
         String beforeName = command.substring(0, command.indexOf('"')).trim();
         String afterName = command.substring(command.lastIndexOf('"') + 1).trim();
