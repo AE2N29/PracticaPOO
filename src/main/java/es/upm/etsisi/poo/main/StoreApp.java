@@ -15,7 +15,6 @@ import java.util.Scanner;
 
 public class StoreApp {
     private final Scanner sc = new Scanner(System.in);
-    private final Ticket ticket = new Ticket();
 
     public static void main( String[] args ) {
         StoreApp app = new StoreApp();
@@ -70,6 +69,7 @@ public class StoreApp {
                 System.out.println();
             }
         }
+        sc.close();
     }
 
     private void end() {
@@ -117,7 +117,7 @@ public class StoreApp {
                 double priceFood = Double.parseDouble(afterNameParts[0]);
                 int personNumberFood = Integer.parseInt(afterNameParts[2]);
 
-                if(beforeNameParts[2] == "GENERATE") {
+                if("GENERATE".equals(beforeNameParts[2])) {
                     EventFood product = new EventFood(nameFood,eventTimeFood,priceFood,personNumberFood);
                     String idFood = product.getId();
                     ProductCatalog.add(idFood,product);
@@ -144,7 +144,7 @@ public class StoreApp {
                 double priceMeeting = Double.parseDouble(afterNamePartsMeeting[0]);
                 int personNumberMeeting = Integer.parseInt(afterNamePartsMeeting[2]);
 
-                if(beforeNamePartsMeeting[2] == "GENERATE") {
+                if("GENERATE".equals(beforeNamePartsMeeting[2])) {
                     EventMeeting product = new EventMeeting(nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
                     String idFood = product.getId();
                     ProductCatalog.add(idFood,product);

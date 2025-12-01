@@ -1,7 +1,6 @@
 package es.upm.etsisi.poo.utils;
 
 import es.upm.etsisi.poo.model.products.Category;
-import es.upm.etsisi.poo.main.StoreApp;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -20,7 +19,7 @@ public class InputValidator {
         if (splittedCommand.length < 2) { return false; }
         switch (splittedCommand[0]) {
             case "PROD":
-                return prodCommandVerification(splittedCommand);
+                return prodCommandVerification(splittedCommand, command);
             case "TICKET":
                 return ticketCommandVerification(splittedCommand);
             case "ECHO":
@@ -67,21 +66,17 @@ public class InputValidator {
         }
     }
 
+    private static boolean validateProdAdd(String[] splittedCommand, String fullCommand) {
+        if (splittedCommand.length < 6) { return false; }
+        if (fullCommand.split("\"").length < 3){ return false; }
 
-    //prod add [<id>] "<name>" <category> <price> [<maxPers>]
-            // si tiene <maxPers> se considerara que el producto es personalizable)
-    private static boolean validateProdAdd(String[] splittedCommand) {
-        if (splittedCommand.length < 6) {return false;}
-        String fullCommand = String.join(" ", splittedCommand);
-        if(fullCommand.split("\"").length < 3){return false;}
-        try{
-            String[] processedCommand = StoreApp.processProdAdd(fullCommand);
-            if(!validProductID(processedCommand[2])){return false;}
-            if(processedCommand.length < 6 || processedCommand.length > 7 ) {
+        try {
+            String[] processedCommand = localProcessProdAdd(fullCommand);
+            if (!validProductID(processedCommand[2])){ return false; }
+            if (processedCommand.length < 6 || processedCommand.length > 7 ) {
                 return false;
             }
-            if(processedCommand.length == 7) //caso donde tiene MAX Personas
-            {
+            if (processedCommand.length == 7){ //caso donde tiene MAX Personas
                 return isName(processedCommand[3])
                         && isCategory(processedCommand[4])
                         && isDouble(processedCommand[5])
@@ -89,8 +84,7 @@ public class InputValidator {
                         && isInteger(processedCommand[6])
                         && Integer.parseInt(processedCommand[6]) > 0;
             }
-            if(processedCommand.length == 6)  //caso donde NO tiene MAX Personas
-            {
+            if(processedCommand.length == 6){  //caso donde NO tiene MAX Personas
                 return isName(processedCommand[3])
                         && isCategory(processedCommand[4])
                         && isDouble(processedCommand[5])
@@ -98,25 +92,20 @@ public class InputValidator {
             }
             return false;
         }
-        catch (NoSuchElementException | NumberFormatException e){return false;}
+        catch (NoSuchElementException | NumberFormatException | IndexOutOfBoundsException e){return false;}
     }
 
-    private static boolean validateProdAddEvent(String[] splittedCommand) {
-        //prod addFood [<id>] "< name>" <price> <expiration: yyyy-MM-dd> <max_people>
-        //prod addMeeting [<id>] "<name>" <price> < expiration: yyyy-MM-dd> <max_people>
-        if(splittedCommand.length < 6 || splittedCommand.length > 7){return false;}
-        String fullCommand = String.join(" ", splittedCommand);
-        if(fullCommand.split("\"").length < 3){return false;}
+    private static boolean validateProdAddEvent(String[] splittedCommand, String fullCommand) {
+        if (splittedCommand.length < 6 || splittedCommand.length > 7){ return false; }
+        if (fullCommand.split("\"").length < 3){ return false; }
         try {
             int firstQuote = fullCommand.indexOf('"');
             int lastQuote = fullCommand.lastIndexOf('"');
-            if(firstQuote == -1 || lastQuote <= firstQuote)
-            {return false;}
-            String name = fullCommand.substring(firstQuote + 1, lastQuote);
+            if(firstQuote == -1 || lastQuote <= firstQuote) { return false; }
 
+            String name = fullCommand.substring(firstQuote + 1, lastQuote);
             String beforeName = fullCommand.substring(0, firstQuote).trim();
             String[] beforeNameParts = beforeName.split(" ");
-
             String afterName = fullCommand.substring(lastQuote + 1).trim();
             String[] afterNameParts = afterName.split(" ");
 
@@ -148,20 +137,16 @@ public class InputValidator {
             }catch (Exception e){return false;}
     }
 
-    private static boolean validateProdUpdate(String[] splittedCommand) {
+    private static boolean validateProdUpdate(String[] splittedCommand, String fullCommand) {
+        if (splittedCommand.length < 4) { return false; }
+        if (!validProductID(splittedCommand[2])) { return false; }
 
-        if (splittedCommand.length < 4) {
-            return false;
-        }
-        if (!isInteger(splittedCommand[2])) { return false; }
-        String fullUpdate = String.join(" ", splittedCommand);
         switch (splittedCommand[3]) {
-            case "NAME": {
-                //  Acepta nombres con espacios cuando están entre comillas: prod update <id> NAME "nuevo nombre"
-                int first = fullUpdate.indexOf('"');
-                int last = fullUpdate.lastIndexOf('"');
-                if (first == -1 || last <= first) { return false; } //tira -1 cuando no lo encuentra
-                String nameValue = fullUpdate.substring(first + 1, last);
+            case "NAME": {  //  Acepta nombres con espacios cuando están entre comillas: prod update <id> NAME "nuevo nombre"
+                int first = fullCommand.indexOf('"');
+                int last = fullCommand.lastIndexOf('"');
+                if (first == -1 || last <= first) { return false; }
+                String nameValue = fullCommand.substring(first + 1, last);
                 return isName(nameValue);
             }
             case "PRICE":
@@ -175,19 +160,18 @@ public class InputValidator {
         }
     }
 
-    private static boolean prodCommandVerification(String[] splittedCommand) {
+    private static boolean prodCommandVerification(String[] splittedCommand, String fullCommand) {
         switch (splittedCommand[1]) {
             case "ADD":
-                return validateProdAdd(splittedCommand);
+                return validateProdAdd(splittedCommand, fullCommand);
             case "ADDFOOD":
-                return validateProdAddEvent(splittedCommand);
             case "ADDMEETING":
-                return validateProdAddEvent(splittedCommand);
+                return validateProdAddEvent(splittedCommand, fullCommand);
             case "UPDATE":
-                return validateProdUpdate(splittedCommand);
+                return validateProdUpdate(splittedCommand, fullCommand);
             case "REMOVE":
                 if (splittedCommand.length != 3) { return false; }
-                return isInteger(splittedCommand[2]);
+                return validProductID(splittedCommand[2]);
             case "LIST":
                 return splittedCommand.length == 2;
             default:
@@ -202,7 +186,6 @@ public class InputValidator {
                 String commandString = String.join(" ", splittedCommand);
                 if (commandString.split("\"").length < 3) {return false;}
                 String name = commandString.substring(commandString.indexOf('"') + 1, commandString.lastIndexOf('"'));
-                // Obtener lo que viene después del nombre
                 String substringAfterName = commandString.substring(commandString.lastIndexOf('"') + 1).trim();
                 String[] subarray = substringAfterName.split(" ");
                 if (subarray.length != 3) {
@@ -311,7 +294,6 @@ public class InputValidator {
                     sustitute = '2';
                     break;
             }
-
             numbers = sustitute + numbers.substring(1);
 
         } else if(Character.isDigit(firstChar)){
@@ -328,7 +310,7 @@ public class InputValidator {
     }
 
     public static boolean isEmail(String email) {
-        return email.toLowerCase().endsWith("@upm.es");   // lo que viene despues de la arroba debe estar siempre en minusculas?
+        return email.toLowerCase().endsWith("@upm.es");
     }
 
     public static boolean isCashID(String cashId) {
@@ -342,10 +324,10 @@ public class InputValidator {
     }
     public static boolean isDate(String date) {
         if(date == null){return false;}
-        try{
+        try {
             LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             return true;
-        }catch (DateTimeException e){return false;}
+        } catch (DateTimeException e){return false;}
     }
     public static boolean validProductID(String id) {
         if(id == null || id.trim().isEmpty()){return false;}
@@ -355,6 +337,36 @@ public class InputValidator {
         String pattern = "^[A-Z]{2}\\d{7}$";  //admite formatos con dos letras mayusculas y que termine por una secuencia de 7 numeros
         return id.matches(pattern);  // acepta ( ids generados internamente)
     }
+
+    private static String[] localProcessProdAdd(String command) {
+        String name = command.substring(command.indexOf('"') + 1, command.lastIndexOf('"'));
+        String beforeName = command.substring(0, command.indexOf('"')).trim();
+        String afterName = command.substring(command.lastIndexOf('"') + 1).trim();
+        String[] beforeNameParts = beforeName.split(" ");
+        String[] afterNameParts = afterName.split(" ");
+        boolean hasId = (beforeNameParts.length == 3);
+        boolean hasMaxPers = (afterNameParts.length == 3);
+        int size = 0;
+        if (!hasId && !hasMaxPers) { size = 6; }
+        if(hasId && hasMaxPers) { size = 7; }
+        if(!hasId && hasMaxPers) { size = 7; }
+        if(hasId && !hasMaxPers) { size = 6; }
+
+        String[] result = new String[size];
+        result[0] = "Prodd";
+        result[1] = "add";
+        if(hasId){result[2] = beforeNameParts[2];}
+        else{result[2] = "GENERATE";}
+
+        result[3] = name;
+        result[4] = afterNameParts[0]; // category
+        result[5] = afterNameParts[1]; // price
+
+        if(hasMaxPers){result[6] = afterNameParts[2];} // maxPers
+        return result;
+    }
+}
+
 
     // public static boolean validCustomCommand (String[] customCommand) {
         // for (int i = 6; i < customCommand.length; i++) {
@@ -372,4 +384,3 @@ public class InputValidator {
        // }
        // return true;
    // }
-}
