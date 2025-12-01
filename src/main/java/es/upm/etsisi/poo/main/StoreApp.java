@@ -223,7 +223,6 @@ public class StoreApp {
             case "NAME":
                 product.setName(change);
                 ProductCatalog.update(id, product);
-                System.out.println(product);
                 System.out.println("product update: ok");
                 break;
             case "PRICE":
@@ -251,7 +250,6 @@ public class StoreApp {
                         if (product.setCategory(newCategory)) {
                             ProductCatalog.update(id, product);
                             System.out.println(product);
-                            System.out.println("product update: ok");
                         }
                     } catch (IllegalArgumentException e) {
                         System.out.println("ERROR: Invalid input");
@@ -264,7 +262,6 @@ public class StoreApp {
                 System.out.println("ERROR: Invalid input");
                 return;
         }
-        ProductCatalog.update(id, product);
     }
 
     public void ticketCommands(String[] commands, String fullCommand) {

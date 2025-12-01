@@ -64,7 +64,7 @@ public class ProductCatalog {
         java.util.ArrayList<AbstractProduct> sortedList = new java.util.ArrayList<>(products.values());
         sortedList.sort(java.util.Comparator.comparing(AbstractProduct::getId));
         for (AbstractProduct product : sortedList) {
-            System.out.println(product);
+            System.out.println("  " + product);
         }
         System.out.println("prod list: ok");
     }
