@@ -36,7 +36,6 @@ public class StoreApp {
                 System.out.println("ERROR: Not a valid command");
             } else {
                 String[] commandParts = command.split(" ");
-                System.out.println(command);
                 try {
                     switch (commandParts[0].toUpperCase()) {
                         case "PROD":
