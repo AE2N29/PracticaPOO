@@ -470,7 +470,9 @@ public class StoreApp {
     private String typeCommand() {
         System.out.print("tUPM> ");
         try{
-            return sc.nextLine();
+            String command = sc.nextLine();
+            System.out.println(command);
+            return command;
         } catch(NoSuchElementException e){
             System.out.println("ERROR: Info not found");
             return "exit";
