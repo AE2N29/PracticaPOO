@@ -7,18 +7,42 @@ import es.upm.etsisi.poo.model.users.Client;
 import es.upm.etsisi.poo.persistance.*;
 import es.upm.etsisi.poo.utils.*;
 
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.io.File;
 
 public class StoreApp {
-    private final Scanner sc = new Scanner(System.in);
+    private static Scanner sc = null;
+    private static boolean fromKeyboard;
 
     public static void main( String[] args ) {
         StoreApp app = new StoreApp();
-        app.init();
+        try {
+            if (args.length == 0) {
+                sc = new Scanner(System.in);
+                fromKeyboard = true;
+                app.init();
+            } else if (args.length == 1) {
+                String nombreArchivo = args[0];
+                File archivo = new File(nombreArchivo);
+                sc = new Scanner(archivo);
+                fromKeyboard = false;
+                app.init();
+            } else {
+                System.out.println("ERROR: More arguments than expected");
+                app.end();
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("ERROR: Indicated file doesn't exist");
+        } finally {
+            if (sc != null) {
+                sc.close();
+            }
+        }
     }
 
     private void init() {
@@ -467,14 +491,23 @@ public class StoreApp {
     }
 
     private String typeCommand() {
-        System.out.print("tUPM> ");
-        try{
-            String command = sc.nextLine();
-            System.out.println(command);
+        String command;
+        try {
+            if (fromKeyboard) {
+                System.out.print("tUPM> ");
+                command = sc.nextLine();
+                System.out.println(command);
+            } else {
+                if (!sc.hasNextLine()) {
+                    return "EXIT";
+                }
+                command = sc.nextLine();
+                System.out.print("tUPM> " + command);
+            }
             return command;
-        } catch(NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             System.out.println("ERROR: Info not found");
-            return "exit";
+            return "EXIT";
         }
     }
 
