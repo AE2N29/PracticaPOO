@@ -33,11 +33,11 @@ public class StoreApp {
                 fromKeyboard = false;
                 app.init();
             } else {
-                System.out.println("ERROR: More arguments than expected");
+                System.out.println(StaticMessages.ARGS_EXCEED);
                 app.end();
             }
         } catch (FileNotFoundException e) {
-            System.out.println("ERROR: Indicated file doesn't exist");
+            System.out.println(StaticMessages.FILE_NOT_FOUND);
         } finally {
             if (sc != null) {
                 sc.close();
@@ -46,8 +46,7 @@ public class StoreApp {
     }
 
     private void init() {
-        System.out.println("Welcome to the ticket module App.");
-        System.out.println("Ticket module. Type 'help' to see commands.");
+        System.out.println(StaticMessages.WELCOME);
         start();
     }
 
@@ -57,7 +56,7 @@ public class StoreApp {
             String command = typeCommand().trim();
             if (command.isEmpty()) continue;
             if (!InputValidator.validCommand(command)) {
-                System.out.println("ERROR: Not a valid command");
+                System.out.println(StaticMessages.NOT_VALID_CMD);
             } else {
                 String[] commandParts = command.split(" ");
                 try {
@@ -85,7 +84,7 @@ public class StoreApp {
                             cashierCommands(commandParts);
                             break;
                         default:
-                            System.out.println("ERROR: Not a valid command");
+                            System.out.println(StaticMessages.NOT_VALID_CMD);
                     }
                 } catch (Exception e) {
                     System.out.println("Error processing ->" + commandParts[0].toLowerCase() + " " + commandParts[1].toLowerCase() + " ->" + e.getMessage());
@@ -200,7 +199,7 @@ public class StoreApp {
                 ProductCatalog.remove(id3);
                 break;
             default:
-                System.out.println("ERROR: Invalid input");
+                System.out.println(StaticMessages.INVALID_INPUT);
                 break;
         }
     }
@@ -240,7 +239,7 @@ public class StoreApp {
     public void prodUpdateManage(String id, String CategoryToChange, String change) {
         AbstractProduct product = ProductCatalog.getProduct(id);
         if (product == null) {
-            System.out.println("ERROR: Product with id " + id + " does not exist!");
+            System.out.println(StaticMessages.PROD_NO_EXIST);
             return;
         }
         switch (CategoryToChange) {
@@ -252,16 +251,16 @@ public class StoreApp {
                 try {
                     double newPrice = Double.parseDouble(change);
                     if (newPrice <= 0) {
-                        System.out.println("ERROR: Invalid input");
+                        System.out.println(StaticMessages.INVALID_INPUT);
                         return;
                     }
                     if (product.setPrice(newPrice)) {//setPrice booleanos, da positivo si la clase permite el set(tiene precio)
                         ProductCatalog.update(id, product);
                     } else {
-                        System.out.println("ERROR: Invalid input");
+                        System.out.println(StaticMessages.INVALID_INPUT);
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("ERROR: Invalid input");
+                    System.out.println(StaticMessages.INVALID_INPUT);
                 }
                 break;
             case "CATEGORY":
@@ -273,15 +272,15 @@ public class StoreApp {
                             System.out.println(product);
                         }
                     } catch (IllegalArgumentException e) {
-                        System.out.println("ERROR: Invalid input");
+                        System.out.println(StaticMessages.INVALID_INPUT);
                     }
                 } else {
-                    System.out.println("ERROR: Invalid input");
+                    System.out.println(StaticMessages.INVALID_INPUT);
                 }
                 break;
             default:
-                System.out.println("ERROR: Invalid input");
-                return;
+                System.out.println(StaticMessages.INVALID_INPUT);
+                break;
         }
     }
 
@@ -300,18 +299,18 @@ public class StoreApp {
                 Cashier cashier = CashierDatabase.getCashierByUW(inputCashId);
                 Client client = ClientDatabase.getClientByDNI(inputUserId);
                 if (cashier == null) {
-                    System.out.println("ERROR: Cashier with ID " + inputCashId + " not found");
+                    System.out.println(StaticMessages.CASHIER_NOT_FOUND);
                     return;
                 }
                 if (client == null) {
-                    System.out.println("ERROR: Client with DNI " + inputUserId + " not found");
+                    System.out.println(StaticMessages.CLIENT_NOT_FOUND);
                     return;
                 }
                 Ticket newTicket;
                 if (inputTicketId == null) { // cuando no pasan el id del ticket como parametro
                     newTicket = new Ticket();
                 } else if (Ticket.isIdRegistered(inputTicketId)) { // cuando pasan el id del ticket como parametro
-                    System.out.println("ERROR: Ticket ID " + inputTicketId + " already exists.");
+                    System.out.println(StaticMessages.TICKET_ALREADY_EXISTS);
                     return;
                 } else {
                     newTicket = new Ticket(inputTicketId);
@@ -330,12 +329,12 @@ public class StoreApp {
 
                 Cashier cash = CashierDatabase.getCashierByUW(cashId);
                 if (cash == null) {
-                    System.out.println("ERROR: Cashier with ID " + cashId + " not found");
+                    System.out.println(StaticMessages.CASHIER_NOT_FOUND);
                     return;
                 }
                 Ticket t = cash.getTicketById(ticketId);
                 if (t == null) {
-                    System.out.println("ERROR: Ticket with ID " + ticketId + " not found");
+                    System.out.println(StaticMessages.TICKET_NOT_FOUND);
                     return;
                 }
 
@@ -360,12 +359,12 @@ public class StoreApp {
                 String pId = commands[4];
                 Cashier c = CashierDatabase.getCashierByUW(cId);
                 if (c == null) {
-                    System.out.println("ERROR: Cashier with ID " + cId + " not found");
+                    System.out.println(StaticMessages.CASHIER_NOT_FOUND);
                     return;
                 }
                 Ticket ticket = c.getTicketById(tId);
                 if (ticket == null) {
-                    System.out.println("ERROR: Ticket with ID " + tId + " not found");
+                    System.out.println(StaticMessages.TICKET_NOT_FOUND);
                     return;
                 }
                 ticket.remove(pId);
@@ -375,12 +374,12 @@ public class StoreApp {
                 String idCash = commands[3];
                 Cashier cashierC = CashierDatabase.getCashierByUW(idCash);
                 if (cashierC == null) {
-                    System.out.println("ERROR: Cashier with ID " + idCash + " not found");
+                    System.out.println(StaticMessages.CASHIER_NOT_FOUND);
                     return;
                 }
                 Ticket ticketT = cashierC.getTicketById(idTicket);
                 if (ticketT == null) {
-                    System.out.println("ERROR: Ticket with ID " + idTicket + " not found");
+                    System.out.println(StaticMessages.TICKET_NOT_FOUND);
                     return;
                 }
                 ticketT.print();
@@ -397,7 +396,7 @@ public class StoreApp {
                 System.out.println("ticket list: ok");
                 break;
             default:
-                System.out.println("ERROR: Invalid input");
+                System.out.println(StaticMessages.INVALID_INPUT);
         }
     }
 
@@ -422,7 +421,7 @@ public class StoreApp {
                 } else if (countNotNull(correctCommand) == 4) {
                     CashierDatabase.add(correctCommand[2], correctCommand[3]);
                 } else {
-                    System.out.println("ERROR: Invalid input");
+                    System.out.println(StaticMessages.INVALID_INPUT);
                 }
                 break;
             case "REMOVE":
@@ -435,7 +434,7 @@ public class StoreApp {
                 CashierDatabase.tickets(commands[2]);
                 break;
             default:
-                System.out.println("ERROR: Not valid command");
+                System.out.println(StaticMessages.NOT_VALID_CMD);
                 break;
         }
     }
@@ -456,7 +455,7 @@ public class StoreApp {
                 ClientDatabase.list();
                 break;
             default:
-                System.out.println("ERROR: Invalid input");
+                System.out.println(StaticMessages.INVALID_INPUT);
         }
     }
 
@@ -506,7 +505,7 @@ public class StoreApp {
             }
             return command;
         } catch (NoSuchElementException e) {
-            System.out.println("ERROR: Info not found");
+            System.out.println(StaticMessages.INFO_NOT_FOUND);
             return "EXIT";
         }
     }

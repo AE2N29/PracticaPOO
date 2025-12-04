@@ -2,6 +2,7 @@ package es.upm.etsisi.poo.model.sales;
 
 import es.upm.etsisi.poo.model.products.*;
 import es.upm.etsisi.poo.persistance.ProductCatalog;
+import es.upm.etsisi.poo.utils.StaticMessages;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -50,7 +51,7 @@ public class Ticket {
     // Este metodo ya no se utiliza en la segunda entrega, el new ticket ya no resetea el ticket. No lo borro por si lo usamos en un futuro
     public void resetTicket() {//  uso de ArrayList.clear para resetear el ticket
         if (state.equals(TicketState.CLOSE)) {
-            System.out.println("ERROR: Ticket is already closed");
+            System.out.println(StaticMessages.CLOSED_TICKET);
         } else {
             this.productList.clear();
             this.state = TicketState.EMPTY;
@@ -60,14 +61,14 @@ public class Ticket {
 
     public void add(String prodID, int amount, ArrayList<String> customizations) {
         if (state.equals(TicketState.CLOSE)) {
-            System.out.println("ERROR: Ticket is already closed");
+            System.out.println(StaticMessages.CLOSED_TICKET);
         } else {
             if (amount <= 0) {
-                System.out.println("ERROR: Amount must be greater than 0");
+                System.out.println(StaticMessages.NEGATIVE_AMOUNT);
             } else {
                 AbstractProduct prod = ProductCatalog.getProduct(prodID);
                 if (prod == null) {
-                    System.out.println("ERROR: There isn't any product with " + prodID + " as ID");
+                    System.out.println(StaticMessages.PROD_NO_EXIST);
                     return;
                 }
                 if (!prod.isAvailable()) {
@@ -75,7 +76,7 @@ public class Ticket {
                     return;
                 }
                 if (prod instanceof Event && productList.contains(prod)) {
-                    System.out.println("ERROR: Event/Food product " + prodID + " is already in the ticket.");
+                    System.out.println(StaticMessages.EVENT_ALREADY_EXISTS);
                     return;
                 }
                 if (prod instanceof PersonalizedProduct && customizations != null && !customizations.isEmpty()) {
