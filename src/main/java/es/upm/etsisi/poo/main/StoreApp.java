@@ -502,7 +502,7 @@ public class StoreApp {
                     return "EXIT";
                 }
                 command = sc.nextLine();
-                System.out.print("tUPM> " + command);
+                System.out.println("tUPM> " + command);
             }
             return command;
         } catch (NoSuchElementException e) {
