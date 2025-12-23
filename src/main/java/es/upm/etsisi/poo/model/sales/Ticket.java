@@ -186,14 +186,14 @@ public class Ticket {
             if (discountPct > 0) {
                 double moneySaved = prod.getPrice() * discountPct;
                 totalDiscount += moneySaved;
-                System.out.println(prod + " **discount -" + rounded(moneySaved));
+                System.out.println(" " + prod + " **discount -" + rounded(moneySaved));
             } else {
                 System.out.println(prod);
             }
         }
-        System.out.println("Total price: " + rounded(totalPrice));
-        System.out.println("Total discount: " + rounded(totalDiscount));
-        System.out.println("Final Price: " + rounded(totalPrice - totalDiscount));
+        System.out.println(" Total price: " + rounded(totalPrice));
+        System.out.println(" Total discount: " + rounded(totalDiscount));
+        System.out.println(" Final Price: " + rounded(totalPrice - totalDiscount));
         if (printOkAtEnd) {
             if (state != TicketState.CLOSE) {
                 setState(TicketState.CLOSE);
@@ -205,7 +205,7 @@ public class Ticket {
 
     public void printInitialState() {
         System.out.println("Ticket: " + this.id);
-        System.out.println("""
+        System.out.print("""
                   Total price: 0.0
                   Total discount: 0.0
                   Final Price: 0.0

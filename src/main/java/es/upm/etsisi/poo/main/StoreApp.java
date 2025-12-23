@@ -36,6 +36,7 @@ public class StoreApp {
                 System.out.println("ERROR: Not a valid command");
             } else {
                 String[] commandParts = command.split(" ");
+                System.out.println(command);
                 try {
                     switch (commandParts[0].toUpperCase()) {
                         case "PROD":
@@ -469,7 +470,9 @@ public class StoreApp {
     private String typeCommand() {
         System.out.print("tUPM> ");
         try{
-            return sc.nextLine();
+            String command = sc.nextLine();
+            System.out.println(command);
+            return command;
         } catch(NoSuchElementException e){
             System.out.println("ERROR: Info not found");
             return "exit";
