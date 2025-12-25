@@ -87,7 +87,7 @@ public class StoreApp {
                             System.out.println(StaticMessages.NOT_VALID_CMD);
                     }
                 } catch (Exception e) {
-                    System.out.println("Error processing ->" + commandParts[0].toLowerCase() + " " + commandParts[1].toLowerCase() + " ->" + e.getMessage());
+                    System.out.println(StaticMessages.ERROR_PROCESSING + " ->" + commandParts[0].toLowerCase() + " " + commandParts[1].toLowerCase() + " ->" + e.getMessage());
                 }
                 System.out.println();
             }
@@ -96,8 +96,8 @@ public class StoreApp {
     }
 
     private void end() {
-        System.out.println("Closing application.");
-        System.out.print("Goodbye!");
+        System.out.println(StaticMessages.CLOSING_APP);
+        System.out.println(StaticMessages.GOODBYE);
     }
 
     public void prodCommands(String[] commands) {
@@ -318,7 +318,7 @@ public class StoreApp {
                 cashier.addTicket(newTicket);
                 client.addTicket(newTicket);
                 newTicket.printInitialState();
-                System.out.println("ticket new: ok");
+                System.out.println(StaticMessages.TICKET_NEW_OK);
                 break;
             case "ADD":
                 String ticketId = commands[2];
@@ -385,7 +385,7 @@ public class StoreApp {
                 ticketT.print();
                 break;
             case "LIST":
-                System.out.println("Ticket List:");
+                System.out.println(StaticMessages.TICKET_LIST);
                 ArrayList<Cashier> sortedCashiers = CashierDatabase.getCashiersSortedById();
                 for (Cashier cashierc : sortedCashiers) {
                     ArrayList<Ticket> tickets = cashierc.getTicketsSortedById();
@@ -393,7 +393,7 @@ public class StoreApp {
                         System.out.println("  " + tickett.getId() + " - " + tickett.getState());
                     }
                 }
-                System.out.println("ticket list: ok");
+                System.out.println(StaticMessages.TICKET_LIST_OK);
                 break;
             default:
                 System.out.println(StaticMessages.INVALID_INPUT);
@@ -460,33 +460,7 @@ public class StoreApp {
     }
 
     private void help() {
-        System.out.println(("""
-               Commands:
-                 client add "<nombre>" <DNI> <email> <cashId>
-                 client remove <DNI>
-                 client list
-                 cash add [<id>] "<nombre>"<email>
-                 cash remove <id>
-                 cash list
-                 cash tickets <id>
-                 ticket new [<id>] <cashId> <userId>
-                 ticket add <ticketId><cashId> <prodId> <amount> [--p<txt> --p<txt>]
-                 ticket remove <ticketId><cashId> <prodId>
-                 ticket print <ticketId> <cashId>
-                 ticket list
-                 prod add <id> "<name>" <category> <price>
-                 prod update <id> NAME|CATEGORY|PRICE <value>
-                 prod addFood [<id>] "<name>" <price> <expiration:yyyy-MM-dd> <max_people>
-                 prod addMeeting [<id>] "<name>" <price> <expiration:yyyy-MM-dd> <max_people>
-                 prod list
-                 prod remove <id>
-                 help
-                 echo “<text>”
-                 exit
-               
-               Categories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS
-               Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.
-               """));
+        System.out.print(StaticMessages.HELP_TEXT);
     }
 
     private String typeCommand() {
