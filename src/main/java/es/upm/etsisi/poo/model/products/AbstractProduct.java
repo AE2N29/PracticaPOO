@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo.model.products;
 
 import es.upm.etsisi.poo.persistance.ProductCatalog;
+import es.upm.etsisi.poo.utils.StaticMessages;
 
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public abstract class AbstractProduct {
 
     public void setName(String name) {
         if (name == null || name.isBlank() || name.length() >= 100) {
-            System.out.println("Invalid name update.");
+            System.out.println(StaticMessages.INVALID_NAME);
             return;
         }
         this.name = name;
