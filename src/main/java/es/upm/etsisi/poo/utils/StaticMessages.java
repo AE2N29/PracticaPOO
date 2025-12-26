@@ -17,4 +17,6 @@ public class StaticMessages {
     public static final String CLOSED_TICKET = "ERROR: Ticket is already closed";
     public static final String NEGATIVE_AMOUNT = "ERROR: Amount must be greater than 0";
     public static final String EVENT_ALREADY_EXISTS = "ERROR: Event/Food product with given ID is already in the ticket.";
+    public static final String INVALID_FOOD_TIME = "A food must be created at least 3 days in advance of its scheduled time.";
+    public static final String INVALID_MEETING_TIME = "A meeting must be created at least 12 hours in advance of its scheduled time.";
 }

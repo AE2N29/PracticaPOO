@@ -141,13 +141,13 @@ public class StoreApp {
                 int personNumberFood = Integer.parseInt(afterNameParts[2]);
 
                 if("GENERATE".equals(beforeNameParts[2])) {
-                    EventFood product = new EventFood(nameFood,eventTimeFood,priceFood,personNumberFood);
+                    Event product = new Event(nameFood,eventTimeFood,priceFood,personNumberFood,EventType.FOOD);
                     String idFood = product.getId();
                     ProductCatalog.add(idFood,product);
                 }
                 else {
                     String idFood = beforeNameParts[2];
-                    EventFood product = new EventFood(idFood,nameFood,eventTimeFood,priceFood,personNumberFood);
+                    Event product = new Event(idFood,nameFood,eventTimeFood,priceFood,personNumberFood, EventType.FOOD);
                     ProductCatalog.add(idFood,product);
                 }
                 break;
@@ -168,13 +168,13 @@ public class StoreApp {
                 int personNumberMeeting = Integer.parseInt(afterNamePartsMeeting[2]);
 
                 if("GENERATE".equals(beforeNamePartsMeeting[2])) {
-                    EventMeeting product = new EventMeeting(nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
+                    Event product = new Event(nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting, EventType.MEETING);
                     String idFood = product.getId();
                     ProductCatalog.add(idFood,product);
                 }
                 else {
                     String idFood = beforeNamePartsMeeting[2];
-                    EventMeeting product = new EventMeeting(idFood,nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting);
+                    Event product = new Event(idFood,nameMeeting,eventTimeMeeting,priceMeeting,personNumberMeeting,  EventType.MEETING);
                     ProductCatalog.add(idFood,product);
                 }
                 break;
