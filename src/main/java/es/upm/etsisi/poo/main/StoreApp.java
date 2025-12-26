@@ -449,7 +449,7 @@ public class StoreApp {
                 String[] afterName = restOfCommand.split(" ");
 
                 Cashier c = UserDatabase.getInstance().getById(afterName[2], Cashier.class);
-                Client nuevoCliente = ClientFactory.createClient(name, afterName[0], afterName[1], c);
+                Client nuevoCliente = ClientFactory.createClient(name, afterName[0], afterName[1], c); // uso de Factory Method
                 UserDatabase.getInstance().add(nuevoCliente);
                 break;
             case "REMOVE":
