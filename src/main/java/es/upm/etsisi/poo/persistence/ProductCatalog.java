@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.persistance;
+package es.upm.etsisi.poo.persistence;
 
 import es.upm.etsisi.poo.model.products.AbstractProduct;
 

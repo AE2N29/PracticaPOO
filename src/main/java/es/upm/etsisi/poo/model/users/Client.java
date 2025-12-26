@@ -4,20 +4,16 @@ import es.upm.etsisi.poo.model.sales.Ticket;
 
 import java.util.ArrayList;
 
-public class Client extends User {
-    private final String dni;
+public abstract class Client extends User {
+    private final String id;
     private final Cashier associatedCashier; // relacion de asociacion
     private final ArrayList<Ticket> clientTickets; // relacion de agregacion
 
-    public Client(String name, String dni, String email, Cashier associatedCashier) {
+    public Client(String name, String id, String email, Cashier associatedCashier) {
         super(name, email);
-        this.dni = dni;
+        this.id = id;
         this.associatedCashier = associatedCashier;
         this.clientTickets = new ArrayList<>();
-    }
-
-    public String getDni() {
-        return dni;
     }
 
     public Cashier getAssociatedCashier() {
@@ -32,9 +28,16 @@ public class Client extends User {
         return clientTickets;
     }
 
+    protected abstract String getHeader();
+
+    @Override
+    public String getIdentifier() {
+        return id;
+    }
+
     @Override
     public String toString() {
-        return "Client{identifier='" + this.dni + "', name='" + this.name +
-                "', email='" + this.email + "', cash=" + this.associatedCashier.getUPMWorkerID() + "}";
+        return getHeader() + "{identifier='" + this.id + "', name='" + this.name +
+                "', email='" + this.email + "', cash=" + this.associatedCashier.getIdentifier() + "}";
     }
 }

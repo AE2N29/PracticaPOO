@@ -193,10 +193,10 @@ public class InputValidator {
                 if (subarray.length != 3) {
                     return false;
                 }
-                return isName(name) && isDNI(subarray[0]) && isEmail(subarray[1]) && isCashID(subarray[2]);
+                return isName(name) && (isDNI(subarray[0])|| isNIF(subarray[0])) && isEmail(subarray[1]) && isCashID(subarray[2]);
             case "REMOVE":
                 if (splittedCommand.length != 3) {return false;}
-                return isDNI(splittedCommand[2]);
+                return isDNI(splittedCommand[2]) || isNIF(splittedCommand[2]);
             case "LIST":
                 return splittedCommand.length == 2;
             default:
@@ -208,10 +208,10 @@ public class InputValidator {
         switch (splittedCommand[1]) {
             case "NEW":
                 if(splittedCommand.length == 4){
-                    return isCashID(splittedCommand[2]) && isDNI(splittedCommand[3]);
+                    return isCashID(splittedCommand[2]) && (isDNI(splittedCommand[3]) || isNIF(splittedCommand[3]));
                 }
                 if(splittedCommand.length == 5){
-                    return isTicketID(splittedCommand[2]) && isCashID(splittedCommand[3]) && isDNI(splittedCommand[4]);
+                    return isTicketID(splittedCommand[2]) && isCashID(splittedCommand[3]) && (isDNI(splittedCommand[4]) || isNIF(splittedCommand[4]));
                 }
                 return false;
             case "ADD":
@@ -311,6 +311,18 @@ public class InputValidator {
         return LETRAS_DNI.charAt(rest) == letter;  // Se verifica si la letra final es la correspondiente (si el DNI/NIE es valido)
     }
 
+    public static boolean isNIF(String nif) {
+        if (nif == null || nif.length() != 9) {
+            return false;
+        }
+        char firstChar = nif.charAt(0);
+        if (firstChar == 'X' || firstChar == 'Y' || firstChar == 'Z') { // Letras reservadas a NIE
+            return false;
+        }
+
+        return nif.matches("^[A-HJ-NP-SUVW]\\d{7}[0-9A-J]$"); // letra + 7 numeros + letra/numero
+    }
+
     public static boolean isEmail(String email) {
         return email.toLowerCase().endsWith("@upm.es");
     }
@@ -368,21 +380,3 @@ public class InputValidator {
         return result;
     }
 }
-
-
-    // public static boolean validCustomCommand (String[] customCommand) {
-        // for (int i = 6; i < customCommand.length; i++) {
-           // if (customCommand[i].equals("--p")) {
-               // if (!(i + 1 < customCommand.length)) {
-                   // return false;
-               // }
-               // i++;
-           // } else if (!(customCommand[i].length() > 3)) {
-               // return false;
-           // } else if (!(customCommand[i].charAt(0) == '-' && customCommand[i].charAt(1) == '-'
-                   // && customCommand[i].charAt(2) == 'p')) {
-               // return false;
-           // }
-       // }
-       // return true;
-   // }
