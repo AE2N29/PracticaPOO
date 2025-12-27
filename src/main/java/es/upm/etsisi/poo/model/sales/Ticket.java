@@ -1,7 +1,7 @@
 package es.upm.etsisi.poo.model.sales;
 
 import es.upm.etsisi.poo.model.products.*;
-import es.upm.etsisi.poo.persistance.ProductCatalog;
+import es.upm.etsisi.poo.persistence.ProductCatalog;
 import es.upm.etsisi.poo.utils.StaticMessages;
 
 import java.time.LocalDateTime;
@@ -156,7 +156,7 @@ public class Ticket {
         }
 
         String headerId = this.id;
-        String futureClosedId = null;
+        String futureClosedId;
         if (printOkAtEnd && state != TicketState.CLOSE) {
             futureClosedId = updateTicketId();
             headerId = futureClosedId;

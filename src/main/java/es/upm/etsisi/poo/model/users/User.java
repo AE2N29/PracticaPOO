@@ -25,6 +25,8 @@ public abstract class User {
         this.name = name;
     }
 
+    public abstract String getIdentifier();
+
     @Override
     public abstract String toString();
 }

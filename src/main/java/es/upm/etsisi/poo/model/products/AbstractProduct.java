@@ -1,6 +1,6 @@
 package es.upm.etsisi.poo.model.products;
 
-import es.upm.etsisi.poo.persistance.ProductCatalog;
+import es.upm.etsisi.poo.persistence.ProductCatalog;
 import es.upm.etsisi.poo.utils.StaticMessages;
 
 import java.util.Map;

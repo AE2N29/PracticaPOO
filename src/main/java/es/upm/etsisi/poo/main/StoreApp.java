@@ -4,7 +4,8 @@ import es.upm.etsisi.poo.model.products.*;
 import es.upm.etsisi.poo.model.sales.Ticket;
 import es.upm.etsisi.poo.model.users.Cashier;
 import es.upm.etsisi.poo.model.users.Client;
-import es.upm.etsisi.poo.persistance.*;
+import es.upm.etsisi.poo.patterns.ClientFactory;
+import es.upm.etsisi.poo.persistence.*;
 import es.upm.etsisi.poo.utils.*;
 
 import java.io.FileNotFoundException;
@@ -296,8 +297,8 @@ public class StoreApp {
                     inputCashId = commands[3];
                     inputUserId = commands[4];
                 }
-                Cashier cashier = CashierDatabase.getCashierByUW(inputCashId);
-                Client client = ClientDatabase.getClientByDNI(inputUserId);
+                Cashier cashier = UserDatabase.getInstance().getById(inputCashId, Cashier.class);
+                Client client = UserDatabase.getInstance().getById(inputUserId, Client.class);
                 if (cashier == null) {
                     System.out.println(StaticMessages.CASHIER_NOT_FOUND);
                     return;
@@ -327,7 +328,7 @@ public class StoreApp {
                 int amount = Integer.parseInt(commands[5]);
                 ArrayList<String> customs = new ArrayList<>();
 
-                Cashier cash = CashierDatabase.getCashierByUW(cashId);
+                Cashier cash = UserDatabase.getInstance().getById(cashId, Cashier.class);
                 if (cash == null) {
                     System.out.println(StaticMessages.CASHIER_NOT_FOUND);
                     return;
@@ -357,7 +358,7 @@ public class StoreApp {
                 String tId = commands[2];
                 String cId = commands[3];
                 String pId = commands[4];
-                Cashier c = CashierDatabase.getCashierByUW(cId);
+                Cashier c = UserDatabase.getInstance().getById(cId, Cashier.class);
                 if (c == null) {
                     System.out.println(StaticMessages.CASHIER_NOT_FOUND);
                     return;
@@ -372,7 +373,7 @@ public class StoreApp {
             case "PRINT":
                 String idTicket = commands[2];
                 String idCash = commands[3];
-                Cashier cashierC = CashierDatabase.getCashierByUW(idCash);
+                Cashier cashierC = UserDatabase.getInstance().getById(idCash, Cashier.class);
                 if (cashierC == null) {
                     System.out.println(StaticMessages.CASHIER_NOT_FOUND);
                     return;
@@ -386,7 +387,7 @@ public class StoreApp {
                 break;
             case "LIST":
                 System.out.println(StaticMessages.TICKET_LIST);
-                ArrayList<Cashier> sortedCashiers = CashierDatabase.getCashiersSortedById();
+                ArrayList<Cashier> sortedCashiers = UserDatabase.getInstance().getAll(Cashier.class);
                 for (Cashier cashierc : sortedCashiers) {
                     ArrayList<Ticket> tickets = cashierc.getTicketsSortedById();
                     for (Ticket tickett : tickets) {
@@ -417,21 +418,21 @@ public class StoreApp {
                     correctCommand[3] = commands[commands.length - 1];
                 }
                 if (countNotNull(correctCommand) == 5) {
-                    CashierDatabase.add(correctCommand[2], name, correctCommand[4]);
+                    UserDatabase.getInstance().add(new Cashier(correctCommand[2], name, correctCommand[4]));
                 } else if (countNotNull(correctCommand) == 4) {
-                    CashierDatabase.add(correctCommand[2], correctCommand[3]);
+                    UserDatabase.getInstance().add(new Cashier(UserDatabase.getInstance().generateCashId(), correctCommand[2], correctCommand[3]));
                 } else {
                     System.out.println(StaticMessages.INVALID_INPUT);
                 }
                 break;
             case "REMOVE":
-                CashierDatabase.remove(commands[2]);
+                UserDatabase.getInstance().remove(commands[2]);
                 break;
             case "LIST":
-                CashierDatabase.list();
+                UserDatabase.getInstance().listCashiers();
                 break;
             case "TICKETS":
-                CashierDatabase.tickets(commands[2]);
+                UserDatabase.getInstance().showCashierTickets(commands[2]);
                 break;
             default:
                 System.out.println(StaticMessages.NOT_VALID_CMD);
@@ -446,13 +447,16 @@ public class StoreApp {
                 String name = stringedCommand.substring(stringedCommand.indexOf('"') + 1, stringedCommand.lastIndexOf('"'));
                 String restOfCommand = stringedCommand.substring(stringedCommand.lastIndexOf('"') + 1).trim();
                 String[] afterName = restOfCommand.split(" ");
-                ClientDatabase.add(name, afterName[0], afterName[1], afterName[2]);
+
+                Cashier c = UserDatabase.getInstance().getById(afterName[2], Cashier.class);
+                Client nuevoCliente = ClientFactory.createClient(name, afterName[0], afterName[1], c); // uso de Factory Method
+                UserDatabase.getInstance().add(nuevoCliente);
                 break;
             case "REMOVE":
-                ClientDatabase.remove(commands[2]);
+                UserDatabase.getInstance().remove(commands[2]);
                 break;
             case "LIST":
-                ClientDatabase.list();
+                UserDatabase.getInstance().listClients();
                 break;
             default:
                 System.out.println(StaticMessages.INVALID_INPUT);

@@ -15,21 +15,12 @@ public class Cashier extends User {
         this.createdTickets = new ArrayList<>();
     }
 
-    public String getUPMWorkerID() {
-        return UPMWorkerID;
-    }
-
     public void addTicket(Ticket ticket) {
         createdTickets.add(ticket);
     }
 
     public ArrayList<Ticket> getCreatedTickets() {
         return createdTickets;
-    }
-
-    @Override
-    public String toString() {
-        return "Cash{identifier='" + this.UPMWorkerID + "', name='" + this.name + "', email='" + this.email + "'}";
     }
 
     public Ticket getTicketById(String id) {
@@ -46,5 +37,15 @@ public class Cashier extends User {
         ArrayList<Ticket> sortedTickets = new ArrayList<>(this.createdTickets);
         sortedTickets.sort(Comparator.comparing(Ticket::getId));
         return sortedTickets;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return UPMWorkerID;
+    }
+
+    @Override
+    public String toString() {
+        return "Cash{identifier='" + this.UPMWorkerID + "', name='" + this.name + "', email='" + this.email + "'}";
     }
 }

@@ -11,9 +11,14 @@ public class StaticMessages {
     public static final String NEGATIVE_AMOUNT = "ERROR: Amount must be greater than 0";
 
     // ENTITY ERRORS
+    public static final String USER_WITH_ID = "Error: User with ID ";
+
     public static final String PROD_NO_EXIST = "ERROR: Product with the given ID doesn't exist";
     public static final String CASHIER_NOT_FOUND = "ERROR: Cashier with given ID doesn't exist";
     public static final String CLIENT_NOT_FOUND = "ERROR: Client with the given ID doesn't exist";
+    public static final String CLIENT_LIST_EMPTY = "ERROR: Client list is empty";
+    public static final String CASHIER_LIST_EMPTY = "ERROR: Cashier list is empty";
+
     public static final String TICKET_ALREADY_EXISTS = "ERROR: Ticket with the given ID already exists.";
     public static final String TICKET_NOT_FOUND = "ERROR: Ticket with the given ID doesn't exist.";
     public static final String CLOSED_TICKET = "ERROR: Ticket is already closed";
@@ -25,9 +30,22 @@ public class StaticMessages {
     public static final String WELCOME = "Welcome to the ticket module App.\nTicket module. Type 'help' to see commands.";
     public static final String CLOSING_APP = "Closing application.";
     public static final String GOODBYE = "Goodbye!";
+    public static final String CLIENT_ADD_OK = "client add: ok";
+    public static final String CASH_ADD_OK = "cash add: ok";
+    public static final String CLIENT_REMOVE_OK = "client remove: ok";
+    public static final String CASH_REMOVE_OK = "cash remove: ok";
+    public static final String CLIENT = "Client:";
+    public static final String CLIENT_LIST_OK = "client list: ok";
+    public static final String CASH = "Cash:";
+    public static final String CASH_LIST_OK = "cash list: ok";
+    public static final String TICKETS = "Tickets: ";
+    public static final String CASH_TICKETS_OK = "cash tickets: ok";
     public static final String TICKET_NEW_OK = "ticket new: ok";
     public static final String TICKET_LIST = "Ticket List:";
     public static final String TICKET_LIST_OK = "ticket list: ok";
+
+
+
 
     // HELP BLOCK
     public static final String HELP_TEXT = """
@@ -60,4 +78,8 @@ public class StaticMessages {
 
     // ERROR PROCESSING PREFIX
     public static final String ERROR_PROCESSING = "Error processing";
+
+    //ERROR SUFFIXES
+    public static final String ALREADY_EXISTS = " already exists.";
+    public static final String NOT_FOUND = " not found";
 }
