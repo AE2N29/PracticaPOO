@@ -121,17 +121,15 @@ public class UserDatabase {
         String upmWorkerID;
         boolean exists;
         do {
-            StringBuilder sb = new StringBuilder("UW");
+            upmWorkerID = "UW";
             for (int i = 0; i < 7; i++) {
                 int random = (int) (Math.random() * 10);
-                sb.append(random);
+                upmWorkerID += random;
             }
-            upmWorkerID = sb.toString();
-
-            // Reutilizamos getById para ver si existe
             exists = (getById(upmWorkerID) != null);
 
         } while (exists);
+
         return upmWorkerID;
     }
 
