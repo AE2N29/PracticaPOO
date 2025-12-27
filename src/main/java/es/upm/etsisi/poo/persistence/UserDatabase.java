@@ -2,6 +2,7 @@ package es.upm.etsisi.poo.persistence;
 
 import es.upm.etsisi.poo.model.users.*;
 import es.upm.etsisi.poo.model.sales.Ticket;
+import es.upm.etsisi.poo.utils.StaticMessages;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,17 +26,17 @@ public class UserDatabase {
 
     public void add(User user) {
         if (getById(user.getIdentifier()) != null) {
-            System.out.println("Error: User with ID " + user.getIdentifier() + " already exists.");
+            System.out.println(StaticMessages.USER_WITH_ID + user.getIdentifier() + StaticMessages.ALREADY_EXISTS);
             return;
         }
         this.users.add(user);
 
         if (user instanceof Client) {
             System.out.println(user); // Usa el toString del cliente
-            System.out.println("client add: ok");
+            System.out.println(StaticMessages.CLIENT_ADD_OK);
         } else if (user instanceof Cashier) {
             System.out.println(user);
-            System.out.println("cash add: ok");
+            System.out.println(StaticMessages.CASH_ADD_OK);
         }
     }
 
@@ -46,11 +47,11 @@ public class UserDatabase {
 
             this.users.remove(user);
 
-            if (isClient) { System.out.println("client remove: ok");
-            } else { System.out.println("cash remove: ok"); }
+            if (isClient) { System.out.println(StaticMessages.CLIENT_REMOVE_OK);
+            } else { System.out.println(StaticMessages.CASH_REMOVE_OK); }
 
         } else {
-            System.out.println("ERROR: User with identifier " + id + " not found");
+            System.out.println(StaticMessages.USER_WITH_ID + id + StaticMessages.NOT_FOUND);
         }
     }
 
@@ -83,37 +84,37 @@ public class UserDatabase {
     // METODOS ESPECIFICOS DE CLIENTES
 
     public void listClients() {
-        System.out.println("Client:");
+        System.out.println(StaticMessages.CLIENT);
         ArrayList<Client> clients = getAll(Client.class);
 
         clients.sort(Comparator.comparing(User::getName));
 
         if (clients.isEmpty()) {
-            System.out.println("ERROR: Client list is empty");
+            System.out.println(StaticMessages.CLIENT_LIST_EMPTY);
         }
 
         for (Client c : clients) {
             System.out.println("  " + c);
         }
-        System.out.println("client list: ok");
+        System.out.println(StaticMessages.CLIENT_LIST_OK);
     }
 
     // METODOS ESPECIFICOS DE CAJEROS
 
     public void listCashiers() {
-        System.out.println("Cash:");
+        System.out.println(StaticMessages.CASH);
 
         ArrayList<Cashier> cashiers = getAll(Cashier.class);
         cashiers.sort(Comparator.comparing(User::getName));
 
         if (cashiers.isEmpty()) {
-            System.out.println("ERROR: Cashier list is empty");
+            System.out.println(StaticMessages.CASHIER_LIST_EMPTY);
         }
 
         for (Cashier c : cashiers) {
             System.out.println("  " + c);
         }
-        System.out.println("cash list: ok");
+        System.out.println(StaticMessages.CASH_LIST_OK);
     }
 
 
@@ -136,7 +137,7 @@ public class UserDatabase {
 
     public void showCashierTickets(String cashierId) {
         Cashier cashier = getById(cashierId, Cashier.class); // Devolver si encuentra y es Cashier
-        System.out.println("Tickets: ");
+        System.out.println(StaticMessages.TICKETS);
 
         if (cashier != null) {
             ArrayList<Ticket> tickets = cashier.getCreatedTickets();
@@ -146,6 +147,6 @@ public class UserDatabase {
                 System.out.println("  " + t.getId() + "->" + t.getState());
             }
         }
-        System.out.println("cash tickets: ok");
+        System.out.println(StaticMessages.CASH_TICKETS_OK);
     }
 }
