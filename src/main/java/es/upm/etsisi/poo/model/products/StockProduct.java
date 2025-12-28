@@ -1,17 +1,19 @@
 package es.upm.etsisi.poo.model.products;
 
+import es.upm.etsisi.poo.exceptions.StoreException;
+
 public class StockProduct extends AbstractProduct {
     protected Category category;
     protected double price;
 
 
-    public StockProduct(String id, String name, Category category, double price) {
+    public StockProduct(String id, String name, Category category, double price) throws StoreException {
         super(id, name);
         this.category = category;
         this.price = price;
     }
 
-    public StockProduct(String name, Category category, double price) {
+    public StockProduct(String name, Category category, double price) throws StoreException {
         super(name);
         this.category = category;
         this.price = price;
@@ -29,7 +31,7 @@ public class StockProduct extends AbstractProduct {
     @Override
     public boolean setCategory(Category category) {
         this.category = category;
-        return true; // Éxito
+        return true;
     }
 
     @Override
@@ -53,10 +55,15 @@ public class StockProduct extends AbstractProduct {
                 ", price:" + String.format("%.1f", this.price) + "}";
     }
 
-    public boolean equals(StockProduct product) {
-        return getId().equals(product.getId()) &&
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StockProduct)) return false;
+
+        StockProduct product = (StockProduct) o;
+
+        return Double.compare(product.price, price) == 0 &&
+                getId().equals(product.getId()) &&
                 getName().equals(product.getName()) &&
-                this.category.equals(product.getCategory()) &&
-                this.price == product.getPrice();
+                category == product.category;
     }
 }

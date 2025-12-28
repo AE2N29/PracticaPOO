@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.model.products;
 
+import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.persistence.ProductCatalog;
 import es.upm.etsisi.poo.utils.StaticMessages;
 
@@ -9,19 +10,15 @@ public abstract class AbstractProduct {
     private String name;
     private final String id;
 
-    public AbstractProduct(String id, String name) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Product name cannot be empty.");
-        }
-        if (name.length() >= 100) {
-            throw new IllegalArgumentException("Product name must be less than 100 characters.");
+    public AbstractProduct(String id, String name) throws StoreException {
+        if (name == null || name.isBlank() || name.length() >= 100) {
+            throw new StoreException(StaticMessages.INVALID_NAME);
         }
         this.name = name;
         this.id = id;
     }
-    public AbstractProduct(String name) {
-        this.name = name;
-        this.id = generateID();
+    public AbstractProduct(String name) throws StoreException {
+        this(generateID(), name);
     }
 
     public String getName() {
@@ -31,10 +28,9 @@ public abstract class AbstractProduct {
         return id;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws StoreException {
         if (name == null || name.isBlank() || name.length() >= 100) {
-            System.out.println(StaticMessages.INVALID_NAME);
-            return;
+            throw new StoreException(StaticMessages.INVALID_NAME);
         }
         this.name = name;
     }
@@ -43,7 +39,7 @@ public abstract class AbstractProduct {
         return false;
     }
 
-    public boolean setCategory(Category category) { return false; } //igual
+    public boolean setCategory(Category category) { return false; }
 
     public static String generateID() {
         Map<String, AbstractProduct> map = ProductCatalog.getList();

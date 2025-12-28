@@ -1,4 +1,5 @@
 package es.upm.etsisi.poo.model.products;
+import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.utils.StaticMessages;
 
 import java.time.LocalDateTime;
@@ -11,10 +12,10 @@ public class Event extends AbstractProduct {
     protected LocalDateTime expirationDate;
     protected double pricePerPerson;
 
-    public Event(String id, String name, LocalDateTime expirationDate, double pricePerPerson, int maxPeopleAllowed, EventType eventType) {
+    public Event(String id, String name, LocalDateTime expirationDate, double pricePerPerson, int maxPeopleAllowed, EventType eventType) throws StoreException {
         super(id, name);
         if(maxPeopleAllowed > MAX_PEOPLE) {
-            throw new IllegalArgumentException("maxPeopleAllowed > " + MAX_PEOPLE);
+            throw new IllegalArgumentException(StaticMessages.ADD_PROD_ERROR);
         }
         validateEventTimeByType(expirationDate, eventType);
         this.eventType = eventType;
@@ -24,16 +25,15 @@ public class Event extends AbstractProduct {
     }
 
     //Constructor sin ID
-    public Event( String name, LocalDateTime expirationDate, double pricePerPerson, int maxPeopleAllowed, EventType eventType) {
+    public Event( String name, LocalDateTime expirationDate, double pricePerPerson, int maxPeopleAllowed, EventType eventType) throws StoreException {
         this(AbstractProduct.generateID(), name, expirationDate, pricePerPerson, maxPeopleAllowed, eventType);
     }
 
     private void validateEventTimeByType(LocalDateTime eventTime, EventType eventType) {
-
         switch(eventType) {
             case FOOD:
                 if(eventTime.isBefore(LocalDateTime.now().plusDays(3))) {
-                    System.out.println(StaticMessages.INVALID_FOOD_TIME);
+                    throw new IllegalArgumentException(StaticMessages.INVALID_FOOD_TIME);
                 }
                 break;
             case MEETING:
