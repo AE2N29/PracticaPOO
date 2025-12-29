@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.main;
 
+import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.products.*;
 import es.upm.etsisi.poo.model.sales.Ticket;
 import es.upm.etsisi.poo.model.users.Cashier;
@@ -56,6 +57,7 @@ public class StoreApp {
         while (keepGoing) {
             String command = typeCommand().trim();
             if (command.isEmpty()) continue;
+
             if (!InputValidator.validCommand(command)) {
                 System.out.println(StaticMessages.NOT_VALID_CMD);
             } else {
@@ -87,6 +89,9 @@ public class StoreApp {
                         default:
                             System.out.println(StaticMessages.NOT_VALID_CMD);
                     }
+                } catch (StoreException e) {
+                    System.out.println(e.getMessage());
+
                 } catch (Exception e) {
                     System.out.println(StaticMessages.ERROR_PROCESSING + " ->" + commandParts[0].toLowerCase() + " " + commandParts[1].toLowerCase() + " ->" + e.getMessage());
                 }
@@ -101,7 +106,7 @@ public class StoreApp {
         System.out.println(StaticMessages.GOODBYE);
     }
 
-    public void prodCommands(String[] commands) {
+    public void prodCommands(String[] commands) throws StoreException {
 
         String prodCommand = commands[1].toUpperCase();
         switch (prodCommand) {
@@ -127,7 +132,6 @@ public class StoreApp {
                 break;
 
             case "ADDFOOD":
-
                 String commandsStringFood = String.join(" ", commands);
                 String nameFood = commandsStringFood.substring(commandsStringFood.indexOf('"') + 1, commandsStringFood.lastIndexOf('"'));
                 String beforeNameFood = commandsStringFood.substring(0, commandsStringFood.indexOf('"')).trim();
@@ -154,7 +158,6 @@ public class StoreApp {
                 break;
 
             case "ADDMEETING":
-
                 String commandsStringMeeting = String.join(" ", commands);
                 String nameMeeting = commandsStringMeeting.substring(commandsStringMeeting.indexOf('"') + 1, commandsStringMeeting.lastIndexOf('"'));
                 String beforeName = commandsStringMeeting.substring(0, commandsStringMeeting.indexOf('"')).trim();
@@ -183,6 +186,7 @@ public class StoreApp {
             case "LIST":
                 ProductCatalog.list();
                 break;
+
             case "UPDATE":
                 String id2 = (commands[2]);
                 String categoryToChange = commands[3].toUpperCase();
@@ -195,10 +199,12 @@ public class StoreApp {
                 }
                 prodUpdateManage(id2, categoryToChange, change);
                 break;
+
             case "REMOVE":
                 String id3 =(commands[2]);
                 ProductCatalog.remove(id3);
                 break;
+
             default:
                 System.out.println(StaticMessages.INVALID_INPUT);
                 break;
@@ -237,11 +243,10 @@ public class StoreApp {
         return result;
     }
 
-    public void prodUpdateManage(String id, String CategoryToChange, String change) {
+    public void prodUpdateManage(String id, String CategoryToChange, String change) throws StoreException {
         AbstractProduct product = ProductCatalog.getProduct(id);
         if (product == null) {
-            System.out.println(StaticMessages.PROD_NO_EXIST);
-            return;
+            throw new StoreException(StaticMessages.PROD_NO_EXIST);
         }
         switch (CategoryToChange) {
             case "NAME":
@@ -252,16 +257,15 @@ public class StoreApp {
                 try {
                     double newPrice = Double.parseDouble(change);
                     if (newPrice <= 0) {
-                        System.out.println(StaticMessages.INVALID_INPUT);
-                        return;
+                        throw new StoreException(StaticMessages.NEGATIVE_AMOUNT);
                     }
-                    if (product.setPrice(newPrice)) {//setPrice booleanos, da positivo si la clase permite el set(tiene precio)
+                    if (product.setPrice(newPrice)) { //setPrice booleanos, da positivo si la clase permite el set(tiene precio)
                         ProductCatalog.update(id, product);
                     } else {
                         System.out.println(StaticMessages.INVALID_INPUT);
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println(StaticMessages.INVALID_INPUT);
+                    throw new StoreException(StaticMessages.INVALID_INPUT);
                 }
                 break;
             case "CATEGORY":
@@ -285,7 +289,8 @@ public class StoreApp {
         }
     }
 
-    public void ticketCommands(String[] commands, String fullCommand) {
+
+    public void ticketCommands(String[] commands, String fullCommand) throws StoreException {
         switch (commands[1].toUpperCase()) {
             case "NEW":
                 String inputCashId, inputUserId, inputTicketId = null;
@@ -300,19 +305,16 @@ public class StoreApp {
                 Cashier cashier = UserDatabase.getInstance().getById(inputCashId, Cashier.class);
                 Client client = UserDatabase.getInstance().getById(inputUserId, Client.class);
                 if (cashier == null) {
-                    System.out.println(StaticMessages.CASHIER_NOT_FOUND);
-                    return;
+                    throw new StoreException(StaticMessages.CASHIER_NOT_FOUND);
                 }
                 if (client == null) {
-                    System.out.println(StaticMessages.CLIENT_NOT_FOUND);
-                    return;
+                    throw new StoreException(StaticMessages.CLIENT_NOT_FOUND);
                 }
                 Ticket newTicket;
                 if (inputTicketId == null) { // cuando no pasan el id del ticket como parametro
                     newTicket = new Ticket();
                 } else if (Ticket.isIdRegistered(inputTicketId)) { // cuando pasan el id del ticket como parametro
-                    System.out.println(StaticMessages.TICKET_ALREADY_EXISTS);
-                    return;
+                    throw new StoreException(StaticMessages.TICKET_ALREADY_EXISTS);
                 } else {
                     newTicket = new Ticket(inputTicketId);
                 }
@@ -321,6 +323,7 @@ public class StoreApp {
                 newTicket.printInitialState();
                 System.out.println(StaticMessages.TICKET_NEW_OK);
                 break;
+
             case "ADD":
                 String ticketId = commands[2];
                 String cashId = commands[3];
@@ -330,13 +333,11 @@ public class StoreApp {
 
                 Cashier cash = UserDatabase.getInstance().getById(cashId, Cashier.class);
                 if (cash == null) {
-                    System.out.println(StaticMessages.CASHIER_NOT_FOUND);
-                    return;
+                    throw new StoreException(StaticMessages.CASHIER_NOT_FOUND);
                 }
                 Ticket t = cash.getTicketById(ticketId);
                 if (t == null) {
-                    System.out.println(StaticMessages.TICKET_NOT_FOUND);
-                    return;
+                    throw new StoreException(StaticMessages.TICKET_NOT_FOUND);
                 }
 
                 if (fullCommand.toLowerCase().contains("--p")) {
@@ -354,37 +355,36 @@ public class StoreApp {
                 }
                 t.add(prodId, amount, customs);
                 break;
+
             case "REMOVE":
                 String tId = commands[2];
                 String cId = commands[3];
                 String pId = commands[4];
                 Cashier c = UserDatabase.getInstance().getById(cId, Cashier.class);
                 if (c == null) {
-                    System.out.println(StaticMessages.CASHIER_NOT_FOUND);
-                    return;
+                    throw new StoreException(StaticMessages.CASHIER_NOT_FOUND);
                 }
                 Ticket ticket = c.getTicketById(tId);
                 if (ticket == null) {
-                    System.out.println(StaticMessages.TICKET_NOT_FOUND);
-                    return;
+                    throw new StoreException(StaticMessages.TICKET_NOT_FOUND);
                 }
                 ticket.remove(pId);
                 break;
+
             case "PRINT":
                 String idTicket = commands[2];
                 String idCash = commands[3];
                 Cashier cashierC = UserDatabase.getInstance().getById(idCash, Cashier.class);
                 if (cashierC == null) {
-                    System.out.println(StaticMessages.CASHIER_NOT_FOUND);
-                    return;
+                    throw new StoreException(StaticMessages.CASHIER_NOT_FOUND);
                 }
                 Ticket ticketT = cashierC.getTicketById(idTicket);
                 if (ticketT == null) {
-                    System.out.println(StaticMessages.TICKET_NOT_FOUND);
-                    return;
+                    throw new StoreException(StaticMessages.TICKET_NOT_FOUND);
                 }
                 ticketT.print();
                 break;
+
             case "LIST":
                 System.out.println(StaticMessages.TICKET_LIST);
                 ArrayList<Cashier> sortedCashiers = UserDatabase.getInstance().getAll(Cashier.class);
@@ -396,12 +396,14 @@ public class StoreApp {
                 }
                 System.out.println(StaticMessages.TICKET_LIST_OK);
                 break;
+
             default:
-                System.out.println(StaticMessages.INVALID_INPUT);
+                throw new StoreException(StaticMessages.INVALID_INPUT);
         }
     }
 
-    public void cashierCommands(String[] commands) {
+
+    public void cashierCommands(String[] commands) throws StoreException {
         switch (commands[1].toUpperCase()) {
             case "ADD":
                 String[] correctCommand = new String[commands.length];
@@ -418,11 +420,11 @@ public class StoreApp {
                     correctCommand[3] = commands[commands.length - 1];
                 }
                 if (countNotNull(correctCommand) == 5) {
-                    UserDatabase.getInstance().add(new Cashier(correctCommand[2], name, correctCommand[4]));
+                    UserDatabase.getInstance().add(new Cashier(correctCommand[2], name, correctCommand[4])); // UserDatabase.add lanza StoreException si falla, así que no hace falta if/else aquí
                 } else if (countNotNull(correctCommand) == 4) {
                     UserDatabase.getInstance().add(new Cashier(UserDatabase.getInstance().generateCashId(), correctCommand[2], correctCommand[3]));
                 } else {
-                    System.out.println(StaticMessages.INVALID_INPUT);
+                    throw new StoreException(StaticMessages.INVALID_INPUT);
                 }
                 break;
             case "REMOVE":
@@ -435,12 +437,11 @@ public class StoreApp {
                 UserDatabase.getInstance().showCashierTickets(commands[2]);
                 break;
             default:
-                System.out.println(StaticMessages.NOT_VALID_CMD);
-                break;
+                throw new StoreException(StaticMessages.NOT_VALID_CMD);
         }
     }
 
-    public void clientCommands(String[] commands) {
+    public void clientCommands(String[] commands) throws StoreException {
         switch (commands[1].toUpperCase()) {
             case "ADD":
                 String stringedCommand = String.join(" ", commands);
@@ -449,6 +450,9 @@ public class StoreApp {
                 String[] afterName = restOfCommand.split(" ");
 
                 Cashier c = UserDatabase.getInstance().getById(afterName[2], Cashier.class);
+                if (c == null) {
+                    throw new StoreException(StaticMessages.CASHIER_NOT_FOUND);
+                }
                 Client nuevoCliente = ClientFactory.createClient(name, afterName[0], afterName[1], c); // uso de Factory Method
                 UserDatabase.getInstance().add(nuevoCliente);
                 break;
@@ -459,7 +463,7 @@ public class StoreApp {
                 UserDatabase.getInstance().listClients();
                 break;
             default:
-                System.out.println(StaticMessages.INVALID_INPUT);
+                throw new StoreException(StaticMessages.INVALID_INPUT);
         }
     }
 

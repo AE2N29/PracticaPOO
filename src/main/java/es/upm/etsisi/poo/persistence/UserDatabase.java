@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.persistence;
 
+import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.users.*;
 import es.upm.etsisi.poo.model.sales.Ticket;
 import es.upm.etsisi.poo.utils.StaticMessages;
@@ -24,34 +25,32 @@ public class UserDatabase {
     }
 
 
-    public void add(User user) {
+    public void add(User user) throws StoreException {
         if (getById(user.getIdentifier()) != null) {
-            System.out.println(StaticMessages.USER_WITH_ID + user.getIdentifier() + StaticMessages.ALREADY_EXISTS);
-            return;
+            throw new StoreException(String.format(StaticMessages.USER_ALREADY_EXISTS, user.getIdentifier()));
         }
         this.users.add(user);
+        System.out.println(user); // Usa el toString del cliente
 
         if (user instanceof Client) {
-            System.out.println(user); // Usa el toString del cliente
             System.out.println(StaticMessages.CLIENT_ADD_OK);
         } else if (user instanceof Cashier) {
-            System.out.println(user);
             System.out.println(StaticMessages.CASH_ADD_OK);
         }
     }
 
-    public void remove(String id) {
+    public void remove(String id) throws StoreException {
         User user = getById(id);
-        if (user != null) {
-            boolean isClient = user instanceof Client;
+        if (user == null) {
+            throw new StoreException(String.format(StaticMessages.USER_NOT_FOUND, id));
+        }
+        boolean isClient = user instanceof Client;
+        this.users.remove(user);
 
-            this.users.remove(user);
-
-            if (isClient) { System.out.println(StaticMessages.CLIENT_REMOVE_OK);
-            } else { System.out.println(StaticMessages.CASH_REMOVE_OK); }
-
+        if (isClient) {
+            System.out.println(StaticMessages.CLIENT_REMOVE_OK);
         } else {
-            System.out.println(StaticMessages.USER_WITH_ID + id + StaticMessages.NOT_FOUND);
+            System.out.println(StaticMessages.CASH_REMOVE_OK);
         }
     }
 
@@ -84,7 +83,7 @@ public class UserDatabase {
     // METODOS ESPECIFICOS DE CLIENTES
 
     public void listClients() {
-        System.out.println(StaticMessages.CLIENT);
+        System.out.println(StaticMessages.CLIENT_HEADER);
         ArrayList<Client> clients = getAll(Client.class);
 
         clients.sort(Comparator.comparing(User::getName));
@@ -102,7 +101,7 @@ public class UserDatabase {
     // METODOS ESPECIFICOS DE CAJEROS
 
     public void listCashiers() {
-        System.out.println(StaticMessages.CASH);
+        System.out.println(StaticMessages.CASH_HEADER);
 
         ArrayList<Cashier> cashiers = getAll(Cashier.class);
         cashiers.sort(Comparator.comparing(User::getName));
@@ -135,14 +134,16 @@ public class UserDatabase {
     }
 
 
-    public void showCashierTickets(String cashierId) {
+    public void showCashierTickets(String cashierId) throws StoreException {
         Cashier cashier = getById(cashierId, Cashier.class); // Devolver si encuentra y es Cashier
-        System.out.println(StaticMessages.TICKETS);
+        if (cashier == null) {
+            throw new StoreException(StaticMessages.CASHIER_NOT_FOUND);
+        }
+        System.out.println(StaticMessages.TICKETS_HEADER);
 
-        if (cashier != null) {
-            ArrayList<Ticket> tickets = cashier.getCreatedTickets();
+        ArrayList<Ticket> tickets = cashier.getCreatedTickets();
+        if (tickets != null) {
             tickets.sort(Comparator.comparing(Ticket::getId));
-
             for (Ticket t : tickets) {
                 System.out.println("  " + t.getId() + "->" + t.getState());
             }

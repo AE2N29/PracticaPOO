@@ -1,13 +1,16 @@
 package es.upm.etsisi.poo.model.products;
-import java.time.LocalDateTime;
-public class Service extends AbstractProduct {
 
+import es.upm.etsisi.poo.exceptions.StoreException;
+
+import java.time.LocalDateTime;
+
+public class Service extends AbstractProduct {
     public static int counter = 1;
     private ServiceTypes serviceType;
     private LocalDateTime expirationDate;
 
     // Usamos el tipo como nombre, así podemos encasillar service como AbstractProduct tambien
-    public Service(ServiceTypes serviceType, LocalDateTime expirationDate){
+    public Service(ServiceTypes serviceType, LocalDateTime expirationDate) throws StoreException {
         super(generateServiceID(), serviceType.toString());
         this.serviceType = serviceType;
         this.expirationDate = expirationDate;
@@ -21,6 +24,7 @@ public class Service extends AbstractProduct {
     public ServiceTypes getServiceType() {
         return serviceType;
     }
+
     public LocalDateTime getExpirationDate() {
         return expirationDate;
     }
@@ -29,6 +33,7 @@ public class Service extends AbstractProduct {
     public double getPrice() {
         return 0.0;
     }
+
     @Override
     public boolean setPrice(double price) { // No deja poner precio ditinto a 0.0
         return false;
@@ -38,6 +43,7 @@ public class Service extends AbstractProduct {
     public boolean isAvailable() {
         return LocalDateTime.now().isBefore(expirationDate);
     }
+
     @Override
     public String toString() {
         return "{class:Service, type:" + serviceType +
