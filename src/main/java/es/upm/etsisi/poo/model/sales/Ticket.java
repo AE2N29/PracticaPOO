@@ -77,7 +77,6 @@ public class Ticket {
         if (prod instanceof Event && productList.contains(prod)) {
             throw new StoreException(StaticMessages.EVENT_ALREADY_EXISTS);
         }
-        //Crear copia producto personalizado
         if (prod instanceof PersonalizedProduct && customizations != null && !customizations.isEmpty()) {
             PersonalizedProduct original = (PersonalizedProduct) prod;
             PersonalizedProduct copy = new PersonalizedProduct(
@@ -91,11 +90,9 @@ public class Ticket {
                     System.out.println(String.format(StaticMessages.WARN_CUSTOM_LIMIT, text));
                 }
             }
-            prod = copy; // 'prod' pasa a ser la copia nueva
+            prod = copy;
         } else
-        //Resto de copias
         {
-               //En caso de que de que el producto no sea personalizable por lo que sea
             if (customizations != null && !customizations.isEmpty()) {
                 System.out.println(String.format(StaticMessages.WARN_NOT_CUSTOMIZABLE, prod.getName()));
             }
