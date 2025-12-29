@@ -18,6 +18,12 @@ public class StockProduct extends AbstractProduct {
         this.category = category;
         this.price = price;
     }
+    // Constructor de copia, para controlar que el cambio de un producto, no cambie el ticket
+    public StockProduct(StockProduct source) throws StoreException {
+        super(source.getId(), source.getName());
+        this.category = source.getCategory();
+        this.price = source.getPrice();
+    }
 
     public Category getCategory() {
         return category;
