@@ -136,6 +136,9 @@ public class Ticket {
     }
 
     private void printTicketLinesSorted(boolean printOkAtEnd) {
+        if(printOkAtEnd){
+            validateAllProductsAreStillAvailable();
+        }
         double totalPrice = 0.0, totalDiscount = 0.0;
         ArrayList<AbstractProduct> sorted = new ArrayList<>(this.productList); // Copia segura
         sorted.sort(Comparator.comparing(AbstractProduct::getName));
@@ -151,14 +154,10 @@ public class Ticket {
                 }
             }
         }
-
-        String headerId = this.id;
-        String futureClosedId;
         if (printOkAtEnd && state != TicketState.CLOSE) {
-            futureClosedId = updateTicketId();
-            headerId = futureClosedId;
+            this.id = updateTicketId();
         }
-        System.out.println(StaticMessages.TICKET_HEADER + headerId);
+        System.out.println(StaticMessages.TICKET_HEADER + this.id);
         for (AbstractProduct prod : sorted) {
             totalPrice += prod.getPrice();
             double discountPct = 0.0;
@@ -193,12 +192,9 @@ public class Ticket {
         System.out.println(StaticMessages.TOTAL_DISCOUNT_LABEL + rounded(totalDiscount));
         System.out.println(StaticMessages.FINAL_PRICE_LABEL + rounded(totalPrice - totalDiscount));
         if (printOkAtEnd) {
-            if (state != TicketState.CLOSE) {
-                setState(TicketState.CLOSE);
-                this.id = headerId;
-            }
-            System.out.println(StaticMessages.TICKET_PRINT_OK);
+            closeTicket();
         }
+        System.out.println(StaticMessages.TICKET_PRINT_OK);
     }
 
     public void printInitialState() {
@@ -209,6 +205,21 @@ public class Ticket {
     private String rounded(double d) {
         double val = Math.round(d * 1000.0) / 1000.0;
         return String.valueOf(val);
+    }
+
+    private void closeTicket () {
+        if (state != TicketState.CLOSE) {
+            setState(TicketState.CLOSE);
+        }
+    }
+
+    private void validateAllProductsAreStillAvailable() {
+        for (AbstractProduct p : this.productList) {
+            if (!p.isAvailable()) {
+                String msg = String.format(StaticMessages.PROD_UNAVAILABLE, p.getName());
+                throw new IllegalStateException(msg);
+            }
+        }
     }
 
     public TicketState getState() { return state; }
