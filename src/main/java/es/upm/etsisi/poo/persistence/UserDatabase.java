@@ -24,7 +24,6 @@ public class UserDatabase {
         return instance;
     }
 
-
     public void add(User user) throws StoreException {
         if (getById(user.getIdentifier()) != null) {
             throw new StoreException(String.format(StaticMessages.USER_ALREADY_EXISTS, user.getIdentifier()));

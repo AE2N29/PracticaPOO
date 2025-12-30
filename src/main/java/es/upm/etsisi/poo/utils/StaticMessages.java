@@ -72,8 +72,6 @@ public class StaticMessages {
                   Final Price: 0.0
                 """;
 
-
-
     // HELP BLOCK
     public static final String HELP_TEXT = """
            Commands:
