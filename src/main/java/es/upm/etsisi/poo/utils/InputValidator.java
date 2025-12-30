@@ -108,7 +108,7 @@ public class InputValidator {
             else {
                 return processedCommand.length == priceIndex + 1;
             }
-        } catch (NoSuchElementException | NumberFormatException | IndexOutOfBoundsException e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -145,43 +145,31 @@ public class InputValidator {
                 double price = Double.parseDouble(processedCommand[priceIndex]);
                 if(price < 0) {return false;}
                 int maxPeople = Integer.parseInt(processedCommand[maxPeopleIndex]);
-                if(maxPeople <= 0  || maxPeople>= 0){return false;}
+                if(maxPeople <= 0  || maxPeople> 100){return false;}
                 return true;
             }
             return false;
-        }catch (NoSuchElementException | NumberFormatException | IndexOutOfBoundsException e) {
+        }catch (Exception e) {
             return false;
         }
     }
 
-    private static boolean validateProdUpdate(String[] splittedCommand, String fullCommand) {
-        if (splittedCommand.length < 4) {
-            return false;
-        }
-        if (!validProductID(splittedCommand[2])) {
-            return false;
-        }
-
-        switch (splittedCommand[3]) {
-            case "NAME": {  //  Acepta nombres con espacios cuando están entre comillas: prod update <id> NAME "nuevo nombre"
-                int first = fullCommand.indexOf('"');
-                int last = fullCommand.lastIndexOf('"');
-                if (first == -1 || last <= first) {
-                    return false;
-                }
-                String nameValue = fullCommand.substring(first + 1, last);
-                return isName(nameValue);
-            }
+    //prod update 1 NAME "Libro POO V2"
+    //prod update 1 PRICE 30
+    //prod update 1 PRICE 30
+    //prod update 1 NAME "Libro POO V2"
+    //prod update 1 PRICE 30
+    private static boolean validateProdUpdate(String fullCommand) {
+        String[] processedCommand = procesQuoteCommands(fullCommand);
+        if(processedCommand.length != 5 ) {return false;}
+        if (!validProductID(processedCommand[2])) {return false;}
+        switch (processedCommand[3]) {
+            case "NAME":  //  Acepta nombres con espacios cuando están entre comillas: prod update <id> NAME "nuevo nombre"
+                return isName(processedCommand[4]);
             case "PRICE":
-                if (splittedCommand.length != 5) {
-                    return false;
-                }
-                return isDouble(splittedCommand[4]);
+                return isDouble(processedCommand[4]) && Double.parseDouble(processedCommand[4]) > 0;
             case "CATEGORY":
-                if (splittedCommand.length != 5) {
-                    return false;
-                }
-                return isCategory(splittedCommand[4]);
+                return isCategory(processedCommand[4]);
             default:
                 return false;
         }
@@ -196,7 +184,7 @@ public class InputValidator {
             case "ADDMEETING":
                 return validateProdAddEvent(fullCommand);
             case "UPDATE":
-                return validateProdUpdate(splittedCommand, fullCommand);
+                return validateProdUpdate(fullCommand);
             case "REMOVE":
                 if (splittedCommand.length != 3) {
                     return false;
@@ -444,24 +432,34 @@ public class InputValidator {
 
     // Combierte cualquier comando que tenga "" en un array con cada elemento
     private static String[] procesQuoteCommands(String command) {
-        String beforeQuote = command.substring(0, command.indexOf('"')).trim();
-        String afterQuote = command.substring(command.lastIndexOf('"') + 1).trim();
-        String quote = command.substring(command.indexOf('"') + 1, command.lastIndexOf('"'));
-        List<String> result = new ArrayList<>();
-        if (!beforeQuote.isEmpty()) {
-            String[] beforeQuoteParts = beforeQuote.split("\\s+"); // Cualquier espacio o más de un espacio
-            for (String beforeQuotePart : beforeQuoteParts) {
-                result.add(beforeQuotePart);
+        if(!command.contains("\"")) {
+            String[] splitCommand = command.split("\\s+");
+            List<String> result = new ArrayList<>();
+            for (String s : splitCommand) {
+                result.add(s.trim());
             }
+            return result.toArray(new String[0]);
         }
-        result.add(quote);
-        if (!afterQuote.isEmpty()) {
-            String[] afterQuoteParts = afterQuote.split("\\s+");
-            for (String afterQuotePart : afterQuoteParts) {
-                result.add(afterQuotePart);
+        else {
+            String beforeQuote = command.substring(0, command.indexOf('"')).trim();
+            String afterQuote = command.substring(command.lastIndexOf('"') + 1).trim();
+            String quote = command.substring(command.indexOf('"') + 1, command.lastIndexOf('"'));
+            List<String> result = new ArrayList<>();
+            if (!beforeQuote.isEmpty()) {
+                String[] beforeQuoteParts = beforeQuote.split("\\s+"); // Cualquier espacio o más de un espacio
+                for (String beforeQuotePart : beforeQuoteParts) {
+                    result.add(beforeQuotePart);
+                }
             }
+            result.add(quote);
+            if (!afterQuote.isEmpty()) {
+                String[] afterQuoteParts = afterQuote.split("\\s+");
+                for (String afterQuotePart : afterQuoteParts) {
+                    result.add(afterQuotePart);
+                }
+            }
+            return result.toArray(new String[0]);
         }
-        return result.toArray(new String[0]);
     }
 }
 
