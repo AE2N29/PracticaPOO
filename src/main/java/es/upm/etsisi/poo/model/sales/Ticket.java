@@ -91,10 +91,16 @@ public class Ticket {
                 }
             }
             prod = copy;
-        } else if (customizations != null && !customizations.isEmpty()) {
-            System.out.println(String.format(StaticMessages.WARN_NOT_CUSTOMIZABLE, prod.getName()));
+        } else
+        {
+            if (customizations != null && !customizations.isEmpty()) {
+                System.out.println(String.format(StaticMessages.WARN_NOT_CUSTOMIZABLE, prod.getName()));
+            }
+            // Copiar
+            if (prod instanceof StockProduct) {
+                prod = new StockProduct((StockProduct) prod);
+            }
         }
-
         if (amount + productTotalUnits() > MAX_PRODS_TICKET) {
             throw new StoreException(StaticMessages.MAX_PRODS_EXCEED);
         }
