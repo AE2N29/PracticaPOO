@@ -2,7 +2,7 @@ package es.upm.etsisi.poo.main;
 
 import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.products.*;
-import es.upm.etsisi.poo.model.sales.Ticket;
+import es.upm.etsisi.poo.model.sales.OldTicket;
 import es.upm.etsisi.poo.model.users.Cashier;
 import es.upm.etsisi.poo.model.users.Client;
 import es.upm.etsisi.poo.patterns.ClientFactory;
@@ -310,13 +310,13 @@ public class StoreApp {
                 if (client == null) {
                     throw new StoreException(StaticMessages.CLIENT_NOT_FOUND);
                 }
-                Ticket newTicket;
+                OldTicket newTicket;
                 if (inputTicketId == null) { // cuando no pasan el id del ticket como parametro
-                    newTicket = new Ticket();
-                } else if (Ticket.isIdRegistered(inputTicketId)) { // cuando pasan el id del ticket como parametro
+                    newTicket = new OldTicket();
+                } else if (OldTicket.isIdRegistered(inputTicketId)) { // cuando pasan el id del ticket como parametro
                     throw new StoreException(StaticMessages.TICKET_ALREADY_EXISTS);
                 } else {
-                    newTicket = new Ticket(inputTicketId);
+                    newTicket = new OldTicket(inputTicketId);
                 }
                 cashier.addTicket(newTicket);
                 client.addTicket(newTicket);
@@ -335,7 +335,7 @@ public class StoreApp {
                 if (cash == null) {
                     throw new StoreException(StaticMessages.CASHIER_NOT_FOUND);
                 }
-                Ticket t = cash.getTicketById(ticketId);
+                OldTicket t = cash.getTicketById(ticketId);
                 if (t == null) {
                     throw new StoreException(StaticMessages.TICKET_NOT_FOUND);
                 }
@@ -364,7 +364,7 @@ public class StoreApp {
                 if (c == null) {
                     throw new StoreException(StaticMessages.CASHIER_NOT_FOUND);
                 }
-                Ticket ticket = c.getTicketById(tId);
+                OldTicket ticket = c.getTicketById(tId);
                 if (ticket == null) {
                     throw new StoreException(StaticMessages.TICKET_NOT_FOUND);
                 }
@@ -378,7 +378,7 @@ public class StoreApp {
                 if (cashierC == null) {
                     throw new StoreException(StaticMessages.CASHIER_NOT_FOUND);
                 }
-                Ticket ticketT = cashierC.getTicketById(idTicket);
+                OldTicket ticketT = cashierC.getTicketById(idTicket);
                 if (ticketT == null) {
                     throw new StoreException(StaticMessages.TICKET_NOT_FOUND);
                 }
@@ -389,8 +389,8 @@ public class StoreApp {
                 System.out.println(StaticMessages.TICKET_LIST);
                 ArrayList<Cashier> sortedCashiers = UserDatabase.getInstance().getAll(Cashier.class);
                 for (Cashier cashierc : sortedCashiers) {
-                    ArrayList<Ticket> tickets = cashierc.getTicketsSortedById();
-                    for (Ticket tickett : tickets) {
+                    ArrayList<OldTicket> tickets = cashierc.getTicketsSortedById();
+                    for (OldTicket tickett : tickets) {
                         System.out.println("  " + tickett.getId() + " - " + tickett.getState());
                     }
                 }

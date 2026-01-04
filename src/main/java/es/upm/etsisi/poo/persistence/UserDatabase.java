@@ -2,7 +2,7 @@ package es.upm.etsisi.poo.persistence;
 
 import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.users.*;
-import es.upm.etsisi.poo.model.sales.Ticket;
+import es.upm.etsisi.poo.model.sales.OldTicket;
 import es.upm.etsisi.poo.utils.StaticMessages;
 
 import java.util.ArrayList;
@@ -140,10 +140,10 @@ public class UserDatabase {
         }
         System.out.println(StaticMessages.TICKETS_HEADER);
 
-        ArrayList<Ticket> tickets = cashier.getCreatedTickets();
+        ArrayList<OldTicket> tickets = cashier.getCreatedTickets();
         if (tickets != null) {
-            tickets.sort(Comparator.comparing(Ticket::getId));
-            for (Ticket t : tickets) {
+            tickets.sort(Comparator.comparing(OldTicket::getId));
+            for (OldTicket t : tickets) {
                 System.out.println("  " + t.getId() + "->" + t.getState());
             }
         }

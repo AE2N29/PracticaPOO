@@ -10,21 +10,21 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class Ticket {
+public class OldTicket {
     private final int MAX_PRODS_TICKET = 100; //  ticket no puede tener mas de 100 productos
     private final ArrayList<AbstractProduct> productList;
     private TicketState state;
     private String id;
     private static final ArrayList<String> usedIds = new ArrayList<>(); // Guardamos los ids usados para no repetirlos
 
-    public Ticket(String id) {
+    public OldTicket(String id) {
         this.productList = new ArrayList<>();
         this.state = TicketState.EMPTY;
         this.id = id;
         usedIds.add(id);
     }
 
-    public Ticket() {
+    public OldTicket() {
         this(createTicketId());
     }
 
