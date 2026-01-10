@@ -4,16 +4,32 @@ import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.products.*;
 import es.upm.etsisi.poo.persistence.ProductCatalog;
 import es.upm.etsisi.poo.utils.StaticMessages;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+@Entity
+@Table(name = "Tickets")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class OldTicket {
     private final int MAX_PRODS_TICKET = 100; //  ticket no puede tener mas de 100 productos
     private final ArrayList<AbstractProduct> productList;
     private TicketState state;
+    @Id
+    @GeneratedValue
+    private int numericId;  // Para el SpringBoot
     private String id;
     private static final ArrayList<String> usedIds = new ArrayList<>(); // Guardamos los ids usados para no repetirlos
 

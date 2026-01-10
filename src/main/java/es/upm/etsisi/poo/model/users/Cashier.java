@@ -1,11 +1,24 @@
 package es.upm.etsisi.poo.model.users;
 
 import es.upm.etsisi.poo.model.sales.OldTicket;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 
+@Entity
+@Table(name = "Cashiers")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class Cashier extends User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int numericCashierId;
     private final String UPMWorkerID;
     private final ArrayList<OldTicket> createdTickets; // relacion de composicion
 
