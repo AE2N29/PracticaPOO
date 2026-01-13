@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.model.products;
 
+import es.upm.etsisi.poo.Command.AppConfigurations;
 import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.persistence.ProductCatalog;
 import es.upm.etsisi.poo.utils.StaticMessages;
@@ -10,15 +11,24 @@ public abstract class AbstractProduct {
     private String name;
     private final String id;
 
-    public AbstractProduct(String id, String name) throws StoreException {
-        if (name == null || name.isBlank() || name.length() >= 100) {
-            throw new StoreException(StaticMessages.INVALID_NAME);
+    public AbstractProduct(String id, String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Product name cannot be empty.");
+        }
+        //  Aquí usa AppConfig en lugar de número mágico
+        if (name.length() >= AppConfigurations.MAX_PRODUCT_NAME_LENGTH) {
+            throw new IllegalArgumentException(
+                    "Product name must be less than " +
+                            AppConfigurations.MAX_PRODUCT_NAME_LENGTH + " characters."
+            );
         }
         this.name = name;
         this.id = id;
     }
-    public AbstractProduct(String name) throws StoreException {
-        this(generateID(), name);
+
+    public AbstractProduct(String name) {
+        this.name = name;
+        this.id = generateID();
     }
 
     public String getName() {
@@ -28,9 +38,11 @@ public abstract class AbstractProduct {
         return id;
     }
 
-    public void setName(String name) throws StoreException {
-        if (name == null || name.isBlank() || name.length() >= 100) {
-            throw new StoreException(StaticMessages.INVALID_NAME);
+    public void setName(String name) {
+        if (name == null || name.isBlank() ||
+                name.length() >= AppConfigurations.MAX_PRODUCT_NAME_LENGTH) {
+            System.out.println(StaticMessages.INVALID_NAME);
+            return;
         }
         this.name = name;
     }
