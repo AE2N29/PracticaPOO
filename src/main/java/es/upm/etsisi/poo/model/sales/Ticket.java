@@ -67,7 +67,44 @@ public class Ticket {
         }
     }
 
+    private AbstractProduct createProductCopy(AbstractProduct original) throws StoreException {
+        if (original instanceof PersonalizedProduct) {
+            PersonalizedProduct p = (PersonalizedProduct) original;
+            return new PersonalizedProduct(
+                    p.getId(),
+                    p.getName(),
+                    p.getCategory(),
+                    p.getPrice(),
+                    p.getMaxCustomTexts()
+            );
+        } else if (original instanceof StockProduct) {
+            StockProduct s = (StockProduct) original;
+            return new StockProduct(
+                    s.getId(),
+                    s.getName(),
+                    s. getCategory(),
+                    s.getPrice()
+            );
+        } else if (original instanceof Event) {
+            Event e = (Event) original;
+            return new Event(
+                    e.getId(),
+                    e.getName(),
+                    e.getExpirationDate(),
+                    e.getPrice(),
+                    e. getMaxPeopleAllowed(),
+                    e.getEventType()
+            );
+        } else if (original instanceof Service) {
+            Service svc = (Service) original;
+            return new Service(
+                    svc.getServiceType(),
+                    svc.getExpirationDate()
+            );
+        }
 
+        return original;
+    }
     private String updateTicketId() { // actualiza el id cuando el ticket se cierra
         String pattern = "-YY-MM-dd-HH:mm";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
@@ -108,16 +145,13 @@ public class Ticket {
                     System.out.println(StaticMessages.EVENT_ALREADY_EXISTS);
                     return;
                 }
-
+                AbstractProduct productToAdd = createProductCopy(prod);
+                //Se crean copias para añadir al ticket, para que cuando se modifica el precio de un producto no cambie el ticket
                 // Manejar customizaciones si es PersonalizedProduct
+
                 if (prod instanceof PersonalizedProduct && customizations != null &&
                         !  customizations.  isEmpty()) {
-                    PersonalizedProduct original = (PersonalizedProduct) prod;
-                    PersonalizedProduct copy = new PersonalizedProduct(
-                            original.getId(), original.getName(), original.getCategory(),
-                            original.getPrice(), original.getMaxCustomTexts()
-                    );
-
+                    PersonalizedProduct copy = (PersonalizedProduct) productToAdd;
                     for (String text : customizations) {
                         boolean added = copy.addCustomText(text);
                         if (!  added) {
@@ -125,9 +159,9 @@ public class Ticket {
                                     "'.  Max limit reached.");
                         }
                     }
-                    prod = copy;
+                    productToAdd = copy;
                 } else if (customizations != null && ! customizations. isEmpty()) {
-                    System.out.println("WARNING: Product " + prod.getName() +
+                    System.out.println("WARNING: Product " + productToAdd.getName() +
                             " is not customizable.  Ignoring texts.");
                 }
 
@@ -136,7 +170,7 @@ public class Ticket {
                     return;
                 }
                 for (int i = 0; i < amount; i++) {
-                    productList.add(prod);
+                    productList.add(createProductCopy(productToAdd));
                 }
 
                 printTicketLinesSorted(false);
