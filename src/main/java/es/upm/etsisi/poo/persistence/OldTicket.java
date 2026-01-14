@@ -1,13 +1,12 @@
-package es.upm.etsisi.poo.model.sales;
+package es.upm.etsisi.poo.persistence;
 
 import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.products.*;
-import es.upm.etsisi.poo.persistence.ProductCatalog;
+import es.upm.etsisi.poo.model.repositories.ProductsRepo;
+import es.upm.etsisi.poo.model.repositories.TicketRepo;
+import es.upm.etsisi.poo.model.sales.TicketState;
 import es.upm.etsisi.poo.utils.StaticMessages;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +24,7 @@ import java.util.Comparator;
 
 public class OldTicket {
     private final int MAX_PRODS_TICKET = 100; //  ticket no puede tener mas de 100 productos
+    @ManyToMany
     private final ArrayList<AbstractProduct> productList;
     private TicketState state;
     @Id
@@ -32,6 +32,8 @@ public class OldTicket {
     private int numericId;  // Para el SpringBoot
     private String id;
     private static final ArrayList<String> usedIds = new ArrayList<>(); // Guardamos los ids usados para no repetirlos
+    private static ProductsRepo prodsRepo; // Gestor de productos de la BBDD local
+    private static TicketRepo ticketRepo; // Gestor de añadir o borrar ticket en la BBDD local
 
     public OldTicket(String id) {
         this.productList = new ArrayList<>();
@@ -129,6 +131,9 @@ public class OldTicket {
 
         if (!state.equals(TicketState.OPEN)) {
             this.setState(TicketState.OPEN);
+        }
+        if (ticketRepo != null) {
+            ticketRepo.save(this);
         }
 
     }

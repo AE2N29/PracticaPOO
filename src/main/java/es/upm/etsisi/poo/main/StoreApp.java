@@ -2,12 +2,17 @@ package es.upm.etsisi.poo.main;
 
 import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.products.*;
-import es.upm.etsisi.poo.model.sales.OldTicket;
+import es.upm.etsisi.poo.model.repositories.CashierRepo;
+import es.upm.etsisi.poo.model.repositories.ClientRepo;
+import es.upm.etsisi.poo.model.repositories.ProductsRepo;
+import es.upm.etsisi.poo.model.repositories.TicketRepo;
+import es.upm.etsisi.poo.persistence.OldTicket;
 import es.upm.etsisi.poo.model.users.Cashier;
 import es.upm.etsisi.poo.model.users.Client;
 import es.upm.etsisi.poo.patterns.ClientFactory;
 import es.upm.etsisi.poo.persistence.*;
 import es.upm.etsisi.poo.utils.*;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
@@ -17,9 +22,14 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.io.File;
 
+@SpringBootApplication
 public class StoreApp {
     private static Scanner sc = null;
     private static boolean fromKeyboard;
+    private ProductsRepo productsRepo;
+    private ClientRepo clientRepo;
+    private CashierRepo cashierRepo;
+    private TicketRepo ticketRepo;
 
     public static void main( String[] args ) {
         StoreApp app = new StoreApp();

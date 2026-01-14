@@ -1,8 +1,9 @@
 package es.upm.etsisi.poo.persistence;
 
 import es.upm.etsisi.poo.exceptions.StoreException;
+import es.upm.etsisi.poo.model.repositories.CashierRepo;
+import es.upm.etsisi.poo.model.repositories.ClientRepo;
 import es.upm.etsisi.poo.model.users.*;
-import es.upm.etsisi.poo.model.sales.OldTicket;
 import es.upm.etsisi.poo.utils.StaticMessages;
 
 import java.util.ArrayList;
@@ -11,7 +12,9 @@ import java.util.Comparator;
 public class UserDatabase {
 
     private static UserDatabase instance; // Singleton
-    private final ArrayList<User> users; // Unica Database
+    private final ArrayList<User> users; // Única Database
+    private static ClientRepo clientRepo; // Gestor de clientes para la BD
+    private static CashierRepo cashierRepo; // Idem
 
     private UserDatabase() {
         this.users = new ArrayList<>();
@@ -33,8 +36,10 @@ public class UserDatabase {
 
         if (user instanceof Client) {
             System.out.println(StaticMessages.CLIENT_ADD_OK);
+            clientRepo.save((Client) user);     // Guarda el cliente en la BBDD local
         } else if (user instanceof Cashier) {
             System.out.println(StaticMessages.CASH_ADD_OK);
+            cashierRepo.save((Cashier) user);    // Guarda el cashier en la BBDD local
         }
     }
 
@@ -45,11 +50,12 @@ public class UserDatabase {
         }
         boolean isClient = user instanceof Client;
         this.users.remove(user);
-
         if (isClient) {
             System.out.println(StaticMessages.CLIENT_REMOVE_OK);
+            clientRepo.delete((Client) user);   // Borra los clientes de la BBDD local
         } else {
             System.out.println(StaticMessages.CASH_REMOVE_OK);
+            cashierRepo.delete((Cashier) user);  // Borra los cashiers de la BBDD local
         }
     }
 

@@ -1,6 +1,6 @@
 package es.upm.etsisi.poo.model.users;
 
-import es.upm.etsisi.poo.model.sales.OldTicket;
+import es.upm.etsisi.poo.persistence.OldTicket;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
