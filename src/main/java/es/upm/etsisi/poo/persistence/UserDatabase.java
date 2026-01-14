@@ -1,8 +1,9 @@
 package es.upm.etsisi.poo.persistence;
 
+import es.upm.etsisi.poo.Command.AppConfigurations;
 import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.users.*;
-import es.upm.etsisi.poo.model.sales.OldTicket;
+import es.upm.etsisi.poo.model.sales.Ticket;
 import es.upm.etsisi.poo.utils.StaticMessages;
 
 import java.util.ArrayList;
@@ -76,10 +77,10 @@ public class UserDatabase {
                 result.add(type.cast(u));
             }
         }
-        return result; // Devuelve la lista cruda
+        return result;
     }
 
-    // METODOS ESPECIFICOS DE CLIENTES
+
 
     public void listClients() {
         System.out.println(StaticMessages.CLIENT_HEADER);
@@ -96,8 +97,6 @@ public class UserDatabase {
         }
         System.out.println(StaticMessages.CLIENT_LIST_OK);
     }
-
-    // METODOS ESPECIFICOS DE CAJEROS
 
     public void listCashiers() {
         System.out.println(StaticMessages.CASH_HEADER);
@@ -116,12 +115,13 @@ public class UserDatabase {
     }
 
 
-    public String generateCashId() { // Uso en StoreApp
+    public String generateCashId() {
         String upmWorkerID;
         boolean exists;
         do {
-            upmWorkerID = "UW";
-            for (int i = 0; i < 7; i++) {
+            // Usa AppConfig en lugar de la generación de numeros aleatorios
+            upmWorkerID = AppConfigurations.CASHIER_ID_PREFIX;
+            for (int i = 0; i < AppConfigurations.CASHIER_ID_DIGITS; i++) {
                 int random = (int) (Math.random() * 10);
                 upmWorkerID += random;
             }
@@ -140,10 +140,10 @@ public class UserDatabase {
         }
         System.out.println(StaticMessages.TICKETS_HEADER);
 
-        ArrayList<OldTicket> tickets = cashier.getCreatedTickets();
+        ArrayList<Ticket> tickets = cashier.getCreatedTickets();
         if (tickets != null) {
-            tickets.sort(Comparator.comparing(OldTicket::getId));
-            for (OldTicket t : tickets) {
+            tickets.sort(Comparator.comparing(Ticket::getId));
+            for (Ticket t : tickets) {
                 System.out.println("  " + t.getId() + "->" + t.getState());
             }
         }
