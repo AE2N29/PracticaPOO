@@ -1,25 +1,14 @@
 package es.upm.etsisi.poo.model.products;
 
 import es.upm.etsisi.poo.exceptions.StoreException;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "PersonalizedProds")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class PersonalizedProduct extends StockProduct {
 
     private final List<String> customTexts;
     private final int maxCustomTexts;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int persProdId;
 
     public PersonalizedProduct(String id, String name, Category category, double price, int maxCustomTexts) throws StoreException {

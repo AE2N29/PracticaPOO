@@ -1,22 +1,11 @@
 package es.upm.etsisi.poo.model.products;
 import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.utils.StaticMessages;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "Events")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Event extends AbstractProduct {
     protected static final int MAX_PEOPLE = 100;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected int eventid;
     protected EventType eventType;
     protected int maxPeopleAllowed;

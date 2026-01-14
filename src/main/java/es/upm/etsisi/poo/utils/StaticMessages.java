@@ -75,19 +75,19 @@ public class StaticMessages {
     // HELP BLOCK
     public static final String HELP_TEXT = """
            Commands:
-             client add "<nombre>" <DNI/NIF> <email> <cashId>
+             client add "<nombre>" (<DNI>|<NIF>) <email> <cashId>
              client remove <DNI>
              client list
              cash add [<id>] "<nombre>"<email>
              cash remove <id>
              cash list
              cash tickets <id>
-             ticket new [<id>] <cashId> <userId> -[c/p/s]
+             ticket new [<id>] <cashId> <userId> -[c/p/s] (default -p option)
              ticket add <ticketId><cashId> <prodId> <amount> [--p<txt> --p<txt>]
              ticket remove <ticketId><cashId> <prodId>
              ticket print <ticketId> <cashId>
              ticket list
-             prod add <id> "<name>" <category> <price>
+             prod add ([<id>] "<name>" <category> <price> [<maxPers>] || ("<name>" <category> )
              prod update <id> NAME|CATEGORY|PRICE <value>
              prod addFood [<id>] "<name>" <price> <expiration:yyyy-MM-dd> <max_people>
              prod addMeeting [<id>] "<name>" <price> <expiration:yyyy-MM-dd> <max_people>

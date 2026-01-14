@@ -1,14 +1,9 @@
 package es.upm.etsisi.poo.model.users;
 
 import es.upm.etsisi.poo.model.sales.OldTicket;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 
 import java.util.ArrayList;
 
-@Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Client extends User {
     private final String id;
     private final Cashier associatedCashier; // relacion de asociacion
