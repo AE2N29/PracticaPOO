@@ -1,10 +1,22 @@
 package es.upm.etsisi.poo.model.products;
 
 import es.upm.etsisi.poo.exceptions.StoreException;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "Services")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class Service extends AbstractProduct {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public static int counter = 1;
     private ServiceTypes serviceType;
     private LocalDateTime expirationDate;
