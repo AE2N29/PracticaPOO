@@ -1,30 +1,30 @@
 package es.upm.etsisi.poo.model.users;
 
-import es.upm.etsisi.poo.model.sales.OldTicket;
+import es.upm.etsisi.poo.model.sales.Ticket;
 
 import java.util.ArrayList;
 
 public abstract class Client extends User {
     private final String id;
     private final Cashier associatedCashier; // relacion de asociacion
-    private final ArrayList<OldTicket> clientTickets; // relacion de agregacion
+    private final ArrayList<Ticket> clientTickets; // relacion de agregacion
 
     public Client(String name, String id, String email, Cashier associatedCashier) {
         super(name, email);
         this.id = id;
         this.associatedCashier = associatedCashier;
-        this.clientTickets = new ArrayList<>();
+        this.clientTickets = new ArrayList<Ticket>();
     }
 
     public Cashier getAssociatedCashier() {
         return associatedCashier;
     }
 
-    public void addTicket(OldTicket ticket) {
+    public void addTicket(Ticket ticket) {
         this.clientTickets.add(ticket);
     }
 
-    public ArrayList<OldTicket> getClientTickets() {
+    public ArrayList<Ticket> getClientTickets() {
         return clientTickets;
     }
 

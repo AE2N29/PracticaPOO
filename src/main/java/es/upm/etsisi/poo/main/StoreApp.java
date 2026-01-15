@@ -14,6 +14,7 @@ import es. upm.etsisi.poo.model.users.CorporateClient;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -139,7 +140,18 @@ public class StoreApp {
 
     private void prodAdd(String fullCommand) throws StoreException {
         String[] parsed = processProdAdd(fullCommand);
-
+        if (parsed.length == 4) {
+            String[] fCDate = processProdDate(fullCommand);
+            boolean isService = false;
+            for (ServiceTypes c: ServiceTypes.values()) {
+                if (c.name().equalsIgnoreCase(fCDate[3])) {
+                    isService = true;
+                }
+            }
+            if (InputValidator.isDate(fCDate[2]) && isService) {
+                ProductCatalog.add(Service.generateID(), new Service(ServiceTypes.valueOf(fCDate[3]), LocalDate.parse(fCDate[2]).atStartOfDay()));
+            }
+        }
         // ← Cambio: En lugar de parsed[2]. equals("GENERATE") ?  ...
         String id;
         if (parsed[2].equals("GENERATE")) {
@@ -598,6 +610,10 @@ public class StoreApp {
         int first = command.indexOf('"');
         int last = command.lastIndexOf('"');
         return command.substring(first + 1, last);
+    }
+
+    public String[] processProdDate(String command) {
+        return command.trim().split(" ");
     }
 
     /**
