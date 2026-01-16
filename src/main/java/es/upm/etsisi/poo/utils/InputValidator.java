@@ -46,9 +46,7 @@ public class InputValidator {
         switch (splittedCommand[1]) {
             case "ADD":
                 return validateProdAdd(fullCommand);
-            case "ADDFOOD":
-                return validateProdAddEvent(fullCommand);
-            case "ADDMEETING":
+            case "ADDFOOD", "ADDMEETING":
                 return validateProdAddEvent(fullCommand);
             case "UPDATE":
                 return validateProdUpdate(fullCommand);
@@ -145,8 +143,7 @@ public class InputValidator {
                 double price = Double.parseDouble(processedCommand[priceIndex]);
                 if(price < 0) {return false;}
                 int maxPeople = Integer.parseInt(processedCommand[maxPeopleIndex]);
-                if(maxPeople <= 0  || maxPeople> 100){return false;}
-                return true;
+                return maxPeople > 0;
             }
             return false;
         }catch (Exception e) {
