@@ -5,17 +5,16 @@ import es.upm.etsisi.poo.model.users.*;
 import es.upm.etsisi.poo.model.sales.Ticket;
 import es.upm.etsisi.poo.utils.StaticMessages;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 public class UserDatabase {
 
     private static UserDatabase instance; // Singleton
-    private final ArrayList<User> users; // Unica Database
+    private static ArrayList<User> users = new ArrayList<>();; // Unica Database
 
-    private UserDatabase() {
-        this.users = new ArrayList<>();
-    }
+    private UserDatabase() {}
 
     public static UserDatabase getInstance() { //Acceso singleton
         if (instance == null) {
@@ -24,12 +23,26 @@ public class UserDatabase {
         return instance;
     }
 
+    public static void setUsers(List<User> loadedUsers) {
+        if (users == null) {
+            users = new ArrayList<>();
+        }
+        users.clear(); // Vaciamos lo que hubiera (seguridad)
+        if (loadedUsers != null) {
+            users.addAll(loadedUsers); // Añadimos lo cargado
+        }
+    }
+
+    // Metodo auxiliar necesario para StoreData (Getter estático)
+    public static ArrayList<User> getUsers() {
+        return users;
+    }
 
     public void add(User user) throws StoreException {
         if (getById(user.getIdentifier()) != null) {
             throw new StoreException(String.format(StaticMessages.USER_ALREADY_EXISTS, user.getIdentifier()));
         }
-        this.users.add(user);
+        users.add(user);
         System.out.println(user); // Usa el toString del cliente
 
         if (user instanceof Client) {
@@ -45,7 +58,7 @@ public class UserDatabase {
             throw new StoreException(String.format(StaticMessages.USER_NOT_FOUND, id));
         }
         boolean isClient = user instanceof Client;
-        this.users.remove(user);
+        users.remove(user);
 
         if (isClient) {
             System.out.println(StaticMessages.CLIENT_REMOVE_OK);

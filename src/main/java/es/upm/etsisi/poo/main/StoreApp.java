@@ -53,6 +53,16 @@ public class StoreApp {
     }
 
     private void start() {
+
+        StoreData loadedData = PersistenceManager.load();
+        if (loadedData != null) {
+            // Restaurar los datos en vuestras clases estáticas
+            UserDatabase.setUsers(loadedData.getUsers()); // Necesitarás crear este setter si no existe
+            ProductCatalog.setProducts(loadedData.getProducts()); // Igual aquí
+            // Ticket.setHistory(loadedData.getTickets()); // Si guardáis historial de tickets
+            System.out.println("Data loaded from persistence.");
+        }
+
         boolean keepGoing = true;
         while (keepGoing) {
             String command = typeCommand().trim();
@@ -77,6 +87,13 @@ public class StoreApp {
                             System.out.println(command.substring(5));
                             break;
                         case "EXIT":
+                            // Recopilar datos actuales
+                            StoreData currentData = new StoreData(
+                                    UserDatabase.getUsers(),      // Asumiendo que tenéis un getter que devuelve la lista
+                                    ProductCatalog.getProducts(), // Asumiendo getter
+                                    new ArrayList<>()             // Pasad la lista de tickets si la tenéis guardada
+                            );
+                            PersistenceManager.save(currentData);
                             keepGoing = false;
                             end();
                             break;

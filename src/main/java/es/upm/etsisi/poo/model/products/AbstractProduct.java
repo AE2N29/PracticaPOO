@@ -4,9 +4,10 @@ import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.persistence.ProductCatalog;
 import es.upm.etsisi.poo.utils.StaticMessages;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public abstract class AbstractProduct {
+public abstract class AbstractProduct implements Serializable {
     private String name;
     private final String id;
 

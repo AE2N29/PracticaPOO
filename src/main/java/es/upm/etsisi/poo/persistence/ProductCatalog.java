@@ -4,14 +4,11 @@ import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.products.AbstractProduct;
 import es.upm.etsisi.poo.utils.StaticMessages;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ProductCatalog {
     private static final int MAX_PRODUCTS = 200;
-    private static final HashMap<String, AbstractProduct> products = new HashMap<>();
+    private static HashMap<String, AbstractProduct> products = new HashMap<>();
 
     private ProductCatalog() {}
 
@@ -21,6 +18,23 @@ public class ProductCatalog {
 
     public static Map<String, AbstractProduct> getList() {
         return products;
+    }
+
+    // Para GUARDAR: Convierte el mapa en lista
+    public static ArrayList<AbstractProduct> getProducts() {
+        return new ArrayList<>(products.values());
+    }
+
+    // Para CARGAR: Recibe lista y reconstruye el mapa
+    public static void setProducts(List<AbstractProduct> loadedProducts) {
+        // Como ya no es final, podemos hacer esto:
+        products = new HashMap<>(); // Creamos un mapa nuevo y limpio
+
+        if (loadedProducts != null) {
+            for (AbstractProduct p : loadedProducts) {
+                products.put(p.getId(), p);
+            }
+        }
     }
 
     public static void add(String id, AbstractProduct product) throws StoreException {
