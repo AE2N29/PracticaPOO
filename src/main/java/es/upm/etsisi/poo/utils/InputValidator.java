@@ -2,6 +2,7 @@ package es.upm.etsisi.poo.utils;
 
 import es.upm.etsisi.poo.model.products.Category;
 import es.upm.etsisi.poo.model.products.ServiceTypes;
+import es.upm.etsisi.poo.model.sales.TicketAccessType;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -242,18 +243,38 @@ public class InputValidator {
                     return isCashID(processedCommand[2])
                             && (isDNI(processedCommand[3]) || isNIF(processedCommand[3]));
                 }
-                if (processedCommand.length == 5) { //[ticket, new, TicketID, CashID, ClientID]
+                if (processedCommand.length == 5) { //[ticket, new, TicketID, CashID, ClientID] || [ticket, new, CashID, ClientID, [c|p|s]]
+                    if(isTicketID(processedCommand[2])
+                            && isCashID(processedCommand[3])
+                            && (isDNI(processedCommand[4]) || isNIF(processedCommand[4]))){
+                        return true;
+                    }
+                    if(isCashID(processedCommand[2])
+                            && (isDNI(processedCommand[3]) || isNIF(processedCommand[3]))
+                            && (TicketAccessType.fromFlag(processedCommand[4]) != null)){
+                        return true;
+                    }
+                }
+                if (processedCommand.length == 6) { //[ticket, new, TicketID, CashID, ClientID, [c|p|s]]
                     return isTicketID(processedCommand[2])
                             && isCashID(processedCommand[3])
-                            && (isDNI(processedCommand[4]) || isNIF(processedCommand[4]));
+                            && (isDNI(processedCommand[4]) || isNIF(processedCommand[4]))
+                            && (TicketAccessType.fromFlag(processedCommand[5]) != null);
                 }
                 return false;
             case "ADD":      //[ticket, add, TicketID, CashID, ProdID, Cantidad, (Opcionales...)]
-                if (processedCommand.length < 6) return false;
-                return isTicketID(processedCommand[2])
-                        && isCashID(processedCommand[3])
-                        && validProductID(processedCommand[4])
-                        && isInteger(processedCommand[5]) && Integer.parseInt(processedCommand[5]) > 0;
+                if (processedCommand.length >= 6) {
+                    return isTicketID(processedCommand[2])
+                            && isCashID(processedCommand[3])
+                            && validProductID(processedCommand[4])
+                            && isInteger(processedCommand[5]) && Integer.parseInt(processedCommand[5]) > 0;
+                }
+                if (processedCommand.length == 5) {
+                    return isTicketID(processedCommand[2])
+                            && isCashID(processedCommand[3])
+                            && isServiceID(processedCommand[4]);
+                }
+                return false;
             case "REMOVE":      //[ticket, remove, TicketID, CashID, ProdID]
                 if (processedCommand.length == 5) {
                     return isTicketID(processedCommand[2])
@@ -411,6 +432,10 @@ public class InputValidator {
         } //Tambien debe de aceptar IDs solamente numericos
         String pattern = "^[A-Z]{2}\\d{7}$";  //admite formatos con dos letras mayusculas y que termine por una secuencia de 7 numeros
         return id.matches(pattern);  // acepta ( ids generados internamente)
+    }
+
+    public static boolean isServiceID(String id) {
+        return id != null && id.matches("^\\d+S$"); // Valida uno o más dígitos seguidos de una 'S'
     }
 
     // Combierte cualquier comando que tenga "" en un array con cada elemento

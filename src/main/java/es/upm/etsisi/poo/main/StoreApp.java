@@ -170,7 +170,8 @@ public class StoreApp {
 
         if (isService) {
             if (InputValidator.isDate(parts[2])) {
-                ProductCatalog.add(Service.generateID(), new Service(ServiceTypes.valueOf(transportField), LocalDate.parse(parts[2]).atStartOfDay()));
+                Service service = new Service(ServiceTypes.valueOf(transportField), LocalDate.parse(parts[2]).atStartOfDay());
+                ProductCatalog.add(service.getId(), service);
                 return;
             }
         }
@@ -465,7 +466,11 @@ public class StoreApp {
         String ticketId = commands[2];
         String cashId = commands[3];
         String prodId = commands[4];
-        int amount = Integer.parseInt(commands[5]);
+        int amount = 1;
+
+        if(commands.length != 5) { //si no es un servicio
+            amount = Integer.parseInt(commands[5]);
+        }
 
         Cashier cashier = UserDatabase.getInstance().getById(cashId, Cashier.class);
         if (cashier == null) {

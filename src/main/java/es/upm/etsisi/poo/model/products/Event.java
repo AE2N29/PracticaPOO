@@ -72,7 +72,14 @@ public class Event extends AbstractProduct {
 
     @Override
     public boolean isAvailable() {
-        return LocalDateTime.now().isBefore(expirationDate);
+        switch(eventType) {
+            case FOOD:
+                return LocalDateTime.now().plusDays(3).isBefore(expirationDate);
+            case MEETING:
+                return LocalDateTime.now().plusHours(12).isBefore(expirationDate);
+            default:
+                return LocalDateTime.now().isBefore(expirationDate);
+        }
     }
 
     @Override
