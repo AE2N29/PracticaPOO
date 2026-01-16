@@ -28,16 +28,15 @@ public class UserDatabase {
         if (users == null) {
             users = new ArrayList<>();
         }
-        users.clear(); // Vaciamos lo que hubiera (seguridad)
+        users.clear(); // Vaciamos lo que hubiera por seguridad
         if (loadedUsers != null) {
             users.addAll(loadedUsers); // Añadimos lo cargado
         }
     }
 
-    // Metodo auxiliar necesario para StoreData (Getter estático)
     public static ArrayList<User> getUsers() {
         return users;
-    }
+    } // Metodo auxiliar necesario para StoreData
 
     public void add(User user) throws StoreException {
         if (getById(user.getIdentifier()) != null) {

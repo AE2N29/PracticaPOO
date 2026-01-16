@@ -4,13 +4,11 @@ import es.upm.etsisi.poo.Command.AppConfigurations;
 import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.products.*;
 import es.upm.etsisi.poo.model.sales.Ticket;
-import es.upm.etsisi.poo.model.users.Cashier;
-import es.upm.etsisi.poo.model.users.Client;
+import es.upm.etsisi.poo.model.users.*;
 import es.upm.etsisi.poo.patterns.ClientFactory;
 import es.upm.etsisi.poo.persistence.*;
 import es.upm.etsisi.poo.utils.*;
-import es.upm.etsisi.poo.model.users.IndividualClient;
-import es. upm.etsisi.poo.model.users.CorporateClient;
+
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -58,10 +56,23 @@ public class StoreApp {
 
         StoreData loadedData = PersistenceManager.load();
         if (loadedData != null) {
-            // Restaurar los datos en vuestras clases estáticas
-            UserDatabase.setUsers(loadedData.getUsers()); // Necesitarás crear este setter si no existe
-            ProductCatalog.setProducts(loadedData.getProducts()); // Igual aquí
-            // Ticket.setHistory(loadedData.getTickets()); // Si guardáis historial de tickets
+            // Restaurar los datos en clases estáticas
+            UserDatabase.setUsers(loadedData.getUsers());
+            ProductCatalog.setProducts(loadedData.getProducts());
+            // Recopilamos todos los tickets de todos los cajeros para 'avisar' a la clase Ticket
+            ArrayList<Ticket> allTickets = new ArrayList<>();
+
+            for (User u : UserDatabase.getUsers()) { // Asumiendo que hiciste el getter estático users
+                if (u instanceof Cashier) {
+                    Cashier c = (Cashier) u;
+                    if (c.getCreatedTickets() != null) {
+                        allTickets.addAll(c.getCreatedTickets());
+                    }
+                }
+            }
+
+            // Restauramos la lista de IDs prohibidos
+            Ticket.rebuildUsedIds(allTickets);
             System.out.println("Data loaded from persistence.");
         }
 
@@ -90,11 +101,7 @@ public class StoreApp {
                             break;
                         case "EXIT":
                             // Recopilar datos actuales
-                            StoreData currentData = new StoreData(
-                                    UserDatabase.getUsers(),      // Asumiendo que tenéis un getter que devuelve la lista
-                                    ProductCatalog.getProducts(), // Asumiendo getter
-                                    new ArrayList<>()             // Pasad la lista de tickets si la tenéis guardada
-                            );
+                            StoreData currentData = new StoreData(UserDatabase.getUsers(), ProductCatalog.getProducts(), new ArrayList<>());
                             PersistenceManager.save(currentData);
                             keepGoing = false;
                             end();
@@ -717,6 +724,7 @@ public class StoreApp {
             if (fromKeyboard) {
                 System.out.print(AppConfigurations.PROMPT);
                 command = sc.nextLine();
+                System.out.println(command);
             } else {
                 if (!sc.hasNextLine()) {
                     return "EXIT";

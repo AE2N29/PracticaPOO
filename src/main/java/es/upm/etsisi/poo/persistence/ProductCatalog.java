@@ -20,14 +20,12 @@ public class ProductCatalog {
         return products;
     }
 
-    // Para GUARDAR: Convierte el mapa en lista
-    public static ArrayList<AbstractProduct> getProducts() {
+
+    public static ArrayList<AbstractProduct> getProducts() { // Para guardar convierte el mapa en lista
         return new ArrayList<>(products.values());
     }
 
-    // Para CARGAR: Recibe lista y reconstruye el mapa
-    public static void setProducts(List<AbstractProduct> loadedProducts) {
-        // Como ya no es final, podemos hacer esto:
+    public static void setProducts(List<AbstractProduct> loadedProducts) { // Para cargar recibe lista y reconstruye el mapa
         products = new HashMap<>(); // Creamos un mapa nuevo y limpio
 
         if (loadedProducts != null) {
