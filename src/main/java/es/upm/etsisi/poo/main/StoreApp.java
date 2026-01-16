@@ -59,10 +59,10 @@ public class StoreApp {
             // Restaurar los datos en clases estáticas
             UserDatabase.setUsers(loadedData.getUsers());
             ProductCatalog.setProducts(loadedData.getProducts());
-            // Recopilamos todos los tickets de todos los cajeros para 'avisar' a la clase Ticket
+            // Recopilamos todos los tickets de todos los cajeros para avisar a la clase Ticket
             ArrayList<Ticket> allTickets = new ArrayList<>();
 
-            for (User u : UserDatabase.getUsers()) { // Asumiendo que hiciste el getter estático users
+            for (User u : UserDatabase.getUsers()) {
                 if (u instanceof Cashier) {
                     Cashier c = (Cashier) u;
                     if (c.getCreatedTickets() != null) {
@@ -70,10 +70,7 @@ public class StoreApp {
                     }
                 }
             }
-
-            // Restauramos la lista de IDs prohibidos
-            Ticket.rebuildUsedIds(allTickets);
-            System.out.println("Data loaded from persistence.");
+            Ticket.rebuildUsedIds(allTickets); // Restauramos la lista de IDs prohibidos (ya usados)
         }
 
         boolean keepGoing = true;
