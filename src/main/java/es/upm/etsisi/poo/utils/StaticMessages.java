@@ -10,6 +10,7 @@ public class StaticMessages {
     public static final String INVALID_NAME = "ERROR: Name is not valid";
     public static final String NEGATIVE_AMOUNT = "ERROR: Amount must be greater than 0";
     public static final String ADD_PROD_ERROR = "Error adding product";
+    public static final String WRONG_TICKET_TYPE = "ERROR: You can´t add this to this type of ticket";
 
     // ENTITY ERRORS
     public static final String USER_ALREADY_EXISTS = "Error: User with ID %s already exists.";
@@ -72,24 +73,22 @@ public class StaticMessages {
                   Final Price: 0.0
                 """;
 
-
-
     // HELP BLOCK
     public static final String HELP_TEXT = """
            Commands:
-             client add "<nombre>" <DNI/NIF> <email> <cashId>
+             client add "<nombre>" (<DNI>|<NIF>) <email> <cashId>
              client remove <DNI>
              client list
              cash add [<id>] "<nombre>"<email>
              cash remove <id>
              cash list
              cash tickets <id>
-             ticket new [<id>] <cashId> <userId> -[c/p/s]
+             ticket new [<id>] <cashId> <userId> -[c/p/s] (default -p option)
              ticket add <ticketId><cashId> <prodId> <amount> [--p<txt> --p<txt>]
              ticket remove <ticketId><cashId> <prodId>
              ticket print <ticketId> <cashId>
              ticket list
-             prod add <id> "<name>" <category> <price>
+             prod add ([<id>] "<name>" <category> <price> [<maxPers>] || ("<name>" <category> )
              prod update <id> NAME|CATEGORY|PRICE <value>
              prod addFood [<id>] "<name>" <price> <expiration:yyyy-MM-dd> <max_people>
              prod addMeeting [<id>] "<name>" <price> <expiration:yyyy-MM-dd> <max_people>
@@ -103,6 +102,8 @@ public class StaticMessages {
            Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.
            """;
 
-    // ERROR PROCESSING PREFIX
+    // OTROS
     public static final String ERROR_PROCESSING = "Error processing";
+    public static final String CORPORATE_TICKET_HEADER = "--- CORPORATE TICKET ---";
+    public static final String INDIVIDUAL_TICKET_HEADER = "--- INDIVIDUAL TICKET ---";
 }

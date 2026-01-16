@@ -46,8 +46,8 @@ public class Service extends AbstractProduct {
 
     @Override
     public String toString() {
-        return "{class:Service, type:" + serviceType +
-                ", id:" + getId() +
-                ", expiration:" + expirationDate.toLocalDate() + "}";
+        return "{class:ProductService, id:" + getId() +
+                ", category:" + serviceType +
+                ", expiration:" + expirationDate + "}";
     }
 }

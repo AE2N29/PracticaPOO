@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.persistence;
 
+import es.upm.etsisi.poo.Command.AppConfigurations;
 import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.users.*;
 import es.upm.etsisi.poo.model.sales.Ticket;
@@ -23,7 +24,6 @@ public class UserDatabase {
         }
         return instance;
     }
-
 
     public void add(User user) throws StoreException {
         if (getById(user.getIdentifier()) != null) {
@@ -77,10 +77,10 @@ public class UserDatabase {
                 result.add(type.cast(u));
             }
         }
-        return result; // Devuelve la lista cruda
+        return result;
     }
 
-    // METODOS ESPECIFICOS DE CLIENTES
+
 
     public void listClients() {
         System.out.println(StaticMessages.CLIENT_HEADER);
@@ -97,8 +97,6 @@ public class UserDatabase {
         }
         System.out.println(StaticMessages.CLIENT_LIST_OK);
     }
-
-    // METODOS ESPECIFICOS DE CAJEROS
 
     public void listCashiers() {
         System.out.println(StaticMessages.CASH_HEADER);
@@ -117,12 +115,13 @@ public class UserDatabase {
     }
 
 
-    public String generateCashId() { // Uso en StoreApp
+    public String generateCashId() {
         String upmWorkerID;
         boolean exists;
         do {
-            upmWorkerID = "UW";
-            for (int i = 0; i < 7; i++) {
+            // Usa AppConfig en lugar de la generación de numeros aleatorios
+            upmWorkerID = AppConfigurations.CASHIER_ID_PREFIX;
+            for (int i = 0; i < AppConfigurations.CASHIER_ID_DIGITS; i++) {
                 int random = (int) (Math.random() * 10);
                 upmWorkerID += random;
             }

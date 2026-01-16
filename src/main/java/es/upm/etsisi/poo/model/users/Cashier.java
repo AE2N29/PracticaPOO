@@ -1,13 +1,12 @@
 package es.upm.etsisi.poo.model.users;
 
-import es.upm.etsisi.poo.model.sales.Ticket;
-
+import es.upm.etsisi.poo.model.sales.OldTicket;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 public class Cashier extends User {
     private final String UPMWorkerID;
-    private final ArrayList<Ticket> createdTickets; // relacion de composicion
+    private final ArrayList<OldTicket> createdTickets; // relacion de composicion
 
     public Cashier(String UPMWorkerID, String name, String email) {
         super(name, email);
@@ -15,17 +14,17 @@ public class Cashier extends User {
         this.createdTickets = new ArrayList<>();
     }
 
-    public void addTicket(Ticket ticket) {
+    public void addTicket(OldTicket ticket) {
         createdTickets.add(ticket);
     }
 
-    public ArrayList<Ticket> getCreatedTickets() {
+    public ArrayList<OldTicket> getCreatedTickets() {
         return createdTickets;
     }
 
-    public Ticket getTicketById(String id) {
-        Ticket result = null;
-        for (Ticket t : createdTickets) {
+    public OldTicket getTicketById(String id) {
+        OldTicket result = null;
+        for (OldTicket t : createdTickets) {
             if (t.getId().equalsIgnoreCase(id)) {
                 result = t;
             }
@@ -33,9 +32,9 @@ public class Cashier extends User {
         return result;
     }
 
-    public ArrayList<Ticket> getTicketsSortedById() {
-        ArrayList<Ticket> sortedTickets = new ArrayList<>(this.createdTickets);
-        sortedTickets.sort(Comparator.comparing(Ticket::getId));
+    public ArrayList<OldTicket> getTicketsSortedById() {
+        ArrayList<OldTicket> sortedTickets = new ArrayList<>(this.createdTickets);
+        sortedTickets.sort(Comparator.comparing(OldTicket::getId));
         return sortedTickets;
     }
 

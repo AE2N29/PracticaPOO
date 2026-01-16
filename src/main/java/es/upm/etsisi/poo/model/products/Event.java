@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 public class Event extends AbstractProduct {
     protected static final int MAX_PEOPLE = 100;
-
+    protected int eventid;
     protected EventType eventType;
     protected int maxPeopleAllowed;
     protected LocalDateTime expirationDate;
