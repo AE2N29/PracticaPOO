@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo.utils;
 
 import es.upm.etsisi.poo.model.products.Category;
+import es.upm.etsisi.poo.model.products.ServiceTypes;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -68,9 +69,16 @@ public class InputValidator {
     //prod add 5 "Camiseta talla:M UPM" CLOTHES 15 3
     //prod add 6 "Camiseta talla:L UPM" CLOTHES 20 4
     private static boolean validateProdAdd(String fullCommand) {
+        String[] processedCommand = procesQuoteCommands(fullCommand);
+        boolean isService = false;
+        for (ServiceTypes s: ServiceTypes.values()) {
+            if (s.name().equalsIgnoreCase(processedCommand[3])) {
+                isService = true;
+            }
+        }
+        if (processedCommand.length == 4 && InputValidator.isDate(processedCommand[2]) && isService) {return true;}
         if (fullCommand.split("\"").length < 3) {return false;}
         try {
-            String[] processedCommand = procesQuoteCommands(fullCommand);
             if(processedCommand.length < 5 || processedCommand.length > 7) {return false;}
             int idIndex = -1;
             int nameIndex, categoryIndex, priceIndex, maxCustomTextsIndex;

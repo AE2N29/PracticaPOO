@@ -138,6 +138,22 @@ public class StoreApp {
     }
 
     private void prodAdd(String fullCommand) throws StoreException {
+        String[] parts = fullCommand.trim().split(" ");
+        boolean isService = false;
+        String transportField = parts[parts.length - 1];
+        for (ServiceTypes type: ServiceTypes.values()) {
+            if (type.name().equalsIgnoreCase(transportField)) {
+                isService = true;
+            }
+        }
+
+        if (isService) {
+            if (InputValidator.isDate(parts[2])) {
+                ProductCatalog.add(Service.generateID(), new Service(ServiceTypes.valueOf(transportField), LocalDate.parse(parts[2]).atStartOfDay()));
+                return;
+            }
+        }
+
         String[] parsed = processProdAdd(fullCommand);
 
         // ← Cambio: En lugar de parsed[2]. equals("GENERATE") ?  ...
@@ -597,7 +613,14 @@ public class StoreApp {
     private String extractName(String command) {
         int first = command.indexOf('"');
         int last = command.lastIndexOf('"');
+        if (first == -1 || last == -1 || first == last) { // Si es un productoServicio
+            return "";
+        }
         return command.substring(first + 1, last);
+    }
+
+    public String[] processProdDate(String command) {
+        return command.trim().split(" ");
     }
 
     /**
