@@ -14,7 +14,6 @@ import es. upm.etsisi.poo.model.users.CorporateClient;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -139,19 +138,24 @@ public class StoreApp {
     }
 
     private void prodAdd(String fullCommand) throws StoreException {
-        String[] parsed = processProdAdd(fullCommand);
-        if (parsed.length == 4) {
-            String[] fCDate = processProdDate(fullCommand);
-            boolean isService = false;
-            for (ServiceTypes c: ServiceTypes.values()) {
-                if (c.name().equalsIgnoreCase(fCDate[3])) {
-                    isService = true;
-                }
-            }
-            if (InputValidator.isDate(fCDate[2]) && isService) {
-                ProductCatalog.add(Service.generateID(), new Service(ServiceTypes.valueOf(fCDate[3]), LocalDate.parse(fCDate[2]).atStartOfDay()));
+        String[] parts = fullCommand.trim().split(" ");
+        boolean isService = false;
+        String transportField = parts[parts.length - 1];
+        for (ServiceTypes type: ServiceTypes.values()) {
+            if (type.name().equalsIgnoreCase(transportField)) {
+                isService = true;
             }
         }
+
+        if (isService) {
+            if (InputValidator.isDate(parts[2])) {
+                ProductCatalog.add(Service.generateID(), new Service(ServiceTypes.valueOf(transportField), LocalDate.parse(parts[2]).atStartOfDay()));
+                return;
+            }
+        }
+
+        String[] parsed = processProdAdd(fullCommand);
+
         // ← Cambio: En lugar de parsed[2]. equals("GENERATE") ?  ...
         String id;
         if (parsed[2].equals("GENERATE")) {
@@ -609,6 +613,9 @@ public class StoreApp {
     private String extractName(String command) {
         int first = command.indexOf('"');
         int last = command.lastIndexOf('"');
+        if (first == -1 || last == -1 || first == last) { // Si es un productoServicio
+            return "";
+        }
         return command.substring(first + 1, last);
     }
 
