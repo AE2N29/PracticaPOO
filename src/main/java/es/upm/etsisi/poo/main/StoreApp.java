@@ -700,7 +700,6 @@ public class StoreApp {
             if (fromKeyboard) {
                 System.out.print(AppConfigurations.PROMPT);
                 command = sc.nextLine();
-                System.out.println(command);
             } else {
                 if (!sc.hasNextLine()) {
                     return "EXIT";
