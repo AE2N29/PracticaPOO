@@ -7,12 +7,14 @@ import es.upm.etsisi.poo.model.users.Client;
 import es.upm.etsisi.poo.persistence.ProductCatalog;
 import es.upm.etsisi.poo.utils.StaticMessages;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
-public class Ticket {
+public class Ticket implements Serializable{
     private final int MAX_PRODS_TICKET = AppConfigurations.MAX_PRODUCTS_PER_TICKET;   //  ticket no puede tener mas de 100 productos
     private final ArrayList<AbstractProduct> productList;
     private TicketState state;
@@ -20,7 +22,8 @@ public class Ticket {
     private String id;
     private Client client;
     private static final ArrayList<String> usedIds = new ArrayList<>();
-    private TicketPrinter printer;                         // Guardamos los ids usados para no repetirlos
+    private transient TicketPrinter printer; // Guardamos los ids usados para no repetirlos
+                                             // transient indica que se ignora al guardar en archivo
 
     public Ticket(String id, TicketType ticketType) {
         this.type = ticketType;
@@ -66,6 +69,15 @@ public class Ticket {
     //Enviar copia de la lista si es necesario para evitar modificaciones externas
     public ArrayList<AbstractProduct> getProductList() {
         return new ArrayList<>(productList);
+    }
+
+    public static void rebuildUsedIds(List<Ticket> allLoadedTickets) { //tras cargar persistencia
+        usedIds.clear(); // Limpiamos por si acaso
+        if (allLoadedTickets != null) {
+            for (Ticket t : allLoadedTickets) {
+                usedIds.add(t.getId());
+            }
+        }
     }
 
     private static String createTicketId(){ // crea el Id cuando no se pasa como parámetro

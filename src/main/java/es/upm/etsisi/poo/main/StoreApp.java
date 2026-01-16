@@ -4,13 +4,11 @@ import es.upm.etsisi.poo.Command.AppConfigurations;
 import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.products.*;
 import es.upm.etsisi.poo.model.sales.Ticket;
-import es.upm.etsisi.poo.model.users.Cashier;
-import es.upm.etsisi.poo.model.users.Client;
+import es.upm.etsisi.poo.model.users.*;
 import es.upm.etsisi.poo.patterns.ClientFactory;
 import es.upm.etsisi.poo.persistence.*;
 import es.upm.etsisi.poo.utils.*;
-import es.upm.etsisi.poo.model.users.IndividualClient;
-import es. upm.etsisi.poo.model.users.CorporateClient;
+
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -55,6 +53,26 @@ public class StoreApp {
     }
 
     private void start() {
+
+        StoreData loadedData = PersistenceManager.load();
+        if (loadedData != null) {
+            // Restaurar los datos en clases estáticas
+            UserDatabase.setUsers(loadedData.getUsers());
+            ProductCatalog.setProducts(loadedData.getProducts());
+            // Recopilamos todos los tickets de todos los cajeros para avisar a la clase Ticket
+            ArrayList<Ticket> allTickets = new ArrayList<>();
+
+            for (User u : UserDatabase.getUsers()) {
+                if (u instanceof Cashier) {
+                    Cashier c = (Cashier) u;
+                    if (c.getCreatedTickets() != null) {
+                        allTickets.addAll(c.getCreatedTickets());
+                    }
+                }
+            }
+            Ticket.rebuildUsedIds(allTickets); // Restauramos la lista de IDs prohibidos (ya usados)
+        }
+
         boolean keepGoing = true;
         while (keepGoing) {
             String command = typeCommand().trim();
@@ -79,6 +97,9 @@ public class StoreApp {
                             echo(command);
                             break;
                         case "EXIT":
+                            // Recopilar datos actuales
+                            StoreData currentData = new StoreData(UserDatabase.getUsers(), ProductCatalog.getProducts(), new ArrayList<>());
+                            PersistenceManager.save(currentData);
                             keepGoing = false;
                             end();
                             break;
@@ -700,6 +721,7 @@ public class StoreApp {
             if (fromKeyboard) {
                 System.out.print(AppConfigurations.PROMPT);
                 command = sc.nextLine();
+                System.out.println(command);
             } else {
                 if (!sc.hasNextLine()) {
                     return "EXIT";
