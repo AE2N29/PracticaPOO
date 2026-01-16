@@ -42,7 +42,7 @@ public enum CommandType {
     private final TicketAccessType accessType;
 
 
-     // Constructor para comandos sin tipo de acceso a ticket
+    // Constructor para comandos sin tipo de acceso a ticket
 
     CommandType(String type, String subType, String description) {
         this(type, subType, description, null);
@@ -89,19 +89,19 @@ public enum CommandType {
     }
 
 
-      //Verifica si un comando existe en el sistema
-      //param type Tipo de comando principal
-      //param subType Tipo de subcomando
-      //return true si el comando existe, false en caso contrario
+    //Verifica si un comando existe en el sistema
+    //param type Tipo de comando principal
+    //param subType Tipo de subcomando
+    //return true si el comando existe, false en caso contrario
 
     public static boolean exists(String type, String subType) {
         return getCommand(type, subType) != null;
     }
 
 
-     // Obtiene todos los comandos de un tipo específico
-      //@param type Tipo de comando principal
-     // @return Array de CommandType para ese tipo
+    // Obtiene todos los comandos de un tipo específico
+    //@param type Tipo de comando principal
+    // @return Array de CommandType para ese tipo
 
     public static CommandType[] getCommandsByType(String type) {
         return java.util.Arrays.stream(CommandType.values())
@@ -110,7 +110,7 @@ public enum CommandType {
     }
 
 
-       //Retorna una cadena de ayuda formateada para un comando
+    //Retorna una cadena de ayuda formateada para un comando
 
     public String getHelpString() {
         if (subType. isEmpty()) {

@@ -1,9 +1,10 @@
 package es.upm.etsisi.poo.utils;
 
 import es.upm.etsisi.poo.model.products.Category;
-
-import java.time.DateTimeException;
+import es.upm.etsisi.poo.model.products.ServiceTypes;
 import java.time.LocalDate;
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,17 +44,17 @@ public class InputValidator {
     private static boolean prodCommandVerification(String[] splittedCommand, String fullCommand) {
         switch (splittedCommand[1]) {
             case "ADD":
-                return validateProdAdd(fullCommand);
+                //Aceptar cualquier longitud >= 4 para prod add
+                // StoreApp.prodAdd() hará la validación específica
+                return splittedCommand.length >= 4;
             case "ADDFOOD":
-                return validateProdAddEvent(fullCommand);
+                return splittedCommand.length >= 5;
             case "ADDMEETING":
-                return validateProdAddEvent(fullCommand);
+                return splittedCommand.length >= 5;
             case "UPDATE":
-                return validateProdUpdate(fullCommand);
+                return splittedCommand.length >= 4;
             case "REMOVE":
-                if (splittedCommand.length != 3) {
-                    return false;
-                }
+                if (splittedCommand.length != 3) { return false; }
                 return validProductID(splittedCommand[2]);
             case "LIST":
                 return splittedCommand.length == 2;
@@ -67,41 +68,67 @@ public class InputValidator {
     //prod add 3 "Libro POO repetido Error" BOOK 25
     //prod add 5 "Camiseta talla:M UPM" CLOTHES 15 3
     //prod add 6 "Camiseta talla:L UPM" CLOTHES 20 4
-    private static boolean validateProdAdd(String fullCommand) {
-        if (fullCommand.split("\"").length < 3) {return false;}
-        try {
-            String[] processedCommand = procesQuoteCommands(fullCommand);
-            if(processedCommand.length < 5 || processedCommand.length > 7) {return false;}
-            int idIndex = -1;
-            int nameIndex, categoryIndex, priceIndex, maxCustomTextsIndex;
-            if(isCategory(processedCommand[4])) { // tiene forma: [prod, add, ID, Name, Cat, Price, (maxPers)?]
-                idIndex = 2;
-                nameIndex = 3;
-                categoryIndex = 4;
-                priceIndex = 5;
-                maxCustomTextsIndex = 6;
+    private static boolean validateProdAdd(String[] splittedCommand,String fullCommand) {
+        // Caso 1: Producto normal:  prod add [<id>] "<name>" <category> <price> [<maxPers>]
+        // Caso 2: Servicio: prod add <date: yyyy-MM-dd> <serviceType>
+        if (splittedCommand. length < 4) {
+            // Podría ser un servicio (solo 3 argumentos)
+            if (splittedCommand.length == 3) {
+                // prod add <date> <serviceType>
+                return isValidDate(splittedCommand[2]) && isValidServiceType(splittedCommand[2]);
             }
-            else if(isCategory(processedCommand[3])) {  // tiene forma: [prod, add, Name, Cat, Price, (maxPers)?]
-                nameIndex = 2;
-                categoryIndex = 3;
-                priceIndex = 4;
-                maxCustomTextsIndex = 5;
-            }
-            else{return false;} // La categoria solo puede estar en la posicion 3 o 4
-            if(idIndex != -1 && !validProductID(processedCommand[idIndex])){return false;}
-            boolean validBasicData = isName(processedCommand[nameIndex])
-                    && isCategory(processedCommand[categoryIndex])
-                    && isDouble(processedCommand[priceIndex])
-                    && Double.parseDouble(processedCommand[priceIndex]) > 0;
-            if(!validBasicData){return false;}
-            if(processedCommand.length == maxCustomTextsIndex+1) {
-                return isInteger(processedCommand[maxCustomTextsIndex]) && Integer.parseInt(processedCommand[maxCustomTextsIndex]) > 0;}
-            else {
-                return processedCommand.length == priceIndex + 1;
-            }
-        } catch (Exception e) {
             return false;
         }
+
+        // Verificar si es un servicio:  prod add <date> <serviceType>
+        if (splittedCommand.length == 3) {
+            String possibleDate = splittedCommand[2];
+            String possibleService = splittedCommand[2];
+
+            if (isValidDate(possibleDate) && isValidServiceType(splittedCommand[2])) {
+                return true;
+            }
+        }
+
+        // Si llegamos aquí, validar como producto normal
+        // prod add [<id>] "<name>" <category> <price> [<maxPers>]
+
+        String commandString = String.join(" ", splittedCommand);
+
+        // Debe contener comillas para el nombre
+        if (commandString.split("\"").length < 3) {
+            return false;
+        }
+
+        String name = commandString.substring(commandString.indexOf('"') + 1, commandString.lastIndexOf('"'));
+        String substringAfterName = commandString.substring(commandString.lastIndexOf('"') + 1).trim();
+        String[] subarray = substringAfterName.split(" ");
+
+        if (subarray.length < 2) {
+            return false;
+        }
+
+        // Validar nombre, categoría y precio
+        if (! isName(name)) {
+            return false;
+        }
+
+        try {
+            Category. valueOf(subarray[0].toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+
+        if (!isDouble(subarray[1])) {
+            return false;
+        }
+
+        // Si hay un tercer parámetro, debe ser entero (maxPers)
+        if (subarray.length > 2 && !isInteger(subarray[2])) {
+            return false;
+        }
+
+        return true;
     }
 
     //prod addMeeting 23456 "Reunion Rotonda" 12 2025-12-21 100
@@ -201,17 +228,14 @@ public class InputValidator {
     //client remove Y8682724P
     private static boolean clientCommandVerification(String fullCommand) {
         String[] processedCommand = procesQuoteCommands(fullCommand);
-        if(processedCommand.length < 2){return false;}
-        switch (processedCommand[1].toUpperCase()) {
-            case "ADD":         //[client, add, Name, DNI/NIF, Email, CashID]
-                if (processedCommand.length != 6) {return false;}
-                return isName(processedCommand[2])
-                        && (isDNI(processedCommand[3])|| isNIF(processedCommand[3]))
-                        && isEmail(processedCommand[4])
-                        && isCashID(processedCommand[5]);
-            case "REMOVE":      //[client, remove, DNI/NIF]
+        switch (processedCommand[1]) {
+            case "ADD":
+                // ← MENOS ESTRICTO: Solo verificar que hay suficientes argumentos
+                // StoreApp validará el resto
+                return processedCommand.length >= 6;
+            case "REMOVE":
                 if (processedCommand.length != 3) {return false;}
-                return isDNI(processedCommand[2]) || isNIF(processedCommand[2]);
+                return isDNI(processedCommand[2]);
             case "LIST":
                 return processedCommand.length == 2;
             default:
@@ -229,47 +253,72 @@ public class InputValidator {
     //ticket list
     //ticket print 212121 UW1234567
     private static boolean ticketCommandVerification(String fullCommand) {
-        String[] processedCommand = procesQuoteCommands(fullCommand);
-        if(processedCommand.length < 2){return false;}
-        switch (processedCommand[1].toUpperCase()) {
+        String[] splittedCommand= procesQuoteCommands(fullCommand);
+        switch (splittedCommand[1]) {
             case "NEW":
-                if (processedCommand.length == 4) { //[ticket, new, CashID, ClientID]
-                    return isCashID(processedCommand[2])
-                            && (isDNI(processedCommand[3]) || isNIF(processedCommand[3]));
+                // ← MENOS ESTRICTO: Aceptar 4, 5 o 6 argumentos (con o sin flags)
+                // StoreApp.ticketNew() hará la validación específica
+                return splittedCommand.length >= 4 && splittedCommand.length <= 6;
+            case "ADD":
+                // ← Aceptar cualquier longitud >= 6 (con o sin customizaciones)
+                return splittedCommand.length >= 6;
+            case "REMOVE":
+                if(splittedCommand.length != 5) {
+                    return false;
                 }
-                if (processedCommand.length == 5) { //[ticket, new, TicketID, CashID, ClientID]
-                    return isTicketID(processedCommand[2])
-                            && isCashID(processedCommand[3])
-                            && (isDNI(processedCommand[4]) || isNIF(processedCommand[4]));
+                return isTicketID(splittedCommand[2])
+                        && isCashID(splittedCommand[3])
+                        && validProductID(splittedCommand[4]);
+            case "PRINT":
+                if(splittedCommand.length != 4) {
+                    return false;
                 }
-                return false;
-            case "ADD":      //[ticket, add, TicketID, CashID, ProdID, Cantidad, (Opcionales...)]
-                if (processedCommand.length < 6) return false;
-                return isTicketID(processedCommand[2])
-                        && isCashID(processedCommand[3])
-                        && validProductID(processedCommand[4])
-                        && isInteger(processedCommand[5]) && Integer.parseInt(processedCommand[5]) > 0;
-            case "REMOVE":      //[ticket, remove, TicketID, CashID, ProdID]
-                if (processedCommand.length == 5) {
-                    return isTicketID(processedCommand[2])
-                            && isCashID(processedCommand[3])
-                            && validProductID(processedCommand[4]);
-                }
-                return false;
-
-            case "PRINT":        // [ticket, print, TicketID, CashID]
-                if (processedCommand.length == 4) {
-                    return isTicketID(processedCommand[2])
-                            && isCashID(processedCommand[3]);
-                }
-                return false;
-
-            case "LIST":            //[ticket, list]
-                return processedCommand.length == 2;
+                return isTicketID(splittedCommand[2])
+                        && isCashID(splittedCommand[3]);
+            case "LIST":
+                return splittedCommand.length == 2;
             default:
                 return false;
         }
-    }   //TICKETS
+    }
+    private static boolean validateTicketNew(String[] splittedCommand) {
+        // Sin ID de ticket, sin flag:   ticket new <cashId> <userId>
+        if (splittedCommand.length == 4) {
+            return isCashID(splittedCommand[2]) && isDNI(splittedCommand[3]);
+        }
+
+        // Sin ID de ticket, con flag:  ticket new <cashId> <userId> -[p|c|s]
+        if (splittedCommand.length == 5) {
+            String lastArg = splittedCommand[4];
+
+            // Verificar si el último argumento es un flag válido
+            if (isValidTicketFlag(lastArg)) {
+                return isCashID(splittedCommand[2]) && isDNI(splittedCommand[3]);
+            }
+
+            // Si no es flag, entonces es:   ticket new <ticketId> <cashId> <userId>
+            return isTicketID(splittedCommand[2]) && isCashID(splittedCommand[3]) && isDNI(splittedCommand[4]);
+        }
+
+        // Con ID de ticket, sin flag:  ticket new <ticketId> <cashId> <userId>
+        // (ya validado en length == 5 caso 2)
+
+        // Con ID de ticket, con flag:  ticket new <ticketId> <cashId> <userId> -[p|c|s]
+        if (splittedCommand.length == 6) {
+            String lastArg = splittedCommand[5];
+
+            if (isValidTicketFlag(lastArg)) {
+                return isTicketID(splittedCommand[2]) && isCashID(splittedCommand[3]) && isDNI(splittedCommand[4]);
+            }
+        }
+
+        return false;
+    }
+    private static boolean isValidTicketFlag(String flag) {
+        return flag.equals("-p") || flag.equals("-c") || flag.equals("-s");
+    }
+
+    //TICKETS
 
     public static boolean isInteger(String possibleInteger) {
         try {
@@ -439,4 +488,20 @@ public class InputValidator {
             return result.toArray(new String[0]);
         }
     }
+    private static boolean isValidDate(String date) {
+        try {
+            LocalDate.parse(date);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    private static boolean isValidServiceType(String serviceType) {
+        try {
+            ServiceTypes.valueOf(serviceType.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+}
 }
