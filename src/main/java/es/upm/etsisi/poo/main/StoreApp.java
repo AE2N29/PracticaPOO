@@ -791,6 +791,10 @@ public class StoreApp {
         return flag. equals("-p") || flag.equals("-c") || flag.equals("-s");
     }
 
+    public String[] processProdDate(String command) {
+        return command.trim().split(" ");
+    }
+
     /**
      *  Valida tipo de ticket según cliente
      */
