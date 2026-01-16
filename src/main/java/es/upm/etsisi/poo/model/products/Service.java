@@ -3,6 +3,9 @@ package es.upm.etsisi.poo.model.products;
 import es.upm.etsisi.poo.exceptions.StoreException;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class Service extends AbstractProduct {
     public static int counter = 1;
@@ -46,8 +49,13 @@ public class Service extends AbstractProduct {
 
     @Override
     public String toString() {
-        return "{class:Service, type:" + serviceType +
-                ", id:" + getId() +
-                ", expiration:" + expirationDate.toLocalDate() + "}";
+        // Formatter hace que 2026-06-06T00:00 pase a -> Sun Jun 06 00:00:00 z 2026
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+        ZoneId cet = ZoneId.of("Europe/Madrid");
+        String formattedDate = expirationDate.atZone(cet).format(formatter); // Añade CET a donde se encuentra la 'z'
+        return "{class:ProductService, id:" + getId() +
+                ", category:" + serviceType +
+                ", expiration:" + formattedDate + "}";
     }
+
 }

@@ -5,6 +5,7 @@ import es.upm.etsisi.poo.exceptions.StoreException;
 public class StockProduct extends AbstractProduct {
     protected Category category;
     protected double price;
+    protected int stockProdId;
 
 
     public StockProduct(String id, String name, Category category, double price) throws StoreException {
@@ -17,6 +18,12 @@ public class StockProduct extends AbstractProduct {
         super(name);
         this.category = category;
         this.price = price;
+    }
+    // Constructor de copia, para controlar que el cambio de un producto, no cambie el ticket
+    public StockProduct(StockProduct source) throws StoreException {
+        super(source.getId(), source.getName());
+        this.category = source.getCategory();
+        this.price = source.getPrice();
     }
 
     public Category getCategory() {

@@ -1,13 +1,13 @@
 package es.upm.etsisi.poo.utils;
 
 import es.upm.etsisi.poo.model.products.Category;
+import es.upm.etsisi.poo.model.products.ServiceTypes;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 public class InputValidator {
     private static final String LETRAS_DNI = "TRWAGMYFPDXBNJZSQVHLCKE";
@@ -25,51 +25,41 @@ public class InputValidator {
             case "PROD":
                 return prodCommandVerification(splittedCommand, command);
             case "TICKET":
-                return ticketCommandVerification(splittedCommand);
+                return ticketCommandVerification(command);
             case "ECHO":
                 return true;
             case "CLIENT":
-                return clientCommandVerification(splittedCommand);
+                return clientCommandVerification(command);
             case "CASH":
-                return cashierCommandVerification(splittedCommand);
+                return cashierCommandVerification(command);
             default:
                 return false;
         }
     }
 
-    private static boolean cashierCommandVerification(String[] splittedCommand) {
-        switch (splittedCommand[1].toUpperCase()) {
+    //prod add ....
+    //prod update ...
+    //prod remove ...
+    //prod list
+    private static boolean prodCommandVerification(String[] splittedCommand, String fullCommand) {
+        switch (splittedCommand[1]) {
             case "ADD":
-                ArrayList<String> cmndWithNameIncluded = new ArrayList<>();
-                String stringedCommand = String.join(" ", splittedCommand);
-                int firstQuote = stringedCommand.indexOf('"');
-                int lastQuote = stringedCommand.lastIndexOf('"');
-                if (firstQuote == -1 || lastQuote == -1 || firstQuote == lastQuote) return false;
-                String name = stringedCommand.substring(firstQuote + 1, lastQuote).trim();
-                String email = stringedCommand.substring(lastQuote + 1).trim();
-                cmndWithNameIncluded.add("CASH");
-                cmndWithNameIncluded.add("ADD");
-                String possibleID = splittedCommand[2];
-                if (isCashID(possibleID)) {
-                    cmndWithNameIncluded.add(possibleID);
+                return validateProdAdd(fullCommand);
+            case "ADDFOOD", "ADDMEETING":
+                return validateProdAddEvent(fullCommand);
+            case "UPDATE":
+                return validateProdUpdate(fullCommand);
+            case "REMOVE":
+                if (splittedCommand.length != 3) {
+                    return false;
                 }
-                cmndWithNameIncluded.add(name);
-                cmndWithNameIncluded.add(email);
-                if (cmndWithNameIncluded.size() == 5) {
-                    return isCashID(cmndWithNameIncluded.get(2)) && isName(cmndWithNameIncluded.get(3)) && isEmail(cmndWithNameIncluded.get(4));
-                } else if (cmndWithNameIncluded.size() == 4) {
-                    return isName(cmndWithNameIncluded.get(2)) && isEmail(cmndWithNameIncluded.get(3));
-                }
-            case "REMOVE", "TICKETS":
-                if (splittedCommand.length != 3) return false;
-                return isCashID(splittedCommand[2]);
+                return validProductID(splittedCommand[2]);
             case "LIST":
-                return true;
+                return splittedCommand.length == 2;
             default:
                 return false;
         }
-    }
-
+    }   //PRODUCTS
 
     //prod add 2 "Camiseta talla:M UPM" CLOTHES 15
     //prod add "Camiseta talla:M UPM" CLOTHES 15
@@ -77,9 +67,16 @@ public class InputValidator {
     //prod add 5 "Camiseta talla:M UPM" CLOTHES 15 3
     //prod add 6 "Camiseta talla:L UPM" CLOTHES 20 4
     private static boolean validateProdAdd(String fullCommand) {
+        String[] processedCommand = procesQuoteCommands(fullCommand);
+        boolean isService = false;
+        for (ServiceTypes s: ServiceTypes.values()) {
+            if (s.name().equalsIgnoreCase(processedCommand[3])) {
+                isService = true;
+            }
+        }
+        if (processedCommand.length == 4 && InputValidator.isDate(processedCommand[2]) && isService) {return true;}
         if (fullCommand.split("\"").length < 3) {return false;}
         try {
-            String[] processedCommand = procesQuoteCommands(fullCommand);
             if(processedCommand.length < 5 || processedCommand.length > 7) {return false;}
             int idIndex = -1;
             int nameIndex, categoryIndex, priceIndex, maxCustomTextsIndex;
@@ -108,7 +105,7 @@ public class InputValidator {
             else {
                 return processedCommand.length == priceIndex + 1;
             }
-        } catch (NoSuchElementException | NumberFormatException | IndexOutOfBoundsException e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -145,134 +142,139 @@ public class InputValidator {
                 double price = Double.parseDouble(processedCommand[priceIndex]);
                 if(price < 0) {return false;}
                 int maxPeople = Integer.parseInt(processedCommand[maxPeopleIndex]);
-                if(maxPeople <= 0  || maxPeople>= 0){return false;}
-                return true;
+                return maxPeople > 0;
             }
             return false;
-        }catch (NoSuchElementException | NumberFormatException | IndexOutOfBoundsException e) {
+        }catch (Exception e) {
             return false;
         }
     }
 
-    private static boolean validateProdUpdate(String[] splittedCommand, String fullCommand) {
-        if (splittedCommand.length < 4) {
-            return false;
-        }
-        if (!validProductID(splittedCommand[2])) {
-            return false;
-        }
-
-        switch (splittedCommand[3]) {
-            case "NAME": {  //  Acepta nombres con espacios cuando están entre comillas: prod update <id> NAME "nuevo nombre"
-                int first = fullCommand.indexOf('"');
-                int last = fullCommand.lastIndexOf('"');
-                if (first == -1 || last <= first) {
-                    return false;
-                }
-                String nameValue = fullCommand.substring(first + 1, last);
-                return isName(nameValue);
-            }
+    //prod update 1 NAME "Libro POO V2"
+    //prod update 1 PRICE 30
+    //prod update 1 PRICE 30
+    //prod update 1 NAME "Libro POO V2"
+    //prod update 1 PRICE 30
+    private static boolean validateProdUpdate(String fullCommand) {
+        String[] processedCommand = procesQuoteCommands(fullCommand);
+        if(processedCommand.length != 5 ) {return false;}
+        if (!validProductID(processedCommand[2])) {return false;}
+        switch (processedCommand[3]) {
+            case "NAME":  //  Acepta nombres con espacios cuando están entre comillas: prod update <id> NAME "nuevo nombre"
+                return isName(processedCommand[4]);
             case "PRICE":
-                if (splittedCommand.length != 5) {
-                    return false;
-                }
-                return isDouble(splittedCommand[4]);
+                return isDouble(processedCommand[4]) && Double.parseDouble(processedCommand[4]) > 0;
             case "CATEGORY":
-                if (splittedCommand.length != 5) {
-                    return false;
-                }
-                return isCategory(splittedCommand[4]);
+                return isCategory(processedCommand[4]);
             default:
                 return false;
         }
     }
 
-    private static boolean prodCommandVerification(String[] splittedCommand, String fullCommand) {
-        switch (splittedCommand[1]) {
+    //cash add UW1234567 "pepecurro3" pepe0@upm.es
+    //cash add "pepecurro2" pepe0@upm.es
+    //cash list
+    //cash remove UW1234569
+    //cash tickets UW1234567
+    private static boolean cashierCommandVerification(String fullCommand) {
+        String[] processedCommand = procesQuoteCommands(fullCommand);
+        if(processedCommand.length < 2){return false;}
+        switch (processedCommand[1].toUpperCase()) {
             case "ADD":
-                return validateProdAdd(fullCommand);
-            case "ADDFOOD":
-                return validateProdAddEvent(fullCommand);
-            case "ADDMEETING":
-                return validateProdAddEvent(fullCommand);
-            case "UPDATE":
-                return validateProdUpdate(splittedCommand, fullCommand);
-            case "REMOVE":
-                if (splittedCommand.length != 3) {
-                    return false;
+                if(processedCommand.length == 5) {   //Con ID -> [cash, add, ID, Nombre, Email]
+                    return isCashID(processedCommand[2]) &&
+                            isName(processedCommand[3]) &&
+                            isEmail(processedCommand[4]);
                 }
-                return validProductID(splittedCommand[2]);
+                else if(processedCommand.length == 4) {  //Sin ID -> [cash, add, Nombre, Email]
+                    return isName(processedCommand[2]) &&
+                            isEmail(processedCommand[3]);
+                }
+                return false;
+            case "REMOVE", "TICKETS":
+                if (processedCommand.length != 3) return false;
+                return isCashID(processedCommand[2]);
             case "LIST":
-                return splittedCommand.length == 2;
+                return processedCommand.length == 2;
             default:
                 return false;
         }
-    }
+    }       //CASHIER
 
-    private static boolean clientCommandVerification(String[] splittedCommand) {
-        switch (splittedCommand[1]) {
-            case "ADD":
-                if (splittedCommand.length < 6) {
-                    return false;
-                }
-                String commandString = String.join(" ", splittedCommand);
-                if (commandString.split("\"").length < 3) {
-                    return false;
-                }
-                String name = commandString.substring(commandString.indexOf('"') + 1, commandString.lastIndexOf('"'));
-                String substringAfterName = commandString.substring(commandString.lastIndexOf('"') + 1).trim();
-                String[] subarray = substringAfterName.split(" ");
-                if (subarray.length != 3) {
-                    return false;
-                }
-                return isName(name) && (isDNI(subarray[0])|| isNIF(subarray[0])) && isEmail(subarray[1]) && isCashID(subarray[2]);
-            case "REMOVE":
-                if (splittedCommand.length != 3) {
-                    return false;
-                }
-                return isDNI(splittedCommand[2]) || isNIF(splittedCommand[2]);
+    //client add "Pepe3" 55630667S pepe1@upm.es UW1234567
+    //client list
+    //client remove Y8682724P
+    private static boolean clientCommandVerification(String fullCommand) {
+        String[] processedCommand = procesQuoteCommands(fullCommand);
+        if(processedCommand.length < 2){return false;}
+        switch (processedCommand[1].toUpperCase()) {
+            case "ADD":         //[client, add, Name, DNI/NIF, Email, CashID]
+                if (processedCommand.length != 6) {return false;}
+                return isName(processedCommand[2])
+                        && (isDNI(processedCommand[3])|| isNIF(processedCommand[3]))
+                        && isEmail(processedCommand[4])
+                        && isCashID(processedCommand[5]);
+            case "REMOVE":      //[client, remove, DNI/NIF]
+                if (processedCommand.length != 3) {return false;}
+                return isDNI(processedCommand[2]) || isNIF(processedCommand[2]);
             case "LIST":
-                return splittedCommand.length == 2;
+                return processedCommand.length == 2;
             default:
                 return false;
         }
-    }
+    }   //CLIENTS
 
-    private static boolean ticketCommandVerification(String[] splittedCommand) {
-        switch (splittedCommand[1]) {
+    //ticket new UW1234567 55630667S
+    //ticket new 212121 UW1234567 55630667S
+    //ticket new 212129 UW1234567 B12345674 -s
+    //ticket add 212121 UW1234567 1 20
+    //ticket add 212129 UW1234567 1S
+    //ticket add 212128 UW1234567 5 3 --pred --pblue --pgreen
+    //ticket remove 212123 UW1234567 2
+    //ticket list
+    //ticket print 212121 UW1234567
+    private static boolean ticketCommandVerification(String fullCommand) {
+        String[] processedCommand = procesQuoteCommands(fullCommand);
+        if(processedCommand.length < 2){return false;}
+        switch (processedCommand[1].toUpperCase()) {
             case "NEW":
-                if (splittedCommand.length == 4) {
-                    return isCashID(splittedCommand[2]) && (isDNI(splittedCommand[3]) || isNIF(splittedCommand[3]));
+                if (processedCommand.length == 4) { //[ticket, new, CashID, ClientID]
+                    return isCashID(processedCommand[2])
+                            && (isDNI(processedCommand[3]) || isNIF(processedCommand[3]));
                 }
-                if (splittedCommand.length == 5) {
-                    return isTicketID(splittedCommand[2]) && isCashID(splittedCommand[3]) && (isDNI(splittedCommand[4]) || isNIF(splittedCommand[4]));
-                }
-                return false;
-            case "ADD":
-                if (splittedCommand.length < 6) return false;
-                return isTicketID(splittedCommand[2])
-                        && isCashID(splittedCommand[3])
-                        && validProductID(splittedCommand[4])
-                        && isInteger(splittedCommand[5]);
-            case "REMOVE":
-                if (splittedCommand.length == 5) {
-                    return isTicketID(splittedCommand[2])
-                            && isCashID(splittedCommand[3])
-                            && validProductID(splittedCommand[4]);
+                if (processedCommand.length == 5) { //[ticket, new, TicketID, CashID, ClientID]
+                    return isTicketID(processedCommand[2])
+                            && isCashID(processedCommand[3])
+                            && (isDNI(processedCommand[4]) || isNIF(processedCommand[4]));
                 }
                 return false;
-            case "PRINT":
-                if (splittedCommand.length == 4) {
-                    return isTicketID(splittedCommand[2])
-                            && isCashID(splittedCommand[3]);
+            case "ADD":      //[ticket, add, TicketID, CashID, ProdID, Cantidad, (Opcionales...)]
+                if (processedCommand.length < 6) return false;
+                return isTicketID(processedCommand[2])
+                        && isCashID(processedCommand[3])
+                        && validProductID(processedCommand[4])
+                        && isInteger(processedCommand[5]) && Integer.parseInt(processedCommand[5]) > 0;
+            case "REMOVE":      //[ticket, remove, TicketID, CashID, ProdID]
+                if (processedCommand.length == 5) {
+                    return isTicketID(processedCommand[2])
+                            && isCashID(processedCommand[3])
+                            && validProductID(processedCommand[4]);
                 }
                 return false;
-            case "LIST":
-                return splittedCommand.length == 2;
+
+            case "PRINT":        // [ticket, print, TicketID, CashID]
+                if (processedCommand.length == 4) {
+                    return isTicketID(processedCommand[2])
+                            && isCashID(processedCommand[3]);
+                }
+                return false;
+
+            case "LIST":            //[ticket, list]
+                return processedCommand.length == 2;
             default:
                 return false;
         }
-    }
+    }   //TICKETS
 
     public static boolean isInteger(String possibleInteger) {
         try {
@@ -345,7 +347,6 @@ public class InputValidator {
         } else {
             return false;
         }
-
         if (!isInteger(numbers)) {
             return false;
         }
@@ -412,73 +413,35 @@ public class InputValidator {
         return id.matches(pattern);  // acepta ( ids generados internamente)
     }
 
-    private static String[] localProcessProdAdd(String command) {
-        String name = command.substring(command.indexOf('"') + 1, command.lastIndexOf('"'));
-        String beforeName = command.substring(0, command.indexOf('"')).trim();
-        String afterName = command.substring(command.lastIndexOf('"') + 1).trim();
-        String[] beforeNameParts = beforeName.split(" ");
-        String[] afterNameParts = afterName.split(" ");
-        boolean hasId = (beforeNameParts.length == 3);
-        boolean hasMaxPers = (afterNameParts.length == 3);
-        int size = 0;
-        if (!hasId && !hasMaxPers) { size = 6; }
-        if(hasId && hasMaxPers) { size = 7; }
-        if(!hasId && hasMaxPers) { size = 7; }
-        if(hasId && !hasMaxPers) { size = 6; }
-
-        String[] result = new String[size];
-        result[0] = "Prodd";
-        result[1] = "add";
-
-        if (hasId) { result[2] = beforeNameParts[2]; }
-        else { result[2] = "GENERATE"; }
-
-        result[3] = name;
-        result[4] = afterNameParts[0]; // category
-        result[5] = afterNameParts[1]; // price
-
-        if (hasMaxPers) { result[6] = afterNameParts[2]; } // maxPers
-        return result;
-    }
-
-
     // Combierte cualquier comando que tenga "" en un array con cada elemento
     private static String[] procesQuoteCommands(String command) {
-        String beforeQuote = command.substring(0, command.indexOf('"')).trim();
-        String afterQuote = command.substring(command.lastIndexOf('"') + 1).trim();
-        String quote = command.substring(command.indexOf('"') + 1, command.lastIndexOf('"'));
-        List<String> result = new ArrayList<>();
-        if (!beforeQuote.isEmpty()) {
-            String[] beforeQuoteParts = beforeQuote.split("\\s+"); // Cualquier espacio o más de un espacio
-            for (String beforeQuotePart : beforeQuoteParts) {
-                result.add(beforeQuotePart);
+        if(!command.contains("\"")) {
+            String[] splitCommand = command.split("\\s+");
+            List<String> result = new ArrayList<>();
+            for (String s : splitCommand) {
+                result.add(s.trim());
             }
+            return result.toArray(new String[0]);
         }
-        result.add(quote);
-        if (!afterQuote.isEmpty()) {
-            String[] afterQuoteParts = afterQuote.split("\\s+");
-            for (String afterQuotePart : afterQuoteParts) {
-                result.add(afterQuotePart);
+        else {
+            String beforeQuote = command.substring(0, command.indexOf('"')).trim();
+            String afterQuote = command.substring(command.lastIndexOf('"') + 1).trim();
+            String quote = command.substring(command.indexOf('"') + 1, command.lastIndexOf('"'));
+            List<String> result = new ArrayList<>();
+            if (!beforeQuote.isEmpty()) {
+                String[] beforeQuoteParts = beforeQuote.split("\\s+"); // Cualquier espacio o más de un espacio
+                for (String beforeQuotePart : beforeQuoteParts) {
+                    result.add(beforeQuotePart);
+                }
             }
+            result.add(quote);
+            if (!afterQuote.isEmpty()) {
+                String[] afterQuoteParts = afterQuote.split("\\s+");
+                for (String afterQuotePart : afterQuoteParts) {
+                    result.add(afterQuotePart);
+                }
+            }
+            return result.toArray(new String[0]);
         }
-        return result.toArray(new String[0]);
     }
 }
-
-
-    // public static boolean validCustomCommand (String[] customCommand) {
-        // for (int i = 6; i < customCommand.length; i++) {
-           // if (customCommand[i].equals("--p")) {
-               // if (!(i + 1 < customCommand.length)) {
-                   // return false;
-               // }
-               // i++;
-           // } else if (!(customCommand[i].length() > 3)) {
-               // return false;
-           // } else if (!(customCommand[i].charAt(0) == '-' && customCommand[i].charAt(1) == '-'
-                   // && customCommand[i].charAt(2) == 'p')) {
-               // return false;
-           // }
-       // }
-       // return true;
-   // }

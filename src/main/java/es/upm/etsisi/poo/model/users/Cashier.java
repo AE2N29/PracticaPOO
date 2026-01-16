@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.model.users;
 
+import es.upm.etsisi.poo.model.sales.OldTicket;
 import es.upm.etsisi.poo.model.sales.Ticket;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class Cashier extends User {
     public Cashier(String UPMWorkerID, String name, String email) {
         super(name, email);
         this.UPMWorkerID = UPMWorkerID;
-        this.createdTickets = new ArrayList<>();
+        this.createdTickets = new ArrayList<Ticket>();
     }
 
     public void addTicket(Ticket ticket) {

@@ -13,7 +13,7 @@ public abstract class Client extends User {
         super(name, email);
         this.id = id;
         this.associatedCashier = associatedCashier;
-        this.clientTickets = new ArrayList<>();
+        this.clientTickets = new ArrayList<Ticket>();
     }
 
     public Cashier getAssociatedCashier() {
