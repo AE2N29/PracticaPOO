@@ -16,12 +16,6 @@ public class PersonalizedProduct extends StockProduct {
         this.customTexts = new ArrayList<>();
     }
 
-    public PersonalizedProduct(String name, Category category, double price, int maxCustomTexts) throws StoreException {
-        super(name, category, price);
-        this.maxCustomTexts = maxCustomTexts;
-        this.customTexts = new ArrayList<>();
-    }
-
     public boolean addCustomText(String text) {
         if(this.customTexts.size() < this.maxCustomTexts) {
             this.customTexts.add(text);
