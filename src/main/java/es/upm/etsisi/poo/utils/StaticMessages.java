@@ -11,6 +11,8 @@ public class StaticMessages {
     public static final String NEGATIVE_AMOUNT = "ERROR: Amount must be greater than 0";
     public static final String ADD_PROD_ERROR = "Error adding product";
     public static final String WRONG_TICKET_TYPE = "ERROR: You can´t add this to this type of ticket";
+    public static final String WRONG_TICKET_ACTION = "This type of ticket is not allowed to do this";
+    public static final String PROD_UNCUSTOMIZABLE = "This product or this type of customization cannot be done";
 
     // ENTITY ERRORS
     public static final String USER_ALREADY_EXISTS = "Error: User with ID %s already exists.";

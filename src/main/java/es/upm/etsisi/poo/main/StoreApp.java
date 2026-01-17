@@ -423,14 +423,13 @@ public class StoreApp {
         if (client instanceof IndividualClient) {
             if (!"p".equalsIgnoreCase(ticketType)) {
                 throw new StoreException(
-                        "IndividualClient can only create personal tickets (-p). " +
-                                "Cannot create type: -" + ticketType
+                        StaticMessages.WRONG_TICKET_TYPE + ticketType
                 );
             }
             if (!AppConfigurations.INDIVIDUAL_TICKET_ALLOWS_SERVICES &&
-                    "s".equalsIgnoreCase(ticketType)) {
+                    "s ".equalsIgnoreCase(ticketType)) {
                 throw new StoreException(
-                        "IndividualClient cannot add services to tickets"
+                        StaticMessages.ERROR_PROCESSING
                 );
             }
         }
@@ -440,20 +439,20 @@ public class StoreApp {
             if ("c".equalsIgnoreCase(ticketType)) {
                 if (!AppConfigurations.CORPORATE_TICKET_ALLOWS_COMBINED) {
                     throw new StoreException(
-                            "CorporateClient combined tickets are disabled in AppConfigurations"
+                            StaticMessages.WRONG_TICKET_ACTION
                     );
                 }
             } else if ("s".equalsIgnoreCase(ticketType)) {
                 if (!AppConfigurations.CORPORATE_TICKET_ALLOWS_SERVICES) {
                     throw new StoreException(
-                            "CorporateClient services are disabled in AppConfigurations"
+                            StaticMessages.ERROR_PROCESSING
                     );
                 }
             }
         } else if (!"p".equalsIgnoreCase(ticketType)) {
             // Si no es CorporateClient y no es 'p', rechazar
             throw new StoreException(
-                    "Only CorporateClient can create combined (-c) or service (-s) tickets"
+                    StaticMessages.WRONG_TICKET_ACTION
             );
         }
     }
@@ -491,7 +490,7 @@ public class StoreApp {
         // Si es un servicio y el cliente es Individual, rechazar
         if (product instanceof Service && ticket.getClient() instanceof IndividualClient) {
             throw new StoreException(
-                    "IndividualClient cannot add services to their tickets"
+                    StaticMessages.WRONG_TICKET_ACTION
             );
         }
 

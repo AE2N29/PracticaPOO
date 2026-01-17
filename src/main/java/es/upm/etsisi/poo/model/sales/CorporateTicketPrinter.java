@@ -158,7 +158,7 @@ public class CorporateTicketPrinter implements TicketPrinter {
                 case CLOTHES -> AppConfigurations. DISCOUNT_CLOTHES;
                 case BOOK -> AppConfigurations.DISCOUNT_BOOK;
                 case ELECTRONICS -> AppConfigurations.DISCOUNT_ELECTRONICS;
-                default -> throw new IllegalStateException("Unexpected value: " + cat);
+                case EVENT -> 0.0;
             };
         }
 

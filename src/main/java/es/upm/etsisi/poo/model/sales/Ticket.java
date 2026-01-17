@@ -1,12 +1,10 @@
 package es.upm.etsisi.poo.model.sales;
-
 import es.upm.etsisi.poo.Command.AppConfigurations;
 import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.products.*;
 import es.upm.etsisi.poo.model.users.Client;
 import es.upm.etsisi.poo.persistence.ProductCatalog;
 import es.upm.etsisi.poo.utils.StaticMessages;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -155,9 +153,8 @@ public class Ticket implements Serializable{
                     System.out.println(StaticMessages. PROD_NO_EXIST);
                     return;
                 }
-                if (!  prod.isAvailable()) {
-                    System.out.println("ERROR: Product " + prod.getName() +
-                            " is not available (expired or time restrictions).");
+                if (!prod.isAvailable()) {
+                    System.out.println(StaticMessages.PROD_UNAVAILABLE);
                     return;
                 }
                 if (prod instanceof Event && productList. contains(prod)) {
@@ -173,26 +170,24 @@ public class Ticket implements Serializable{
                     PersonalizedProduct copy = (PersonalizedProduct) productToAdd;
                     for (String text : customizations) {
                         boolean added = copy.addCustomText(text);
-                        if (!  added) {
-                            System. out.println("WARNING: Could not add text '" + text +
-                                    "'.  Max limit reached.");
+                        if (!added) {
+                            System.out.println(StaticMessages.WARN_CUSTOM_LIMIT);
                         }
                     }
                     productToAdd = copy;
                 } else if (customizations != null && ! customizations. isEmpty()) {
-                    System.out.println("WARNING: Product " + productToAdd.getName() +
-                            " is not customizable.  Ignoring texts.");
+                    System.out.println(StaticMessages.WARN_NOT_CUSTOMIZABLE);
                 }
 
                 if (amount + productTotalUnits() > MAX_PRODS_TICKET) {
-                    System. out.println("ERROR: Max products allowed per ticket exceeded!");
+                    System.out.println(StaticMessages.MAX_PRODS_EXCEED);
                     return;
                 }
                 for (int i = 0; i < amount; i++) {
                     productList.add(createProductCopy(productToAdd));
                 }
 
-                System.out.println("ticket add: ok");
+                System.out.println(StaticMessages.TICKET_ADD_OK);
 
                 if (!  state.equals(TicketState.OPEN)) {
                     this.setState(TicketState.OPEN);
@@ -227,12 +222,8 @@ public class Ticket implements Serializable{
         return String. valueOf(val);
     }
     public void printInitialState() {
-        System.out.println("Ticket:  " + this.id);
-        System.out.print("""
-            Total price: 0.0
-            Total discount: 0.0
-            Final Price: 0.0
-            """);
+        System.out.println(StaticMessages.TICKET_HEADER + this.id);
+        System.out.print(StaticMessages.INITIAL_STATE_BLOCK);
     }
 
     public TicketState getState() { return state; }
