@@ -5,7 +5,6 @@ import es.upm.etsisi.poo.exceptions.StoreException;
 public class StockProduct extends AbstractProduct {
     protected Category category;
     protected double price;
-    protected int stockProdId;
 
 
     public StockProduct(String id, String name, Category category, double price) throws StoreException {
