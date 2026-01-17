@@ -1,6 +1,6 @@
 package es.upm.etsisi.poo.main;
 
-import es.upm.etsisi.poo.Command.AppConfigurations;
+import es.upm.etsisi.poo.utils.AppConfigurations;
 import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.products.*;
 import es.upm.etsisi.poo.model.sales.Ticket;
