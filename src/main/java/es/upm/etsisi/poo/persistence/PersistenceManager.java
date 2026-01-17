@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.persistence;
 
+import es.upm.etsisi.poo.utils.StaticMessages;
+
 import java.io.*;
 
 public class PersistenceManager {
@@ -9,7 +11,7 @@ public class PersistenceManager {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
             oos.writeObject(data);
         } catch (IOException e) {
-            System.out.println("Error saving data: " + e.getMessage());
+            System.out.println(String.format(StaticMessages.PERSISTENCE_SAVE_ERROR, e.getMessage()));
         }
     }
 
@@ -21,7 +23,6 @@ public class PersistenceManager {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             return (StoreData) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Error loading data (starting fresh): " + e.getMessage());
             return null;
         }
     }
