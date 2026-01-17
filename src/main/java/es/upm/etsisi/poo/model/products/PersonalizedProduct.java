@@ -9,16 +9,9 @@ public class PersonalizedProduct extends StockProduct {
 
     private final List<String> customTexts;
     private final int maxCustomTexts;
-    private int persProdId;
 
     public PersonalizedProduct(String id, String name, Category category, double price, int maxCustomTexts) throws StoreException {
         super(id, name, category, price);
-        this.maxCustomTexts = maxCustomTexts;
-        this.customTexts = new ArrayList<>();
-    }
-
-    public PersonalizedProduct(String name, Category category, double price, int maxCustomTexts) throws StoreException {
-        super(name, category, price);
         this.maxCustomTexts = maxCustomTexts;
         this.customTexts = new ArrayList<>();
     }
@@ -29,10 +22,6 @@ public class PersonalizedProduct extends StockProduct {
             return true;
         }
         return false;
-    }
-
-    public List<String> getCustomTexts() {
-        return new ArrayList<>(this.customTexts);
     }
 
     public int getMaxCustomTexts() {

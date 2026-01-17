@@ -1,7 +1,7 @@
-package es.upm.etsisi.poo.Command;
+package es.upm.etsisi.poo.utils;
 
  //Centraliza todos los parámetros configurables del proyecto
- //Cambiar valores aquí en lugar de buscarlos por todo el código
+ //Cambiar valores aquí en lugar de buscarlos por el codigo
 
 public class AppConfigurations {
 

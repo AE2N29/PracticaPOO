@@ -13,6 +13,7 @@ public class StaticMessages {
     public static final String WRONG_TICKET_TYPE = "ERROR: You can´t add this to this type of ticket";
     public static final String WRONG_TICKET_ACTION = "This type of ticket is not allowed to do this";
     public static final String PROD_UNCUSTOMIZABLE = "This product or this type of customization cannot be done";
+    public static final String PERSISTENCE_SAVE_ERROR = "Error saving data: %s";
 
     // ENTITY ERRORS
     public static final String USER_ALREADY_EXISTS = "Error: User with ID %s already exists.";

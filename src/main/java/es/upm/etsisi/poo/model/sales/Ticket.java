@@ -1,5 +1,5 @@
 package es.upm.etsisi.poo.model.sales;
-import es.upm.etsisi.poo.Command.AppConfigurations;
+import es.upm.etsisi.poo.utils.AppConfigurations;
 import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.products.*;
 import es.upm.etsisi.poo.model.users.Client;
@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class Ticket implements Serializable{

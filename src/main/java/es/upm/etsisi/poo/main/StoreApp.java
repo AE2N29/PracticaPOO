@@ -1,6 +1,6 @@
 package es.upm.etsisi.poo.main;
 
-import es.upm.etsisi.poo.Command.AppConfigurations;
+import es.upm.etsisi.poo.utils.AppConfigurations;
 import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.products.*;
 import es.upm.etsisi.poo.model.sales.Ticket;
@@ -634,10 +634,6 @@ public class StoreApp {
         return command.substring(first + 1, last);
     }
 
-    public String[] processProdDate(String command) {
-        return command.trim().split(" ");
-    }
-
     /**
      * Procesa el comando prod add y retorna un array con los parámetros
      */
@@ -728,13 +724,5 @@ public class StoreApp {
             System.out.println(StaticMessages.INFO_NOT_FOUND);
             return "EXIT";
         }
-    }
-
-    private int countNotNull(String[] s) {
-        int c = 0;
-        for (String str : s) {
-            if (str != null) c++;
-        }
-        return c;
     }
 }

@@ -1,6 +1,6 @@
 package es.upm.etsisi.poo.model.sales;
 
-import es.upm.etsisi.poo.Command.AppConfigurations;
+import es.upm.etsisi.poo.utils.AppConfigurations;
 import es.upm.etsisi.poo.model.products.*;
 import es.upm.etsisi. poo.utils.StaticMessages;
 import java.time.LocalDateTime;
