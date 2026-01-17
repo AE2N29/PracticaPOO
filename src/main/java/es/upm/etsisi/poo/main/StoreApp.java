@@ -533,17 +533,7 @@ public class StoreApp {
             throw new StoreException(StaticMessages.TICKET_NOT_FOUND);
         }
 
-        // Visualización diferente:  Mostrar header según tipo de cliente
-        Client client = ticket.getClient();
-
-        // ← Cambio: En lugar de operador ternario
-        if (client instanceof CorporateClient) {
-            System.out.println(StaticMessages.CORPORATE_TICKET_HEADER);
-        } else {
-            System.out.println(StaticMessages.INDIVIDUAL_TICKET_HEADER);
-        }
-
-        ticket.print();
+        ticket.print(true);
     }
 
     private void ticketList() throws StoreException {
