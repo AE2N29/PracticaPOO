@@ -644,10 +644,6 @@ public class StoreApp {
         return command.substring(first + 1, last);
     }
 
-    public String[] processProdDate(String command) {
-        return command.trim().split(" ");
-    }
-
     /**
      * Procesa el comando prod add y retorna un array con los parámetros
      */
@@ -738,13 +734,5 @@ public class StoreApp {
             System.out.println(StaticMessages.INFO_NOT_FOUND);
             return "EXIT";
         }
-    }
-
-    private int countNotNull(String[] s) {
-        int c = 0;
-        for (String str : s) {
-            if (str != null) c++;
-        }
-        return c;
     }
 }
