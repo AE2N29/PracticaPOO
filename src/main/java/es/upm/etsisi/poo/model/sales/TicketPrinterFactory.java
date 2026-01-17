@@ -38,27 +38,4 @@ public class TicketPrinterFactory {
 
         return printer;
     }
-
-    /**
-     * Registra una nueva estrategia de impresión
-     * Permite extensibilidad sin modificar el código existente (Open/Closed Principle)
-     */
-    public static void registerPrinter(Class<?> clientType, TicketPrinter printer) {
-        printerStrategies.put(clientType, printer);
-    }
-
-    /**
-     * Retorna todas las estrategias registradas (para debugging/info)
-     */
-    public static Map<Class<?>, TicketPrinter> getAllStrategies() {
-        return new HashMap<>(printerStrategies);
-    }
-
-    /**
-     * Retorna el nombre de la estrategia para un tipo de cliente
-     */
-    public static String getPrinterStrategyName(Client client) {
-        TicketPrinter printer = getPrinterForClient(client);
-        return printer.getStrategyName();
-    }
 }

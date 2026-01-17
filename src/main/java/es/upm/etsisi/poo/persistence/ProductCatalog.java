@@ -10,8 +10,6 @@ public class ProductCatalog {
     private static final int MAX_PRODUCTS = 200;
     private static HashMap<String, AbstractProduct> products = new HashMap<>();
 
-    private ProductCatalog() {}
-
     public static AbstractProduct getProduct(String id) {
         return products.get(id);
     }
