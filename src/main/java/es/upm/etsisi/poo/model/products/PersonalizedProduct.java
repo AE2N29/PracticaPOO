@@ -24,10 +24,6 @@ public class PersonalizedProduct extends StockProduct {
         return false;
     }
 
-    public List<String> getCustomTexts() {
-        return new ArrayList<>(this.customTexts);
-    }
-
     public int getMaxCustomTexts() {
         return this.maxCustomTexts;
     }
