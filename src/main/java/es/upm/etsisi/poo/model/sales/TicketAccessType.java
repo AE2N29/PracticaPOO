@@ -23,20 +23,9 @@ package es.upm.etsisi.poo.model.sales;
                 default -> null;
             };
         }
-        public static TicketAccessType fromTypeName(String typeName) {
-            for (TicketAccessType type :  TicketAccessType.values()) {
-                if (type.name().equalsIgnoreCase(typeName) ||
-                        type.shortName. equalsIgnoreCase(typeName)) {
-                    return type;
-                }
-            }
-            return null;
-        }
+
         public String toString() {
             return String.format("[%s] %s (Flag: %s)", shortName, description, flag);
         }
-
-        public String getDescription() { return description; }
-        public String getShortName() { return shortName; }
     }
 

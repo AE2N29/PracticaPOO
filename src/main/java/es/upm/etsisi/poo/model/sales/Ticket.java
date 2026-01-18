@@ -133,17 +133,6 @@ public class Ticket implements Serializable{
         return original;
     }
 
-    // Este metodo ya no se utiliza en la segunda entrega, el new ticket ya no resetea el ticket. No lo borro por si lo usamos en un futuro
-    public void resetTicket() {//  uso de ArrayList.clear para resetear el ticket
-        if (state.equals(TicketState.CLOSE)) {
-            System.out.println(StaticMessages.CLOSED_TICKET);
-        } else {
-            this.productList.clear();
-            this.state = TicketState.EMPTY;
-            System.out.println(StaticMessages.TICKET_NEW_OK);
-        }
-    }
-
     public void add(String prodID, int amount, ArrayList<String> customizations) throws StoreException {
         if (state.  equals(TicketState. CLOSE)) {
             System.out.  println(StaticMessages. CLOSED_TICKET);
@@ -221,10 +210,6 @@ public class Ticket implements Serializable{
         return productList.size();
     }
 
-    private String rounded(double d) {
-        double val = Math.round(d * 1000.0) / 1000.0;
-        return String. valueOf(val);
-    }
     public void printInitialState() {
         System.out.println(StaticMessages.TICKET_HEADER + this.id);
         System.out.print(StaticMessages.INITIAL_STATE_BLOCK);

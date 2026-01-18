@@ -21,5 +21,4 @@ public class StoreData implements Serializable {
 
     public List<User> getUsers() { return users; }
     public List<AbstractProduct> getProducts() { return products; }
-    public List<Ticket> getTickets() { return tickets; }
 }

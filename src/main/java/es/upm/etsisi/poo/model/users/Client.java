@@ -16,16 +16,8 @@ public abstract class Client extends User {
         this.clientTickets = new ArrayList<Ticket>();
     }
 
-    public Cashier getAssociatedCashier() {
-        return associatedCashier;
-    }
-
     public void addTicket(Ticket ticket) {
         this.clientTickets.add(ticket);
-    }
-
-    public ArrayList<Ticket> getClientTickets() {
-        return clientTickets;
     }
 
     protected abstract String getHeader();
