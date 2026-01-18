@@ -2,11 +2,12 @@ package es.upm.etsisi.poo.model.sales;
 
 import es.upm.etsisi.poo.utils.AppConfigurations;
 import es.upm.etsisi.poo.model.products.*;
-import es.upm.etsisi. poo.utils.StaticMessages;
+import es.upm.etsisi.poo.utils.StaticMessages;
 import java.time.LocalDateTime;
-import java.time. format.DateTimeFormatter;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * Estrategia de impresión para tickets corporativos
@@ -20,7 +21,7 @@ public class CorporateTicketPrinter implements TicketPrinter {
     }
 
     @Override
-    public void printPreview (Ticket ticket) {
+    public void printPreview(Ticket ticket) {
         printTicketDetails(ticket, false);
     }
 
@@ -30,32 +31,30 @@ public class CorporateTicketPrinter implements TicketPrinter {
     }
 
     private void printTicketDetails(Ticket ticket, boolean close) {
-        ArrayList<AbstractProduct> productList = ticket.getProductList();
+        List<AbstractProduct> services = new ArrayList<>();
+        List<AbstractProduct> products = new ArrayList<>();
 
-        // ==================== CÁLCULO DE SERVICIOS ====================
-        int serviceCount = 0;
-        if (ticket.getType() == TicketType.COMBINED || ticket.getType() == TicketType.SERVICE) {
-            for (AbstractProduct p : productList) {
-                if (p instanceof Service) {
-                    serviceCount++;
-                }
+        // Recorremos la lista original del ticket
+        for (AbstractProduct p : ticket.getProductList()) {
+            if (p instanceof Service) {
+                services.add(p);
+            } else {
+                products.add(p);
             }
         }
 
-        // Usar AppConfigurations para el descuento corporativo
-        double companyDiscountRate = serviceCount * AppConfigurations.CORPORATE_SERVICE_DISCOUNT;
-
-        // ==================== CONTEO DE PRODUCTOS ====================
-        double totalPrice = 0.0, totalDiscount = 0.0;
-        ArrayList<AbstractProduct> sorted = new ArrayList<>(productList);
-        sorted.sort(Comparator.comparing(AbstractProduct::getName));
+        services.sort(Comparator.comparing(AbstractProduct::getName));
+        products.sort(Comparator.comparing(AbstractProduct::getName));
+        int serviceCount = services.size();
 
         int merchCount = 0, clothesCount = 0, electronicsCount = 0,
                 stationeryCount = 0, bookCount = 0;
 
-        for (AbstractProduct prod : sorted) {
-            if (prod instanceof StockProduct) {
-                switch (((StockProduct) prod).getCategory()) {
+        for (AbstractProduct p : products) {
+            // Solo contamos si es StockProduct (ignoramos Eventos/Reuniones para estos descuentos)
+            if (p instanceof StockProduct) {
+                StockProduct sp = (StockProduct) p;
+                switch (sp.getCategory()) {
                     case MERCH -> merchCount++;
                     case STATIONERY -> stationeryCount++;
                     case CLOTHES -> clothesCount++;
@@ -65,54 +64,64 @@ public class CorporateTicketPrinter implements TicketPrinter {
             }
         }
 
-        // ==================== PREPARACIÓN DE ID ====================
+        double companyDiscountRate = serviceCount * AppConfigurations.CORPORATE_SERVICE_DISCOUNT;
+
         if (close && ticket.getState() != TicketState.CLOSE) {
             ticket.setId(updateTicketId(ticket.getId()));
         }
 
         System.out.println(StaticMessages.TICKET_HEADER + ticket.getId());
-
-        // ==================== IMPRESIÓN DE PRODUCTOS ====================
-        for (AbstractProduct prod : sorted) {
-            // Si es un servicio, imprime sin precio
-            if (prod instanceof Service) {
-                System.out.println("  " + prod + " | Price: ---");
-                continue;
+        // ==================== IMPRESIÓN SERVICIOS ====================
+        if (!services.isEmpty()) {
+            System.out.println("Services Included:");
+            for (AbstractProduct s : services) {
+                System.out.println("  " + s + " | Price: ---");
             }
+        }
+        // ==================== IMPRESIÓN PRODUCTOS ====================
+        double totalPrice = 0.0;
+        double totalDiscount = 0.0;
+        String lastId = "";
+        if (!products.isEmpty()) {
+            System.out.println("Product Included");
+            for (AbstractProduct p : products) {
+                totalPrice += p.getPrice();
 
-            totalPrice += prod.getPrice();
-            double discountPct = calculateDiscount(ticket,prod, serviceCount, merchCount,
-                    clothesCount, stationeryCount,
-                    electronicsCount, bookCount,
-                    companyDiscountRate);
-
-            // Imprimir con o sin descuento
-            if (discountPct > 0) {
-                double moneySaved = prod.getPrice() * discountPct;
-                totalDiscount += moneySaved;
-                System.out.println(" " + prod + StaticMessages.DISCOUNT_SUFFIX +
-                        rounded(moneySaved));
-            } else {
-                System.out.println(prod);
+                double discountPct = calculateDiscount(ticket, p, serviceCount,
+                        merchCount, clothesCount, stationeryCount,
+                        electronicsCount, bookCount, companyDiscountRate);
+                if (discountPct > 0) {
+                    totalDiscount += (p.getPrice() * discountPct);
+                }
+                if (!p.getId().equals(lastId)) {
+                    System.out.println("  " + p);
+                    lastId = p.getId();
+                }
             }
         }
 
-        // ==================== RESUMEN FINAL ====================
-        boolean isOnlyServices = (ticket.getType() == TicketType.COMBINED ||
-                ticket.getType() == TicketType.SERVICE) &&
-                serviceCount > 0 &&
-                serviceCount == productList.size();
+        double finalPrice = totalPrice - totalDiscount;
 
-        if (! isOnlyServices) {
+        // ==================== RESUMEN ====================
+        boolean isOnlyServices = (ticket.getType() == TicketType.COMBINED || ticket.getType() == TicketType.SERVICE)
+                && serviceCount > 0 && products.isEmpty();
+
+        if (!isOnlyServices) {
             System.out.println(StaticMessages.TOTAL_PRICE_LABEL + rounded(totalPrice));
-            System.out.println(StaticMessages.TOTAL_DISCOUNT_LABEL + rounded(totalDiscount));
-            System.out.println(StaticMessages. FINAL_PRICE_LABEL +
-                    rounded(totalPrice - totalDiscount));
+            if (totalDiscount > 0) {
+                if (serviceCount > 0) {
+                    System.out.println("  Extra Discount from services:" + rounded(totalDiscount));
+                }
+                System.out.println(StaticMessages.TOTAL_DISCOUNT_LABEL + rounded(totalDiscount));
+            } else {
+                System.out.println(StaticMessages.TOTAL_DISCOUNT_LABEL + "0.0");
+            }
+            System.out.println(StaticMessages.FINAL_PRICE_LABEL + rounded(finalPrice));
         } else {
-            System.out. println("------");
+            System.out.println("------");
         }
 
-        // ==================== CIERRE DEL TICKET ====================
+        // ==================== CIERRE ====================
         if (close) {
             if (ticket.getState() != TicketState.CLOSE) {
                 ticket.setState(TicketState.CLOSE);
@@ -121,10 +130,20 @@ public class CorporateTicketPrinter implements TicketPrinter {
         }
     }
 
-    /**
-     * Calcula el descuento aplicable a un producto
-     * Parametrizado con AppConfigurations para valores de descuento
-     */
+    // MÉTODOS AUXILIARES (
+    private String rounded(double d) {
+        double val = Math.round(d * 1000.0) / 1000.0;
+        return String.valueOf(val);
+    }
+
+    private String updateTicketId(String originalId) {
+        String pattern = "-YY-MM-dd-HH:mm";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        LocalDateTime now = LocalDateTime.now();
+        String formattedDate = now.format(formatter);
+        return (originalId + formattedDate);
+    }
+
     private double calculateDiscount(Ticket ticket,AbstractProduct prod, int serviceCount,
                                      int merchCount, int clothesCount,
                                      int stationeryCount, int electronicsCount,
@@ -168,18 +187,5 @@ public class CorporateTicketPrinter implements TicketPrinter {
         }
 
         return discountPct;
-    }
-
-    private String rounded(double d) {
-        double val = Math.round(d * 1000.0) / 1000.0;
-        return String.valueOf(val);
-    }
-
-    private String updateTicketId(String originalId) {
-        String pattern = "-YY-MM-dd-HH: mm";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-        LocalDateTime now = LocalDateTime.now();
-        String formattedDate = now.format(formatter);
-        return (originalId + formattedDate);
     }
 }
