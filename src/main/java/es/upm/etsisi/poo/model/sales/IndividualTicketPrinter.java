@@ -84,7 +84,6 @@ public class IndividualTicketPrinter implements TicketPrinter {
             if (prod instanceof Event event) {
                 String eventId = event.getId();
 
-                // Ya impreso → solo afecta a impresión
                 if (printedEventIds.contains(eventId)) {
                     continue;
                 }
@@ -108,7 +107,6 @@ public class IndividualTicketPrinter implements TicketPrinter {
                 }
             }
         }
-
 
         // ==================== RESUMEN FINAL ====================
         System.out.println(StaticMessages. TOTAL_PRICE_LABEL + rounded(totalPrice));
