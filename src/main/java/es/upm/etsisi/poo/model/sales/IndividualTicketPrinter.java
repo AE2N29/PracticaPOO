@@ -1,0 +1,179 @@
+package es.upm.etsisi.poo.model.sales;
+
+import es.upm.etsisi.poo.utils.AppConfigurations;
+import es.upm.etsisi.poo.model.products.*;
+import es.upm.etsisi.poo.utils.StaticMessages;
+import java.time.LocalDateTime;
+import java. time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util. Comparator;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Estrategia de impresión para tickets individuales
+ * Solo imprime productos, sin servicios ni descuentos corporativos
+ */
+public class IndividualTicketPrinter implements TicketPrinter {
+
+    @Override
+    public void print(Ticket ticket) {
+        printTicketDetails(ticket, true);
+    }
+
+    @Override
+    public void printPreview (Ticket ticket) {
+        printTicketDetails(ticket, false);
+    }
+
+    @Override
+    public String getStrategyName() {
+        return "Individual";
+    }
+
+    private void printTicketDetails(Ticket ticket, boolean close) {
+        ArrayList<AbstractProduct> productList = ticket.getProductList();
+
+        // ==================== CONTEO DE PRODUCTOS ====================
+        double totalPrice = 0.0, totalDiscount = 0.0;
+        ArrayList<AbstractProduct> sorted = new ArrayList<>(productList);
+        sorted.sort(Comparator.comparing(AbstractProduct::getName));
+
+        int merchCount = 0, clothesCount = 0, electronicsCount = 0,
+                stationeryCount = 0, bookCount = 0;
+
+        for (AbstractProduct prod : sorted) {
+            if (prod instanceof StockProduct) {
+                switch (((StockProduct) prod).getCategory()) {
+                    case MERCH -> merchCount++;
+                    case STATIONERY -> stationeryCount++;
+                    case CLOTHES -> clothesCount++;
+                    case BOOK -> bookCount++;
+                    case ELECTRONICS -> electronicsCount++;
+                }
+            }
+        }
+
+        // ==================== PREPARACIÓN DE ID ====================
+        if (close && ticket.getState() != TicketState.CLOSE) {
+            ticket.setId(updateTicketId(ticket.getId()));
+        }
+
+        System.out.println(StaticMessages.TICKET_HEADER + ticket.getId());
+
+        // ==================== IMPRESIÓN DE PRODUCTOS ====================
+        Set<String> printedEventIds = new HashSet<>();
+
+        for (AbstractProduct prod : sorted) {
+
+            // ==================== PRECIO Y DESCUENTO (SIEMPRE) ====================
+            totalPrice += prod.getPrice();
+
+            double discountPct = calculateDiscount(
+                    prod, merchCount, clothesCount,
+                    stationeryCount, electronicsCount, bookCount
+            );
+
+            double moneySaved = 0.0;
+            if (discountPct > 0) {
+                moneySaved = prod.getPrice() * discountPct;
+                totalDiscount += moneySaved;
+            }
+
+            // ==================== EVENTS ====================
+            if (prod instanceof Event event) {
+                String eventId = event.getId();
+
+                if (printedEventIds.contains(eventId)) {
+                    continue;
+                }
+
+                printedEventIds.add(eventId);
+
+                if (discountPct > 0) {
+                    System.out.println(" " + event + StaticMessages.DISCOUNT_SUFFIX +
+                            rounded(moneySaved));
+                } else {
+                    System.out.println(event);
+                }
+
+            } else {
+                // ==================== STOCK PRODUCTS ====================
+                if (discountPct > 0) {
+                    System.out.println(" " + prod + StaticMessages.DISCOUNT_SUFFIX +
+                            rounded(moneySaved));
+                } else {
+                    System.out.println(prod);
+                }
+            }
+        }
+
+        // ==================== RESUMEN FINAL ====================
+        System.out.println(StaticMessages. TOTAL_PRICE_LABEL + rounded(totalPrice));
+        System.out.println(StaticMessages. TOTAL_DISCOUNT_LABEL + rounded(totalDiscount));
+        System.out.println(StaticMessages.FINAL_PRICE_LABEL +
+                rounded(totalPrice - totalDiscount));
+
+        // ==================== CIERRE DEL TICKET ====================
+        if (close) {
+            if (ticket.getState() != TicketState.CLOSE) {
+                ticket.setState(TicketState.CLOSE);
+            }
+            System.out.println(StaticMessages.TICKET_PRINT_OK);
+        }
+    }
+
+    /**
+     * Calcula el descuento aplicable a un producto (solo por categoría)
+     */
+    private double calculateDiscount(AbstractProduct prod,
+                                     int merchCount, int clothesCount,
+                                     int stationeryCount, int electronicsCount, int bookCount) {
+
+        double discountPct = 0.0;
+
+        // Si no es StockProduct, no aplicar descuento
+        if (!(prod instanceof StockProduct)) {
+            return 0.0;
+        }
+
+        Category cat = ((StockProduct) prod).getCategory();
+
+        // Verificar si se aplica descuento para esta categoría
+        boolean applies = switch (cat) {
+            case MERCH -> merchCount >= AppConfigurations.MIN_UNITS_FOR_DISCOUNT;
+            case STATIONERY -> stationeryCount >= AppConfigurations. MIN_UNITS_FOR_DISCOUNT;
+            case CLOTHES -> clothesCount >= AppConfigurations.MIN_UNITS_FOR_DISCOUNT;
+            case BOOK -> bookCount >= AppConfigurations.MIN_UNITS_FOR_DISCOUNT;
+            case ELECTRONICS -> electronicsCount >= AppConfigurations.MIN_UNITS_FOR_DISCOUNT;
+            case EVENT -> false;
+        };
+
+        // Obtener el valor de descuento desde AppConfigurations
+        if (applies) {
+            discountPct = switch (cat) {
+                case MERCH -> AppConfigurations. DISCOUNT_MERCH;
+                case STATIONERY -> AppConfigurations. DISCOUNT_STATIONERY;
+                case CLOTHES -> AppConfigurations.DISCOUNT_CLOTHES;
+                case BOOK -> AppConfigurations.DISCOUNT_BOOK;
+                case ELECTRONICS -> AppConfigurations.DISCOUNT_ELECTRONICS;
+                case EVENT -> 0.0;
+            };
+        }
+
+        return discountPct;
+    }
+
+    private String rounded(double d) {
+        double val = Math.round(d * 1000.0) / 1000.0;
+        return String.valueOf(val);
+    }
+
+    private String updateTicketId(String originalId) {
+        String pattern = "-YY-MM-dd-HH: mm";
+        DateTimeFormatter formatter = DateTimeFormatter. ofPattern(pattern);
+        LocalDateTime now = LocalDateTime.now();
+        String formattedDate = now.format(formatter);
+        return (originalId + formattedDate);
+    }
+}

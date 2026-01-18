@@ -1,11 +1,13 @@
 package es.upm.etsisi.poo.model.products;
 
-import es.upm.etsisi.poo.persistance.ProductCatalog;
+import es.upm.etsisi.poo.utils.AppConfigurations;
+import es.upm.etsisi.poo.persistence.ProductCatalog;
 import es.upm.etsisi.poo.utils.StaticMessages;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public abstract class AbstractProduct {
+public abstract class AbstractProduct implements Serializable {
     private String name;
     private final String id;
 
@@ -13,12 +15,17 @@ public abstract class AbstractProduct {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Product name cannot be empty.");
         }
-        if (name.length() >= 100) {
-            throw new IllegalArgumentException("Product name must be less than 100 characters.");
+        //  Aquí usa AppConfig en lugar de número mágico
+        if (name.length() >= AppConfigurations.MAX_PRODUCT_NAME_LENGTH) {
+            throw new IllegalArgumentException(
+                    "Product name must be less than " +
+                            AppConfigurations.MAX_PRODUCT_NAME_LENGTH + " characters."
+            );
         }
         this.name = name;
         this.id = id;
     }
+
     public AbstractProduct(String name) {
         this.name = name;
         this.id = generateID();
@@ -32,7 +39,8 @@ public abstract class AbstractProduct {
     }
 
     public void setName(String name) {
-        if (name == null || name.isBlank() || name.length() >= 100) {
+        if (name == null || name.isBlank() ||
+                name.length() >= AppConfigurations.MAX_PRODUCT_NAME_LENGTH) {
             System.out.println(StaticMessages.INVALID_NAME);
             return;
         }
@@ -43,7 +51,7 @@ public abstract class AbstractProduct {
         return false;
     }
 
-    public boolean setCategory(Category category) { return false; } //igual
+    public boolean setCategory(Category category) { return false; }
 
     public static String generateID() {
         Map<String, AbstractProduct> map = ProductCatalog.getList();

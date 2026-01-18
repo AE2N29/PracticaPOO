@@ -1,30 +1,84 @@
 package es.upm.etsisi.poo.model.sales;
-
+import es.upm.etsisi.poo.utils.AppConfigurations;
+import es.upm.etsisi.poo.exceptions.StoreException;
 import es.upm.etsisi.poo.model.products.*;
-import es.upm.etsisi.poo.persistance.ProductCatalog;
+import es.upm.etsisi.poo.model.users.Client;
+import es.upm.etsisi.poo.persistence.ProductCatalog;
 import es.upm.etsisi.poo.utils.StaticMessages;
-
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.List;
 
-public class Ticket {
-    private final int MAX_PRODS_TICKET = 100; //  ticket no puede tener mas de 100 productos
+public class Ticket implements Serializable{
+    private final int MAX_PRODS_TICKET = AppConfigurations.MAX_PRODUCTS_PER_TICKET;   //  ticket no puede tener mas de 100 productos
     private final ArrayList<AbstractProduct> productList;
     private TicketState state;
+    private TicketType type;//Añado en el constructor el tipo de ticket
     private String id;
-    private static final ArrayList<String> usedIds = new ArrayList<>(); // Guardamos los ids usados para no repetirlos
+    private Client client;
+    private static final ArrayList<String> usedIds = new ArrayList<>();
+    private transient TicketPrinter printer; // Guardamos los ids usados para no repetirlos
+                                             // transient indica que se ignora al guardar en archivo
 
-    public Ticket(String id) {
+    public Ticket(String id, TicketType ticketType) {
+        this.type = ticketType;
         this.productList = new ArrayList<>();
         this.state = TicketState.EMPTY;
         this.id = id;
         usedIds.add(id);
     }
+    public Ticket(Client client, String ticketType) {
+        this(createTicketId(), client, ticketType);
+    }
+    public Ticket(String id, Client client, String ticketType) {
+        this.productList = new ArrayList<>();
+        this.state = TicketState.EMPTY;
+        this.id = id;
+        this.client = client;
+        this.type = parseTicketType(ticketType);
+        usedIds.add(id);
+    }
+    private static TicketType parseTicketType(String typeStr) {
+        if (typeStr == null) {
+            return TicketType. PERSONAL;
+        }
 
-    public Ticket() {
-        this(createTicketId());
+        return switch (typeStr.  toLowerCase()) {
+            case "c" -> TicketType.COMBINED;
+            case "s" -> TicketType.SERVICE;
+            default -> TicketType.PERSONAL;
+        };
+    }
+    public Client getClient() {
+        return client;
+    }
+    public TicketType getType() {
+        return type;
+    }
+    public void print(boolean close) {
+        if (printer == null) {
+            printer = TicketPrinterFactory.getPrinterForClient(client);
+        }
+        if (close) {
+            printer.print(this);
+        } else {
+            printer.printPreview(this);
+        }
+    }
+    //Enviar copia de la lista si es necesario para evitar modificaciones externas
+    public ArrayList<AbstractProduct> getProductList() {
+        return new ArrayList<>(productList);
+    }
+
+    public static void rebuildUsedIds(List<Ticket> allLoadedTickets) { //tras cargar persistencia
+        usedIds.clear(); // Limpiamos por si acaso
+        if (allLoadedTickets != null) {
+            for (Ticket t : allLoadedTickets) {
+                usedIds.add(t.getId());
+            }
+        }
     }
 
     private static String createTicketId(){ // crea el Id cuando no se pasa como parámetro
@@ -40,201 +94,135 @@ public class Ticket {
         }
     }
 
-    private String updateTicketId() { // actualiza el id cuando el ticket se cierra
-        String pattern = "-YY-MM-dd-HH:mm";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-        LocalDateTime now = LocalDateTime.now();
-        String formattedDate = now.format(formatter);
-        return (this.id + formattedDate);
-    }
-
-    // Este metodo ya no se utiliza en la segunda entrega, el new ticket ya no resetea el ticket. No lo borro por si lo usamos en un futuro
-    public void resetTicket() {//  uso de ArrayList.clear para resetear el ticket
-        if (state.equals(TicketState.CLOSE)) {
-            System.out.println(StaticMessages.CLOSED_TICKET);
-        } else {
-            this.productList.clear();
-            this.state = TicketState.EMPTY;
-            System.out.println("ticket new: ok");
+    private AbstractProduct createProductCopy(AbstractProduct original) throws StoreException {
+        if (original instanceof PersonalizedProduct) {
+            PersonalizedProduct p = (PersonalizedProduct) original;
+            return new PersonalizedProduct(
+                    p.getId(),
+                    p.getName(),
+                    p.getCategory(),
+                    p.getPrice(),
+                    p.getMaxCustomTexts()
+            );
+        } else if (original instanceof StockProduct) {
+            StockProduct s = (StockProduct) original;
+            return new StockProduct(
+                    s.getId(),
+                    s.getName(),
+                    s. getCategory(),
+                    s.getPrice()
+            );
+        } else if (original instanceof Event) {
+            Event e = (Event) original;
+            return new Event(
+                    e.getId(),
+                    e.getName(),
+                    e.getExpirationDate(),
+                    e.getPrice(),
+                    e. getMaxPeopleAllowed(),
+                    e.getEventType()
+            );
+        } else if (original instanceof Service) {
+            Service svc = (Service) original;
+            return new Service(original.getId(),
+                    svc.getServiceType(),
+                    svc.getExpirationDate()
+            );
         }
+
+        return original;
     }
 
-    public void add(String prodID, int amount, ArrayList<String> customizations) {
-        if (state.equals(TicketState.CLOSE)) {
-            System.out.println(StaticMessages.CLOSED_TICKET);
+    public void add(String prodID, int amount, ArrayList<String> customizations) throws StoreException {
+        if (state.  equals(TicketState. CLOSE)) {
+            System.out.  println(StaticMessages. CLOSED_TICKET);
         } else {
             if (amount <= 0) {
-                System.out.println(StaticMessages.NEGATIVE_AMOUNT);
+                System.out. println(StaticMessages.NEGATIVE_AMOUNT);
             } else {
                 AbstractProduct prod = ProductCatalog.getProduct(prodID);
                 if (prod == null) {
-                    System.out.println(StaticMessages.PROD_NO_EXIST);
+                    System.out.println(StaticMessages. PROD_NO_EXIST);
                     return;
                 }
                 if (!prod.isAvailable()) {
-                    System.out.println("ERROR: Product " + prod.getName() + " is not available (expired or time restrictions).");
+                    System.out.println(StaticMessages.PROD_UNAVAILABLE);
                     return;
                 }
-                if (prod instanceof Event && productList.contains(prod)) {
+                if (prod instanceof Event && productList. contains(prod)) {
                     System.out.println(StaticMessages.EVENT_ALREADY_EXISTS);
                     return;
                 }
-                if (prod instanceof PersonalizedProduct && customizations != null && !customizations.isEmpty()) {
-                    PersonalizedProduct original = (PersonalizedProduct) prod;
-                    PersonalizedProduct copy = new PersonalizedProduct(
-                            original.getId(), original.getName(), original.getCategory(),
-                            original.getPrice(), original.getMaxCustomTexts()
-                    );
+                AbstractProduct productToAdd = createProductCopy(prod);
+                //Se crean copias para añadir al ticket, para que cuando se modifica el precio de un producto no cambie el ticket
+                // Manejar customizaciones si es PersonalizedProduct
 
+                if (prod instanceof PersonalizedProduct && customizations != null &&
+                        !  customizations.  isEmpty()) {
+                    PersonalizedProduct copy = (PersonalizedProduct) productToAdd;
                     for (String text : customizations) {
                         boolean added = copy.addCustomText(text);
                         if (!added) {
-                            System.out.println("WARNING: Could not add text '" + text + "'. Max limit reached.");
+                            System.out.println(StaticMessages.WARN_CUSTOM_LIMIT);
                         }
                     }
-                    prod = copy;
-                } else if (customizations != null && !customizations.isEmpty()) {
-                    System.out.println("WARNING: Product " + prod.getName() + " is not customizable. Ignoring texts.");
+                    productToAdd = copy;
+                } else if (customizations != null && ! customizations. isEmpty()) {
+                    System.out.println(StaticMessages.WARN_NOT_CUSTOMIZABLE);
                 }
 
                 if (amount + productTotalUnits() > MAX_PRODS_TICKET) {
-                    System.out.println("ERROR: Max products allowed per ticket exceeded!");
+                    System.out.println(StaticMessages.MAX_PRODS_EXCEED);
                     return;
                 }
                 for (int i = 0; i < amount; i++) {
-                    productList.add(prod);
+                    productList.add(createProductCopy(productToAdd));
                 }
 
-                printTicketLinesSorted(false);
-                System.out.println("ticket add: ok");
+                this.print(false);
+                System.out.println(StaticMessages.TICKET_ADD_OK);
 
-                if (!state.equals(TicketState.OPEN)) {
+                if (!  state.equals(TicketState.OPEN)) {
                     this.setState(TicketState.OPEN);
                 }
             }
         }
     }
 
-    public void remove(String prodID) {
+    public void remove(String prodID) throws StoreException {
         if (state.equals(TicketState.CLOSE)) {
-            System.out.println("ERROR: Ticket is already closed");
-        } else {
-            boolean removed = productList.removeIf(p -> p.getId().equals(prodID));
+            throw new StoreException(StaticMessages.CLOSED_TICKET);
+        }
+        boolean removed = productList.removeIf(p -> p.getId().equals(prodID));
 
-            if (!removed) {
-                System.out.print("ERROR: the product with " + prodID + " as ID wasn't in the current ticket");
-            } else {
-                System.out.print("ticket remove: ok");
-                if (productList.isEmpty()) this.state = TicketState.EMPTY;
+        if (!removed) {
+            throw new StoreException(String.format(StaticMessages.PROD_NOT_IN_TICKET, prodID));
+        } else {
+            System.out.print(StaticMessages.TICKET_REMOVE_OK);
+            if (productList.isEmpty()) {
+                this.state = TicketState.EMPTY;
             }
         }
     }
 
-    public void print() {
-        printTicketLinesSorted(true);
-    }
 
     private int productTotalUnits() {
         return productList.size();
     }
 
-    private void printTicketLinesSorted(boolean printOkAtEnd) {
-        double totalPrice = 0.0, totalDiscount = 0.0;
-        ArrayList<AbstractProduct> sorted = new ArrayList<>(this.productList); // Copia segura
-        sorted.sort(Comparator.comparing(AbstractProduct::getName));
-        int merchCount = 0, clothesCount = 0, electronicsCount = 0, stationeryCount = 0, bookCount = 0;
-        for (AbstractProduct prod : sorted) {
-            if (prod instanceof StockProduct) {
-                switch (((StockProduct) prod).getCategory()) {
-                    case MERCH -> merchCount++;
-                    case STATIONERY -> stationeryCount++;
-                    case CLOTHES -> clothesCount++;
-                    case BOOK -> bookCount++;
-                    case ELECTRONICS -> electronicsCount++;
-                }
-            }
-        }
-
-        String headerId = this.id;
-        String futureClosedId = null;
-        if (printOkAtEnd && state != TicketState.CLOSE) {
-            futureClosedId = updateTicketId();
-            headerId = futureClosedId;
-        }
-        System.out.println("Ticket : " + headerId);
-        for (AbstractProduct prod : sorted) {
-            totalPrice += prod.getPrice();
-            double discountPct = 0.0;
-            if (prod instanceof StockProduct) {
-                Category cat = ((StockProduct) prod).getCategory();
-                boolean applies = false;
-                switch (cat) {
-                    case MERCH -> applies = merchCount >= 2;
-                    case STATIONERY -> applies = stationeryCount >= 2;
-                    case CLOTHES -> applies = clothesCount >= 2;
-                    case BOOK -> applies = bookCount >= 2;
-                    case ELECTRONICS -> applies = electronicsCount >= 2;
-                }
-                if (applies) {
-                    switch (cat) {
-                        case STATIONERY -> discountPct = 0.05;
-                        case CLOTHES -> discountPct = 0.07;
-                        case BOOK -> discountPct = 0.1;
-                        case ELECTRONICS -> discountPct = 0.03;
-                    }
-                }
-            }
-            if (discountPct > 0) {
-                double moneySaved = prod.getPrice() * discountPct;
-                totalDiscount += moneySaved;
-                System.out.println(" " + prod + " **discount -" + rounded(moneySaved));
-            } else {
-                System.out.println(prod);
-            }
-        }
-        System.out.println(" Total price: " + rounded(totalPrice));
-        System.out.println(" Total discount: " + rounded(totalDiscount));
-        System.out.println(" Final Price: " + rounded(totalPrice - totalDiscount));
-        if (printOkAtEnd) {
-            if (state != TicketState.CLOSE) {
-                setState(TicketState.CLOSE);
-                this.id = headerId;
-            }
-            System.out.println("ticket print: ok");
-        }
-    }
-
     public void printInitialState() {
-        System.out.println("Ticket: " + this.id);
-        System.out.print("""
-                  Total price: 0.0
-                  Total discount: 0.0
-                  Final Price: 0.0
-                """);
+        System.out.println(StaticMessages.TICKET_HEADER + this.id);
+        System.out.print(StaticMessages.INITIAL_STATE_BLOCK);
     }
 
-    private String rounded(double d) {
-        double val = Math.round(d * 1000.0) / 1000.0;
-        return String.valueOf(val);
-    }
+    public TicketState getState() { return state; }
 
-    public TicketState getState() {
-        return state;
-    }
+    public void setState(TicketState state) { this.state = state; }
 
-    public void setState(TicketState state) {
-        this.state = state;
-    }
+    public String getId() { return id; }
 
-    public String getId() {
-        return id;
-    }
+    public void setId(String id) { this.id = id; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public static boolean isIdRegistered(String id) { return usedIds.contains(id); }
 
-    public static boolean isIdRegistered(String id) {
-        return usedIds.contains(id);
-    }
 }
