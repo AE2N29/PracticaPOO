@@ -1,7 +1,5 @@
 package es.upm.etsisi.poo.persistence;
-
 import es.upm.etsisi.poo.utils.StaticMessages;
-
 import java.io.*;
 
 public class PersistenceManager {

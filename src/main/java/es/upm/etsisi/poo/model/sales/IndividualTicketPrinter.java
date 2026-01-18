@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java. time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util. Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Estrategia de impresión para tickets individuales
@@ -60,21 +62,53 @@ public class IndividualTicketPrinter implements TicketPrinter {
         System.out.println(StaticMessages.TICKET_HEADER + ticket.getId());
 
         // ==================== IMPRESIÓN DE PRODUCTOS ====================
-        for (AbstractProduct prod : sorted) {
-            totalPrice += prod.getPrice();
-            double discountPct = calculateDiscount(prod, merchCount, clothesCount,
-                    stationeryCount, electronicsCount, bookCount);
+        Set<String> printedEventIds = new HashSet<>();
 
-            // Imprimir con o sin descuento
+        for (AbstractProduct prod : sorted) {
+
+            // ==================== PRECIO Y DESCUENTO (SIEMPRE) ====================
+            totalPrice += prod.getPrice();
+
+            double discountPct = calculateDiscount(
+                    prod, merchCount, clothesCount,
+                    stationeryCount, electronicsCount, bookCount
+            );
+
+            double moneySaved = 0.0;
             if (discountPct > 0) {
-                double moneySaved = prod.getPrice() * discountPct;
+                moneySaved = prod.getPrice() * discountPct;
                 totalDiscount += moneySaved;
-                System.out.println(" " + prod + StaticMessages.DISCOUNT_SUFFIX +
-                        rounded(moneySaved));
+            }
+
+            // ==================== EVENTS ====================
+            if (prod instanceof Event event) {
+                String eventId = event.getId();
+
+                // Ya impreso → solo afecta a impresión
+                if (printedEventIds.contains(eventId)) {
+                    continue;
+                }
+
+                printedEventIds.add(eventId);
+
+                if (discountPct > 0) {
+                    System.out.println(" " + event + StaticMessages.DISCOUNT_SUFFIX +
+                            rounded(moneySaved));
+                } else {
+                    System.out.println(event);
+                }
+
             } else {
-                System.out.println(prod);
+                // ==================== STOCK PRODUCTS ====================
+                if (discountPct > 0) {
+                    System.out.println(" " + prod + StaticMessages.DISCOUNT_SUFFIX +
+                            rounded(moneySaved));
+                } else {
+                    System.out.println(prod);
+                }
             }
         }
+
 
         // ==================== RESUMEN FINAL ====================
         System.out.println(StaticMessages. TOTAL_PRICE_LABEL + rounded(totalPrice));
