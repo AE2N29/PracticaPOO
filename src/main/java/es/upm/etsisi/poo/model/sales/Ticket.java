@@ -57,11 +57,15 @@ public class Ticket implements Serializable{
     public TicketType getType() {
         return type;
     }
-    public void print() {
+    public void print(boolean close) {
         if (printer == null) {
             printer = TicketPrinterFactory.getPrinterForClient(client);
         }
-        printer. print(this);
+        if (close) {
+            printer.print(this);
+        } else {
+            printer.printPreview(this);
+        }
     }
     //Enviar copia de la lista si es necesario para evitar modificaciones externas
     public ArrayList<AbstractProduct> getProductList() {
@@ -186,6 +190,7 @@ public class Ticket implements Serializable{
                     productList.add(createProductCopy(productToAdd));
                 }
 
+                this.print(false);
                 System.out.println(StaticMessages.TICKET_ADD_OK);
 
                 if (!  state.equals(TicketState.OPEN)) {

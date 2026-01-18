@@ -16,8 +16,12 @@ public class CorporateTicketPrinter implements TicketPrinter {
 
     @Override
     public void print(Ticket ticket) {
-        System.out.println(StaticMessages.CORPORATE_TICKET_HEADER);
-        printTicketDetails(ticket);
+        printTicketDetails(ticket, true);
+    }
+
+    @Override
+    public void printPreview (Ticket ticket) {
+        printTicketDetails(ticket, false);
     }
 
     @Override
@@ -25,7 +29,7 @@ public class CorporateTicketPrinter implements TicketPrinter {
         return "Corporate";
     }
 
-    private void printTicketDetails(Ticket ticket) {
+    private void printTicketDetails(Ticket ticket, boolean close) {
         ArrayList<AbstractProduct> productList = ticket.getProductList();
 
         // ==================== CÁLCULO DE SERVICIOS ====================
@@ -62,11 +66,11 @@ public class CorporateTicketPrinter implements TicketPrinter {
         }
 
         // ==================== PREPARACIÓN DE ID ====================
-        String headerId = ticket.getId();
-        String futureClosedId = updateTicketId(ticket.getId());
-        headerId = futureClosedId;
+        if (close && ticket.getState() != TicketState.CLOSE) {
+            ticket.setId(updateTicketId(ticket.getId()));
+        }
 
-        System.out.println(StaticMessages.TICKET_HEADER + headerId);
+        System.out.println(StaticMessages.TICKET_HEADER + ticket.getId());
 
         // ==================== IMPRESIÓN DE PRODUCTOS ====================
         for (AbstractProduct prod : sorted) {
@@ -109,11 +113,12 @@ public class CorporateTicketPrinter implements TicketPrinter {
         }
 
         // ==================== CIERRE DEL TICKET ====================
-        if (ticket.getState() != TicketState.CLOSE) {
-            ticket.setState(TicketState.CLOSE);
-            ticket. setId(headerId);
+        if (close) {
+            if (ticket.getState() != TicketState.CLOSE) {
+                ticket.setState(TicketState.CLOSE);
+            }
+            System.out.println(StaticMessages.TICKET_PRINT_OK);
         }
-        System.out.println(StaticMessages.TICKET_PRINT_OK);
     }
 
     /**
