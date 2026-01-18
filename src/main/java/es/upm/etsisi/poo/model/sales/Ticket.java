@@ -124,7 +124,7 @@ public class Ticket implements Serializable{
             );
         } else if (original instanceof Service) {
             Service svc = (Service) original;
-            return new Service(
+            return new Service(original.getId(),
                     svc.getServiceType(),
                     svc.getExpirationDate()
             );

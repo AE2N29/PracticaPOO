@@ -75,7 +75,7 @@ public class CorporateTicketPrinter implements TicketPrinter {
         if (!services.isEmpty()) {
             System.out.println("Services Included:");
             for (AbstractProduct s : services) {
-                System.out.println("  " + s + " | Price: ---");
+                System.out.println("  " + s);
             }
         }
         // ==================== IMPRESIÓN PRODUCTOS ====================

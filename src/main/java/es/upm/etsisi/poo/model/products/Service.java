@@ -19,6 +19,12 @@ public class Service extends AbstractProduct {
         this.expirationDate = expirationDate;
     }
 
+    public Service(String id, ServiceTypes serviceType, LocalDateTime expirationDate) throws StoreException {
+        super(id, serviceType.toString());
+        this.serviceType = serviceType;
+        this.expirationDate = expirationDate;
+    }
+
     //Syncronized evita errores si se llama de varios lugares al mismo tiempo
     private static synchronized String generateServiceID() {
         return (counter++) + "S";
@@ -53,7 +59,7 @@ public class Service extends AbstractProduct {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
         ZoneId cet = ZoneId.of("Europe/Madrid");
         String formattedDate = expirationDate.atZone(cet).format(formatter); // Añade CET a donde se encuentra la 'z'
-        return "{class:ProductService, id:" + getId() +
+        return "{class:ProductService, id:" + this.getId() +
                 ", category:" + serviceType +
                 ", expiration:" + formattedDate + "}";
     }
